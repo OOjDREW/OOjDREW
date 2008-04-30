@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="jdrew/oo/util/|jdrew/oo/jdrew/oo/util/|jdrew/oo/jdrew.oo.util/|jdrew.oo.util/|jdrew/oo/util/|jdrew/oo/bu/|jdrew/oo/builtins/|jdrew/oo/gui/|jdrew/oo/td/|jdrew/oo/|jdrew/" kind="src" path="src"/>
+	<classpathentry kind="src" path="src/jdrew"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="antlr.jar"/>
+	<classpathentry kind="lib" path="commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="commons-httpclient-3.0.1.jar"/>
+	<classpathentry kind="lib" path="commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="commons-logging-adapters-1.1.jar"/>
+	<classpathentry kind="lib" path="commons-logging-api-1.1.jar"/>
+	<classpathentry kind="lib" path="cos.jar"/>
+	<classpathentry kind="lib" path="log4j-1.2.9.jar"/>
+	<classpathentry kind="lib" path="mysql-connector-java-5.0.4-bin.jar"/>
+	<classpathentry kind="lib" path="ptolemy.jar"/>
+	<classpathentry kind="lib" path="servlet-2_5-api.jar"/>
+	<classpathentry kind="lib" path="XOM.jar"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="OO jDREW Dev">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+    <path id="OO jDREW Dev.classpath">
+        <pathelement location="classes"/>
+        <pathelement location="XOM.jar"/>
+        <pathelement location="antlr.jar"/>
+        <pathelement location="commons-codec-1.3.jar"/>
+        <pathelement location="commons-httpclient-3.0.1.jar"/>
+        <pathelement location="commons-logging-1.1.jar"/>
+        <pathelement location="commons-logging-adapters-1.1.jar"/>
+        <pathelement location="commons-logging-api-1.1.jar"/>
+        <pathelement location="cos.jar"/>
+        <pathelement location="log4j-1.2.9.jar"/>
+        <pathelement location="mysql-connector-java-5.0.4-bin.jar"/>
+        <pathelement location="ptolemy.jar"/>
+        <pathelement location="servlet-2_5-api.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="classes"/>
+        <copy includeemptydirs="false" todir="classes">
+            <fileset dir="src" excludes="**/*.launch, **/*.java"/>
+        </copy>
+        <copy includeemptydirs="false" todir="classes">
+            <fileset dir="src/jdrew" excludes="**/*.launch, **/*.java"/>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="classes"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="classes" source="${source}" target="${target}">
+            <src path="src"/>
+            <exclude name="jdrew/oo/util/"/>
+            <exclude name="jdrew/oo/jdrew/oo/util/"/>
+            <exclude name="jdrew/oo/jdrew.oo.util/"/>
+            <exclude name="jdrew.oo.util/"/>
+            <exclude name="jdrew/oo/util/"/>
+            <exclude name="jdrew/oo/bu/"/>
+            <exclude name="jdrew/oo/builtins/"/>
+            <exclude name="jdrew/oo/gui/"/>
+            <exclude name="jdrew/oo/td/"/>
+            <exclude name="jdrew/oo/"/>
+            <exclude name="jdrew/"/>
+            <classpath refid="OO jDREW Dev.classpath"/>
+        </javac>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="classes" source="${source}" target="${target}">
+            <src path="src/jdrew"/>
+            <classpath refid="OO jDREW Dev.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="BottomUpGUI">
+        <java classname="jdrew.oo.gui.BottomUpGUI" failonerror="true" fork="yes">
+            <classpath refid="OO jDREW Dev.classpath"/>
+        </java>
+    </target>
+    <target name="DatabaseConnection">
+        <java classname="DatabaseConnection" failonerror="true" fork="yes">
+            <classpath refid="OO jDREW Dev.classpath"/>
+        </java>
+    </target>
+    <target name="HelloWorld">
+        <java classname="HelloWorld" failonerror="true" fork="yes">
+            <classpath refid="OO jDREW Dev.classpath"/>
+        </java>
+    </target>
+    <target name="Template">
+        <java classname="Template" failonerror="true" fork="yes">
+            <classpath refid="OO jDREW Dev.classpath"/>
+        </java>
+    </target>
+    <target name="TopDownAllSolutions">
+        <java classname="TopDownAllSolutions" failonerror="true" fork="yes">
+            <classpath refid="OO jDREW Dev.classpath"/>
+        </java>
+    </target>
+    <target name="TopDownGUI (1)">
+        <java classname="jdrew.oo.gui.TopDownGUI" failonerror="true" fork="yes">
+            <jvmarg line="-Xms1000m -Xmx1000m"/>
+            <classpath refid="OO jDREW Dev.classpath"/>
+        </java>
+    </target>
+    <target name="Translator">
+        <java classname="jdrew.oo.gui.Translator" failonerror="true" fork="yes">
+            <classpath refid="OO jDREW Dev.classpath"/>
+        </java>
+    </target>
+    <target name="Types">
+        <java classname="jdrew.oo.util.Types" failonerror="true" fork="yes">
+            <classpath refid="OO jDREW Dev.classpath"/>
+        </java>
+    </target>
+</project>
