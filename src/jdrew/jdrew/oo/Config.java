@@ -13,7 +13,7 @@ package jdrew.oo;
  *
  * <p>Description: Reasoning Engine for the Semantic Web - Supporting OO RuleML
  * 0.88</p>
- *
+ *s
  * <p>Copyright: Copyright (c) 2005</p>
  *
  * @author Marcel A. Ball
