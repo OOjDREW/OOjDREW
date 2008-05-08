@@ -183,8 +183,8 @@ public class Types {
         int id = types.size();
         types.add(name);
 
-        Integer iID = new Integer(id);
-        dag.addNodeWeight(iID);
+       // Integer iID = new Integer(id);
+       // dag.addNodeWeight(iID);
 
         return id;
     }
@@ -254,15 +254,14 @@ public class Types {
      * 
      */
     
-public static void storeTempTypes(String name, String[] parents){
+    public static void storeTempTypes(String name, String[] parents){
 	
-	Object[] obj = new Object[2];
+    	Object[] obj = new Object[2];
 	
-	obj[0] = name;
-	obj[1] = parents;
+    	obj[0] = name;
+    	obj[1] = parents;
 	
-	tempTypes.add(obj);
-	
+    	tempTypes.add(obj);
 	
 }    
     
@@ -274,34 +273,28 @@ public static void storeTempTypes(String name, String[] parents){
  * 
  */
 
-public static void makeTypes(){
+    public static void makeTypes(){
 
-Vector temp = new Vector();
-while(!tempTypes.isEmpty()){	
-Object obj[] = (Object[])tempTypes.remove(0);
+    	Vector temp = new Vector();
+    	while(!tempTypes.isEmpty()){	
+    			Object obj[] = (Object[])tempTypes.remove(0);
 
-String name = obj[0].toString();
+    			String name = obj[0].toString();
 
+    			Types.createDAGNode(name);
+    			System.out.println(name);
+    			temp.add(obj);
+    	}
 
-Types.createDAGNode(name);
-System.out.println(name);
-temp.add(obj);
-}
-
-while(!temp.isEmpty()){
+    	while(!temp.isEmpty()){
 	
-	Object obj[] = (Object[])temp.remove(0);
-	String name = obj[0].toString();	
-	String[] parents = (String[])obj[1];
-	Types.createDAGEdges(name, parents);
-	
-}
-
+    		Object obj[] = (Object[])temp.remove(0);
+    		String name = obj[0].toString();	
+    		String[] parents = (String[])obj[1];
+    		Types.createDAGEdges(name, parents);
+	}
 
 }       
-    
-    
-    
     
     /**
      * Define a new type in the type system. The user must specify the name of
