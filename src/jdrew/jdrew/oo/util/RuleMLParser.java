@@ -86,7 +86,7 @@ public class RuleMLParser {
      * @param format int The integer code for the backend parser - currently
      * only RULEML88 and RULEML91 is accepted.
      *
-     * @param filename String The filename (including the full path) to the
+     * @param kb String The filename (including the full path) to the
      * file to be parsed.
      *
      * @throws ParseException A ParseException is thrown if there is an error
@@ -103,35 +103,59 @@ public class RuleMLParser {
      */
           
     public void parseFile(int format, String filename) throws ParseException,
-            ParsingException, ValidityException, IOException {
-        
-        if (format != RULEML88 && format != RULEML91) {
-            throw new ParseException("Only RuleML 0.88 and RuleML 0.91 is currently supported.");
-        }
+    ParsingException, ValidityException, IOException {
 
-		if(format == RULEML88){
-		
-     	   RuleML88Parser rm88 = new RuleML88Parser(clauses);
-     	   Builder bl = new Builder();
-    	   File file = new File(filename);
-   	 	   Document doc = bl.build(file);
-   	 	   rm88.parseRuleMLDocument(doc);
-    	
+    	if (format != RULEML88 && format != RULEML91) {
+    		throw new ParseException("Only RuleML 0.88 and RuleML 0.91 is currently supported.");
     	}
-    
+
+    	if(format == RULEML88){
+
+    		RuleML88Parser rm88 = new RuleML88Parser(clauses);
+    		Builder bl = new Builder();
+    		File file = new File(filename);
+    		Document doc = bl.build(file);
+    		rm88.parseRuleMLDocument(doc);
+
+    	}
+
     	if(format == RULEML91){
-		
-       	   RuleML91Parser rm91 = new RuleML91Parser(clauses);
-      	   Builder bl = new Builder();
-      	   File file = new File(filename);
-     	   Document doc = bl.build(file);
-     	   rm91.parseRuleMLDocument(doc);
-    	
+
+    		RuleML91Parser rm91 = new RuleML91Parser(clauses);
+    		Builder bl = new Builder();
+    		File file = new File(filename);
+    		Document doc = bl.build(file);
+    		rm91.parseRuleMLDocument(doc);
+
     	}
-    	
-    
+
     }
 
+    public void parseFile(int format, File kb) throws ParseException, ParsingException, ValidityException, IOException {
+
+    	if (format != RULEML88 && format != RULEML91) {
+    		throw new ParseException("Only RuleML 0.88 and RuleML 0.91 is currently supported.");
+    	}
+
+    	if(format == RULEML88){
+    		System.out.println("88 chosen (Remove this later)");
+    		RuleML88Parser rm88 = new RuleML88Parser(clauses);
+    		Builder bl = new Builder();
+   
+    		Document doc = bl.build(kb);
+    		rm88.parseRuleMLDocument(doc);
+
+    		}
+    	if(format == RULEML91){
+    		System.out.println("91 chosen (Remove this later)");
+    		RuleML91Parser rm91 = new RuleML91Parser(clauses);
+    		Builder bl = new Builder();
+   
+    		Document doc = bl.build(kb);
+    		rm91.parseRuleMLDocument(doc);
+    	}
+    }
+    
     /**
      * Parses a string containing a knowledge base that is in the indicated
      * format. Currently only RuleML 0.88 + rests and RuleML 0.91 are supported;
@@ -203,8 +227,8 @@ public class RuleMLParser {
      	    Document doc = bl.build(sr);
         
      	    rmq.parseRuleMLDocument(doc);
-//make new parser
-//get the one out     	    
+     	    //make new parser
+     	    //get the one out     	    
      	    Iterator it = clauses.iterator();
      	    
      	        DefiniteClause dc = null;   	

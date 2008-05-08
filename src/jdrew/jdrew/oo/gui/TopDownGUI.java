@@ -44,9 +44,14 @@ public class TopDownGUI extends javax.swing.JFrame {
 	Iterator it = null;
 	String term1VarName = "";
 	String term2VarName = "";
-	boolean t1Var = false;
+	boolean t1Var = false;	
     boolean t2Var = false;
-    
+    	
+	SubsumesStructure subPlus = null;
+	SubsumesStructure sub = null;
+	LUBGLBStructure lub = null;
+	LUBGLBStructure glb = null;
+	
     BackwardReasoner br;
     Iterator solit;
     //Logger logger = Logger.getLogger("jdrew.oo.gui.TopDownGUI");
@@ -84,6 +89,7 @@ public class TopDownGUI extends javax.swing.JFrame {
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
         buttonGroup3 = new javax.swing.ButtonGroup();
+        buttonGroup4 = new javax.swing.ButtonGroup();
         
         jTabbedPane1 = new javax.swing.JTabbedPane();
         
@@ -105,6 +111,9 @@ public class TopDownGUI extends javax.swing.JFrame {
         
         RMLQuery = new javax.swing.JRadioButton();
         POSLQuery = new javax.swing.JRadioButton();
+        
+        RMLTypeQuery = new javax.swing.JRadioButton();
+        POSLTypeQuery = new javax.swing.JRadioButton();
         
         jLabel2 = new javax.swing.JLabel();
         ttab = new javax.swing.JPanel();
@@ -173,14 +182,16 @@ public class TopDownGUI extends javax.swing.JFrame {
         posl.setToolTipText("Select POSL syntax for Type Input");
         tdtab.add(posl);
         posl.setBounds(190, 530, 140, 23);
-        
+                
         parseTypeBtn.setText("Load Type Information");
         parseTypeBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 parseTypeBtnActionPerformed(evt);
             }
         });
-
+        
+        posl.setSelected(true);
+        
         tdtab.add(parseTypeBtn);
         parseTypeBtn.setBounds(589, 530, 180, 23);
 
@@ -223,10 +234,25 @@ public class TopDownGUI extends javax.swing.JFrame {
 		RMLQuery.setBounds(55,70,120,30);
 		
 		buttonGroup2.add(POSLQuery);
-		POSLQuery.setText("Posl Query");
+		POSLQuery.setText("POSL Query");
 		POSLQuery.setToolTipText("Select POSL syntax for Query Input");
 		qtab.add(POSLQuery);
 		POSLQuery.setBounds(180,70,120,30);
+		
+		buttonGroup4.add(RMLTypeQuery);
+		RMLTypeQuery.setText("RuleML query");
+		RMLTypeQuery.setToolTipText("Select RuleML syntax for Query Input");
+		ttab.add(RMLTypeQuery);
+		RMLTypeQuery.setBounds(55,70,120,30);
+		
+		buttonGroup4.add(POSLTypeQuery);
+		POSLTypeQuery.setText("POSL Query");
+		POSLTypeQuery.setToolTipText("Select POSL syntax for Query Input");
+		ttab.add(POSLTypeQuery);
+		POSLTypeQuery.setBounds(180,70,120,30);
+		
+		POSLTypeQuery.setSelected(true);
+		
 		
         buttonGroup1.add(jrbPOSL);
         jrbPOSL.setText("POSL");
@@ -248,7 +274,6 @@ public class TopDownGUI extends javax.swing.JFrame {
         kbtab.add(jrbRML91);
         jrbRML91.setBounds(330, 530, 200, 23);        
         
-
         jLabel2.setText("Input Format:");
         kbtab.add(jLabel2);
         jLabel2.setBounds(10, 530, 100, 20);
@@ -306,6 +331,7 @@ public class TopDownGUI extends javax.swing.JFrame {
         });
         qtab.add(nextBtn);
         nextBtn.setBounds(630, 80, 140, 23);
+        nextBtn.setEnabled(false);
         
         //query type buttons
         
@@ -365,7 +391,7 @@ public class TopDownGUI extends javax.swing.JFrame {
         jScrollPane8.setViewportView(querytextT);
         ttab.add(jScrollPane8);
         jScrollPane8.setBounds(60, 10, 710, 60);
-		
+        //jScrollPane8.setBounds(60, 10, 710, 100);		
 		
         jTabbedPane1.addTab("Query", qtab);
         jTabbedPane1.addTab("Type Query", ttab);
@@ -471,6 +497,12 @@ public class TopDownGUI extends javax.swing.JFrame {
 	 *
 	 */
 	private void queryBtnTActionPerformed(java.awt.event.ActionEvent evt) {
+		
+		Object[][] resetRow = new Object[2][2];
+		String[] resetCol = new String[] {"Variable", "Binding"};
+		this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(resetRow, resetCol));
+		this.varBindTblT.updateUI(); 
+				
 		this.nextBtnT.setEnabled(false);
 		//It is an iterator that is used to map all the solutions to bindings
 		it = null;
@@ -482,121 +514,145 @@ public class TopDownGUI extends javax.swing.JFrame {
 		if(query.equals("")){
 			return;
 		}
-		//dc will contain the query
-		DefiniteClause dc = null;
-		//parsing the giving query
-	 	try {	
-      	  POSLParser pp = new POSLParser();
-          dc = pp.parseQueryStringT(query); 
-       	  } catch (Exception ex) {  
-         JOptionPane.showMessageDialog(this, ex.getMessage(), "In proper Posl Format", JOptionPane.ERROR_MESSAGE);
-       }
-    	//Determining if the Query is valid
-       	//I.E no rules are allowed in a query
-    	Term[] atoms = dc.atoms;
-    	if(atoms.length != 1){
-    		JOptionPane.showMessageDialog(this, "A query cannot contain a rule", "A query cannot contain a rule", JOptionPane.ERROR_MESSAGE);
-       		return;
-       	}
-    	//Determining what the predicate is
-    	//Valid Predicates are GLB(Greater Lower Bound) LUB(Least Upper Bound)
-    	//Subsumes(direct subclass of) subsumesPlus(transitive closure).
-    	Term t1 = atoms[0];
-    	String predicate = t1.getSymbolString();
-    	boolean glb = false;
-    	boolean sub = false;
-    	boolean lub = false;
-    	boolean subPlus = false;
-    	boolean validPredicate = false;
-    	
-    	if(predicate.equals("subsumesPlus")){
-    		validPredicate = true;
-    		subPlus = true;
-    	}
-    	
-    	if(predicate.equals("subsumes")){
-    		validPredicate = true;
-    		sub = true;
-    	}
-    	if(predicate.equals("glb")){
-    		validPredicate = true;
-    		glb = true;
-    	}
-    	if(predicate.equals("lub")){
-    		validPredicate = true;
-    		lub = true;
-    	}
-    		
-    	if(!validPredicate){
-    		JOptionPane.showMessageDialog(this, "Only subsumes, glb, and lub can be used for type Queries", "Error", JOptionPane.ERROR_MESSAGE);
-    		return;
-    	}
-    	    	
-    	Term[] terms = t1.getSubTerms();
-    	String[] varnames = dc.variableNames;
-    	//if subsumes is the query predicate
-    	//subsumes plus uses the transitive closure of the types
-    	if(subPlus){
-    		
-    		if(terms.length != 3){
-    			JOptionPane.showMessageDialog(this, "Subsumes+ can only have 2 arguments ", "Error", JOptionPane.ERROR_MESSAGE);
-    			return;
-    		}
-    		String term1 = terms[1].toPOSLString(varnames,true);
-    		String term2 = terms[2].toPOSLString(varnames,true);
-    		System.out.println(term1 + " " + term2);
-    	    t1Var = false;
-    	    t2Var = false;
-    	    
-    	    String term1Sub = term1.substring(0,1);
-    	    String term2Sub = term2.substring(0,1);
-    	    
-    	    if(term1Sub.equals("?"))
-    	    	t1Var = true;
-    	    if(term2Sub.equals("?"))
-    	    	t2Var = true;
-    	    	
+		
+		if(RMLTypeQuery.isSelected()){
+			
+			try{
+			
+			//need to get rid of this eventually
+			t1Var = false;
+			t2Var = false;
     	    term1VarName = "";
     	    term2VarName = "";
-    	   	if(t1Var){
-    	   	    term1VarName = term1.substring(1,term1.length()-2);
-    	   		System.out.println("term 1 var name: " + term1VarName);
-    	   	}
-    	   	   	   	
-    	   	if(t2Var){
-    	   	    term2VarName = term2.substring(1,term2.length()-2);
-    	   		System.out.println("term 2 var name: " + term2VarName);
-    	    }
     	    
-    	        	    	
-    		//Ind Ind t1Var == false t2Var == false //is one class the super class of another
-    		if(t1Var == false && t2Var == false){
-    			
-    			try{
-    			solutionTextT.setText("" + typeQuery.isSuperClass(term1,term2));
-    			
-    			}
-       		 catch (Exception ex) {
-            
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
-                                         JOptionPane.ERROR_MESSAGE);
-			}	    			
-    		return;
-    		}
-    		//Var Ind t1Var = true t2Var = false
-    		//super classes of all
-    		if(t1Var == true && t2Var == false){ 
-    			solutionTextT.setText("");
-    			try{
+			solutionTextT.setText("");
+			TypeQueryParserRuleML rmlTParser = new TypeQueryParserRuleML(query);
+			Elements elements = rmlTParser.parseForPredicate();
+			
+			String predicate = rmlTParser.getPredicate();
+			
+			if(predicate.equalsIgnoreCase(TypeQueryParserRuleML.SUBSUMESPLUS)){
+				
+				subPlus = rmlTParser.parseElementsSubsumesAndSubsumesPlus(elements);
+				
+				//rel rel
+				if(!subPlus.getSuperVar() && !subPlus.getSubVar()){
+					solutionTextT.setText("" + typeQuery.isSuperClass(subPlus.getSuperName(),subPlus.getSubName()));
+				//var rel get all super classes
+				}else if(subPlus.getSuperVar() && !subPlus.getSubVar()){
+					t1Var = true;
+					term1VarName = subPlus.getSuperName();
+					
+					String[] superClasses = typeQuery.findAllSuperClasses(subPlus.getSubName());
+					
+					Object[][] rowdata = new Object[2][2];
+                	rowdata[0][0] = "?" + subPlus.getSuperName();
+               		rowdata[0][1] = superClasses[0];
+           		    String[] colnames = new String[] {"Variable", "Binding"};
+            		this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+            		this.varBindTblT.updateUI(); 
+            		
+            		Vector<String> nextVector = new Vector<String>();           		
+            		for(int i = 1; i < superClasses.length; i++)
+            			nextVector.add(superClasses[i]);
+            		
+            		it = nextVector.iterator();
+            			
+            		if(it.hasNext())
+            			this.nextBtnT.setEnabled(true);
+    							
+				//rel var get all sub classes
+				}else if(!subPlus.getSuperVar() && subPlus.getSubVar()){
+					t2Var = true;
+					term2VarName = subPlus.getSubName();
+					String[] subClasses = typeQuery.findAllSubClasses(subPlus.getSuperName());
     				
-    				String[] superClasses = typeQuery.findAllSuperClasses(term2);
+    				for(int i = 0; i < subClasses.length; i++)
+    					System.out.println(subClasses[i]);
+    			
+    				Object[][] rowdata = new Object[2][2];
+
+                	rowdata[0][0] = "?" + subPlus.getSubName();
+               		rowdata[0][1] = subClasses[0];
+            
+           		    String[] colnames = new String[] {"Variable", "Binding"};
+
+            		this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(
+                    rowdata, colnames));
+            		this.varBindTblT.updateUI();  
+            		Vector nextVector = new Vector();           		
+            		for(int i = 1; i < subClasses.length; i++)
+            			nextVector.add(subClasses[i]);
+            		
+            		it = nextVector.iterator();
+            		
+    				if(it.hasNext())
+            			this.nextBtnT.setEnabled(true);			
+				
+				//var var get all relations
+				}else if(subPlus.getSuperVar() && subPlus.getSubVar()){
+					t1Var = true;
+					t2Var = true;
+					term2VarName = subPlus.getSubName();
+					term1VarName = subPlus.getSuperName();
+					
+					if(subPlus.getSuperName().equalsIgnoreCase(subPlus.getSubName())){
+	    				JOptionPane.showMessageDialog(this, "Duplicate variable names not allowed", "Error", JOptionPane.ERROR_MESSAGE);
+	    				return;
+	    			}
+					Vector v1 = typeQuery.findAllSuperClassesOfEverything();
+	    			Vector v2 = typeQuery.findAllSubClassesOfEverything();
+	    			String sol = "";
+	    			Iterator vit1 = v1.iterator();
+					Iterator vit2 = v2.iterator();
+	    			int count = 0;
+	    			//Debug -> Prints out all the solutions for easy Copy and Paste
+	    			sol = "% Taxonomy Facts: \n";
+	    			while(vit1.hasNext()){
+	    				count++;
+	    				sol =  sol + "subsumes(" + vit1.next().toString() + "," + vit1.next().toString() + ")." + "\n";
+	    			}
+	    			solutionTextT.setText(sol);
+	      			//Debug
+	    			
+	    			it = v1.iterator();
+	            	
+	            	Object[][] rowdata = new Object[2][2];
+
+	       			rowdata[0][0] = "?" + subPlus.getSuperName();
+	       	 		rowdata[0][1] = (String)it.next();
+	            
+	            	rowdata[1][0] = "?" + subPlus.getSubName();
+	            	rowdata[1][1] = (String)it.next();
+	            
+	        		String[] colnames = new String[] {"Variable", "Binding"};
+
+	       	 		this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+	       	 		this.varBindTblT.updateUI(); 
+	  	
+	            	if(it.hasNext())
+	            		this.nextBtnT.setEnabled(true);
+					
+				}	
+			}
+			else if(predicate.equalsIgnoreCase(TypeQueryParserRuleML.SUBSUMES)){
+				sub = rmlTParser.parseElementsSubsumesAndSubsumesPlus(elements);
+				//rel rel
+				if(!sub.getSuperVar() && !sub.getSubVar()){
+					solutionTextT.setText("" + typeQuery.isDirectSuperClass(sub.getSuperName(),sub.getSubName()));			
+				//var rel
+				}else if(sub.getSuperVar() && !sub.getSubVar()){
+					t1Var = true;
+					term1VarName = sub.getSuperName();
+					
+					String[] superClasses = typeQuery.getDirectSuperClasses(sub.getSubName());
     				
     				for(int i = 0; i < superClasses.length; i++)
     					System.out.println(superClasses[i]);
     			
     				Object[][] rowdata = new Object[2][2];
 
-                	rowdata[0][0] = "?" + term1VarName;
+                	rowdata[0][0] = "?" + sub.getSuperName();
                		rowdata[0][1] = superClasses[0];
             
            		    String[] colnames = new String[] {"Variable", "Binding"};
@@ -612,29 +668,20 @@ public class TopDownGUI extends javax.swing.JFrame {
             			
             		if(it.hasNext())
             			this.nextBtnT.setEnabled(true);
-    							
-    			}
-    			catch (Exception ex) {
-            
-            	JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
-                                         JOptionPane.ERROR_MESSAGE);                        
-    			}                          
-	
-    		}
-    		//Ind Var t1Var = false t2Var = true 
-
-    		if(t1Var == false && t2Var == true){
-    			solutionTextT.setText("");
-    			try{
+					
+				//rel var
+				}else if(!sub.getSuperVar() && sub.getSubVar()){
+					t2Var = true;
+					term2VarName = sub.getSubName();
+					
+					String[] subClasses = typeQuery.getDirectSubClasses(sub.getSuperName());
     				
-    				String[] subClasses = typeQuery.findAllSubClasses(term1);
-    				    				
     				for(int i = 0; i < subClasses.length; i++)
     					System.out.println(subClasses[i]);
     			
     				Object[][] rowdata = new Object[2][2];
 
-                	rowdata[0][0] = "?" + term2VarName;
+                	rowdata[0][0] = "?" + sub.getSubName();
                		rowdata[0][1] = subClasses[0];
             
            		    String[] colnames = new String[] {"Variable", "Binding"};
@@ -649,141 +696,284 @@ public class TopDownGUI extends javax.swing.JFrame {
             		it = nextVector.iterator();
     				if(it.hasNext())
             			this.nextBtnT.setEnabled(true);			
-    			}
-    			catch (Exception ex) {
-            
-            	JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
-                                         JOptionPane.ERROR_MESSAGE);
+				//var var
+				}else if(sub.getSuperVar() && sub.getSubVar()){
+					t1Var = true;
+					t2Var = true;
+					term2VarName = sub.getSubName();
+					term1VarName = sub.getSuperName();
+					
+					if(sub.getSuperName().equalsIgnoreCase(sub.getSubName())){
+	    				JOptionPane.showMessageDialog(this, "Duplicate variable names not allowed", "Error", JOptionPane.ERROR_MESSAGE);
+	    				return;
+	    			}
+					Vector v1 = typeQuery.findAllDirectSuperClassesOfEverything();
+	    			Vector v2 = typeQuery.findAllDirectSubClassesOfEverything();
+	    			String sol = "";
+	    			Iterator vit1 = v1.iterator();
+					Iterator vit2 = v2.iterator();
+	    			int count = 0;
+	    			//Debug -> Prints out all the solutions for easy Copy and Paste
+	    			sol = "% Taxonomy Facts: \n";
+	    			while(vit1.hasNext()){
+	    				count++;
+	    				sol =  sol + "subsumes(" + vit1.next().toString() + "," + vit1.next().toString() + ")." + "\n";
+	    			}
+	    			solutionTextT.setText(sol);
+	      			//Debug
+	    			
+	    			it = v1.iterator();
+	            	
+	            	Object[][] rowdata = new Object[2][2];
+
+	       			rowdata[0][0] = "?" + sub.getSuperName();
+	       	 		rowdata[0][1] = (String)it.next();
+	            
+	            	rowdata[1][0] = "?" + sub.getSubName();
+	            	rowdata[1][1] = (String)it.next();
+	            
+	        		String[] colnames = new String[] {"Variable", "Binding"};
+
+	       	 		this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+	       	 		this.varBindTblT.updateUI(); 
+	  	
+	            	if(it.hasNext())
+	            		this.nextBtnT.setEnabled(true);
+					
 				}
-    		}
-    		
-    		//Var Var t1Var = true t2var = true
-    		//We want to know all subsumes relations in the type system
-    		if(t1Var == true && t2Var == true){
-    			
-    			try{
-    				
-    			solutionTextT.setText("");
-    			
-    			if(term1VarName.equals(term2VarName)){
-    				JOptionPane.showMessageDialog(this, "Duplicate variable names not allowed", "Error", JOptionPane.ERROR_MESSAGE);
-    				return;
-    			}
-    			
-    			Vector v1 = typeQuery.findAllSuperClassesOfEverything();
-    			Vector v2 = typeQuery.findAllSubClassesOfEverything();
-    			String sol = "";
-    			Iterator vit1 = v1.iterator();
-				Iterator vit2 = v2.iterator();
+	
+			}
+			else if(predicate.equalsIgnoreCase(TypeQueryParserRuleML.LUB)){
+
+				lub = rmlTParser.parseElementsGLBandLUB(elements);
 				
-    			int count = 0;
-    			
-    			//Debug -> Prints out all the solutions for easy Copy and Paste
-    			sol = "% Taxonomy Facts: \n";
-    			while(vit1.hasNext()){
-    				count++;
-    				sol =  sol + "subsumes(" + vit1.next().toString() + "," + vit1.next().toString() + ")." + "\n";
-    			}
-    			solutionTextT.setText(sol);
-      			//Debug
-    			
-    			it = v1.iterator();
-            	
-            	Object[][] rowdata = new Object[2][2];
+				if(lub.getResultVar()){
+					
+					  ArrayList<String> terms = lub.getTerms();
+	                  
+	                  String[] lubArray = new String[terms.size()];
 
-       			rowdata[0][0] = "?" + term1VarName;
-       	 		rowdata[0][1] = (String)it.next();
-            
-            	rowdata[1][0] = "?" + term2VarName;
-            	rowdata[1][1] = (String)it.next();
-            
-        		String[] colnames = new String[] {"Variable", "Binding"};
+	                  for(int i = 0; i < terms.size();i++)
+	                          lubArray[i] = terms.get(i);
 
-       	 		this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
-       	 		this.varBindTblT.updateUI(); 
-  	
-            	if(it.hasNext())
-            		this.nextBtnT.setEnabled(true);
+	                  String leastUpperBound = typeQuery.leastUpperBound(lubArray);
+	                  
+	                  Object[][] rowdata = new Object[2][2];
+
+	                  rowdata[0][0] = "?" + lub.getResultVarName();
+	                  rowdata[0][1] = leastUpperBound;
+
+	                  String[] colnames = new String[] {"Variable", "Binding"};
+
+	                  this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+	                  this.varBindTblT.updateUI();
+					
+				}else if(!lub.getResultVar()){
+
+					  Object[][] rowdata = new Object[2][2];
+					  String[] colnames = new String[] {"Variable", "Binding"};
+	                  this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+	                  this.varBindTblT.updateUI();
+	                  solutionTextT.setText("");
+
+	                  ArrayList<String> terms = lub.getTerms();
+	                  
+	                  String[] lubArray = new String[terms.size()];
+
+	                  for(int i = 0; i < terms.size();i++)
+	                          lubArray[i] = terms.get(i);
+
+	                  String leastUpperBound = typeQuery.leastUpperBound(lubArray);
+	                  solutionTextT.setText(leastUpperBound);	
+				}
+			}else if(predicate.equalsIgnoreCase(TypeQueryParserRuleML.GLB)){
+				
+				glb = rmlTParser.parseElementsGLBandLUB(elements);
+				
+				if(glb.getResultVar()){
+					
+					  ArrayList<String> terms = glb.getTerms();
+	                  
+	                  String[] glbArray = new String[terms.size()];
+
+	                  for(int i = 0; i < terms.size();i++)
+	                	  glbArray[i] = terms.get(i);
+
+	                  String greatestLowerBound = typeQuery.greatestLowerBound(glbArray);
+	                  
+	                  Object[][] rowdata = new Object[2][2];
+
+	                  rowdata[0][0] = "?" + glb.getResultVarName();
+	                  rowdata[0][1] = greatestLowerBound;
+
+	                  String[] colnames = new String[] {"Variable", "Binding"};
+
+	                  this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+	                  this.varBindTblT.updateUI();
+					
+				}else if(!glb.getResultVar()){
+
+					  Object[][] rowdata = new Object[2][2];
+	                  String[] colnames = new String[] {"Variable", "Binding"};
+	                  this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+	                  this.varBindTblT.updateUI();
+	                  solutionTextT.setText("");
+	                  
+	                  ArrayList<String> terms = glb.getTerms();
+	                  
+	                  String[] glbArray = new String[terms.size()];
+	                  
+	                  for(int i = 0; i < terms.size();i++){
+	                	  glbArray[i] = terms.get(i);
+	                  }
+	                  
+	                  String greatestLowerBound = typeQuery.greatestLowerBound(glbArray);
+	                  solutionTextT.setText(greatestLowerBound);	
+				}
+				
+			
+			}
+	
+			}catch(Exception ex){
+				 JOptionPane.showMessageDialog(this, ex.getMessage(), "Type Query Parser Exeception", JOptionPane.ERROR_MESSAGE);
+			}
+		//RULEML	
+		}else if(POSLTypeQuery.isSelected()){
+		
+			try{
+			
+			t1Var = false;
+			t2Var = false;
+	    	term1VarName = "";
+	    	term2VarName = "";
+	    	solutionTextT.setText("");
+	    	
+			TypeQueryParserPOSL poslTParser = new TypeQueryParserPOSL(query);
+			Term[] queryTerms = poslTParser.parseForPredicate();
+			String predicate = poslTParser.getPredicate();
+
+			if(predicate.equalsIgnoreCase(TypeQueryParserPOSL.SUBSUMESPLUS)){
+
+				subPlus = poslTParser.parseElementsSubsumesAndSubsumesPlus(queryTerms);
+				
+				//rel rel
+				if(!subPlus.getSuperVar() && !subPlus.getSubVar()){
+					solutionTextT.setText("" + typeQuery.isSuperClass(subPlus.getSuperName(),subPlus.getSubName()));
+				//var rel get all super classes
+				}else if(subPlus.getSuperVar() && !subPlus.getSubVar()){
+					t1Var = true;
+					term1VarName = subPlus.getSuperName();
+					
+					String[] superClasses = typeQuery.findAllSuperClasses(subPlus.getSubName());
+					
+					Object[][] rowdata = new Object[2][2];
+                	rowdata[0][0] = "?" + subPlus.getSuperName();
+               		rowdata[0][1] = superClasses[0];
+           		    String[] colnames = new String[] {"Variable", "Binding"};
+            		this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+            		this.varBindTblT.updateUI(); 
             		
-    		  }catch (Exception ex) {
-            
-            	JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
-                                         JOptionPane.ERROR_MESSAGE);
-				}    	
-    		}	
-    	}//subPlus
-    	//Subsumes just uses the direct sub classes and not the transitive closure.
-    	if(sub){
-    		
-    		if(terms.length != 3){
-    			JOptionPane.showMessageDialog(this, "Subsumes can only have 2 arguments ", "Error", JOptionPane.ERROR_MESSAGE);
-    			return;
-    		}
-    		String term1 = terms[1].toPOSLString(varnames,true);
-    		String term2 = terms[2].toPOSLString(varnames,true);
-    		//System.out.println(term1 + " " + term2);
-    	    t1Var = false;
-    	    t2Var = false;
-    	    
-    	    String term1Sub = term1.substring(0,1);
-    	    String term2Sub = term2.substring(0,1);
-    	    
-    	    if(term1Sub.equals("?"))
-    	    	t1Var = true;
-    	    if(term2Sub.equals("?"))
-    	    	t2Var = true;
-    	    	
-    	    term1VarName = "";
-    	    term2VarName = "";
-    	   	if(t1Var){
-    	   		try{
-    	   	    term1VarName = term1.substring(1,term1.length()-2);
-    	   		//System.out.println("term 1 var name: " + term1VarName);
-    	   		} 
-    	   		catch (Exception ex) {
-    	   			JOptionPane.showMessageDialog(this, "Anonymous variables are not allowed. ", "Error", JOptionPane.ERROR_MESSAGE);  
-    	   		}		
-    	   	}
-    	   	   	   	
-    	   	if(t2Var){
-    	   		try{
-    	   	    term2VarName = term2.substring(1,term2.length()-2);
-    	   		//System.out.println("term 2 var name: " + term2VarName);
-    	   		}
-        		catch(Exception ex) {
-        			JOptionPane.showMessageDialog(this, "Anonymous variables are not allowed. ", "Error", JOptionPane.ERROR_MESSAGE);
-        			return;
-        		}
-    	    }
-   	    	
-    		//Ind Ind t1Var == false t2Var == false //is one class the super class of another
-    		if(t1Var == false && t2Var == false){
-    			
-    			try{
-    			solutionTextT.setText("" + typeQuery.isDirectSuperClass(term1,term2));
-    			
-    			}
-       		 catch (Exception ex) {
-            
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
-                                         JOptionPane.ERROR_MESSAGE);
-			}	    			
-    		return;
-    		}
-    		//Var Ind t1Var = true t2Var = false
-    		//super classes of all
-    		if(t1Var == true && t2Var == false){ 
-    			solutionTextT.setText("");
-    			try{
+            		Vector<String> nextVector = new Vector<String>();           		
+            		for(int i = 1; i < superClasses.length; i++)
+            			nextVector.add(superClasses[i]);
+            		
+            		it = nextVector.iterator();
+            			
+            		if(it.hasNext())
+            			this.nextBtnT.setEnabled(true);
+    							
+				//rel var get all sub classes
+				}else if(!subPlus.getSuperVar() && subPlus.getSubVar()){
+					t2Var = true;
+					term2VarName = subPlus.getSubName();
+					String[] subClasses = typeQuery.findAllSubClasses(subPlus.getSuperName());
     				
-    				String[] superClasses = typeQuery.getDirectSuperClasses(term2);
+    				for(int i = 0; i < subClasses.length; i++)
+    					System.out.println(subClasses[i]);
+    			
+    				Object[][] rowdata = new Object[2][2];
+
+                	rowdata[0][0] = "?" + subPlus.getSubName();
+               		rowdata[0][1] = subClasses[0];
+            
+           		    String[] colnames = new String[] {"Variable", "Binding"};
+
+            		this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(
+                    rowdata, colnames));
+            		this.varBindTblT.updateUI();  
+            		Vector nextVector = new Vector();           		
+            		for(int i = 1; i < subClasses.length; i++)
+            			nextVector.add(subClasses[i]);
+            		
+            		it = nextVector.iterator();
+            		
+    				if(it.hasNext())
+            			this.nextBtnT.setEnabled(true);			
+				
+				//var var get all relations
+				}else if(subPlus.getSuperVar() && subPlus.getSubVar()){
+					t1Var = true;
+					t2Var = true;
+					term2VarName = subPlus.getSubName();
+					term1VarName = subPlus.getSuperName();
+					
+					if(subPlus.getSuperName().equalsIgnoreCase(subPlus.getSubName())){
+	    				JOptionPane.showMessageDialog(this, "Duplicate variable names not allowed", "Error", JOptionPane.ERROR_MESSAGE);
+	    				return;
+	    			}
+					Vector v1 = typeQuery.findAllSuperClassesOfEverything();
+	    			Vector v2 = typeQuery.findAllSubClassesOfEverything();
+	    			String sol = "";
+	    			Iterator vit1 = v1.iterator();
+					Iterator vit2 = v2.iterator();
+	    			int count = 0;
+	    			//Debug -> Prints out all the solutions for easy Copy and Paste
+	    			sol = "% Taxonomy Facts: \n";
+	    			while(vit1.hasNext()){
+	    				count++;
+	    				sol =  sol + "subsumes(" + vit1.next().toString() + "," + vit1.next().toString() + ")." + "\n";
+	    			}
+	    			solutionTextT.setText(sol);
+	      			//Debug
+	    			
+	    			it = v1.iterator();
+	            	
+	            	Object[][] rowdata = new Object[2][2];
+
+	       			rowdata[0][0] = "?" + subPlus.getSuperName();
+	       	 		rowdata[0][1] = (String)it.next();
+	            
+	            	rowdata[1][0] = "?" + subPlus.getSubName();
+	            	rowdata[1][1] = (String)it.next();
+	            
+	        		String[] colnames = new String[] {"Variable", "Binding"};
+
+	       	 		this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+	       	 		this.varBindTblT.updateUI(); 
+	  	
+	            	if(it.hasNext())
+	            		this.nextBtnT.setEnabled(true);
+					
+				}	
+			//subsumesPlus
+			}else if(predicate.equalsIgnoreCase(TypeQueryParserPOSL.SUBSUMES)){
+				sub = poslTParser.parseElementsSubsumesAndSubsumesPlus(queryTerms);
+				//rel rel
+				if(!sub.getSuperVar() && !sub.getSubVar()){
+					solutionTextT.setText("" + typeQuery.isDirectSuperClass(sub.getSuperName(),sub.getSubName()));			
+				//var rel
+				}else if(sub.getSuperVar() && !sub.getSubVar()){
+					t1Var = true;
+					term1VarName = sub.getSuperName();
+					
+					String[] superClasses = typeQuery.getDirectSuperClasses(sub.getSubName());
     				
     				for(int i = 0; i < superClasses.length; i++)
     					System.out.println(superClasses[i]);
     			
     				Object[][] rowdata = new Object[2][2];
 
-                	rowdata[0][0] = "?" + term1VarName;
+                	rowdata[0][0] = "?" + sub.getSuperName();
                		rowdata[0][1] = superClasses[0];
             
            		    String[] colnames = new String[] {"Variable", "Binding"};
@@ -799,29 +989,20 @@ public class TopDownGUI extends javax.swing.JFrame {
             			
             		if(it.hasNext())
             			this.nextBtnT.setEnabled(true);
-    							
-    			}
-    			catch (Exception ex) {
-            
-            	JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
-                                         JOptionPane.ERROR_MESSAGE);                        
-    			}                          
-	
-    		}
-    		//Ind Var t1Var = false t2Var = true 
-    		//getDirectSubClasses
-    		if(t1Var == false && t2Var == true){
-    			solutionTextT.setText("");
-    			try{
+					
+				//rel var
+				}else if(!sub.getSuperVar() && sub.getSubVar()){
+					t2Var = true;
+					term2VarName = sub.getSubName();
+					
+					String[] subClasses = typeQuery.getDirectSubClasses(sub.getSuperName());
     				
-    				String[] subClasses = typeQuery.getDirectSubClasses(term1);
-    				    				
     				for(int i = 0; i < subClasses.length; i++)
     					System.out.println(subClasses[i]);
     			
     				Object[][] rowdata = new Object[2][2];
 
-                	rowdata[0][0] = "?" + term2VarName;
+                	rowdata[0][0] = "?" + sub.getSubName();
                		rowdata[0][1] = subClasses[0];
             
            		    String[] colnames = new String[] {"Variable", "Binding"};
@@ -836,126 +1017,150 @@ public class TopDownGUI extends javax.swing.JFrame {
             		it = nextVector.iterator();
     				if(it.hasNext())
             			this.nextBtnT.setEnabled(true);			
-    			}
-    			catch (Exception ex) {
-            
-            	JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
-                                         JOptionPane.ERROR_MESSAGE);
+				//var var
+				}else if(sub.getSuperVar() && sub.getSubVar()){
+					t1Var = true;
+					t2Var = true;
+					term2VarName = sub.getSubName();
+					term1VarName = sub.getSuperName();
+					
+					if(sub.getSuperName().equalsIgnoreCase(sub.getSubName())){
+	    				JOptionPane.showMessageDialog(this, "Duplicate variable names not allowed", "Error", JOptionPane.ERROR_MESSAGE);
+	    				return;
+	    			}
+					Vector v1 = typeQuery.findAllDirectSuperClassesOfEverything();
+	    			Vector v2 = typeQuery.findAllDirectSubClassesOfEverything();
+	    			String sol = "";
+	    			Iterator vit1 = v1.iterator();
+					Iterator vit2 = v2.iterator();
+	    			int count = 0;
+	    			//Debug -> Prints out all the solutions for easy Copy and Paste
+	    			sol = "% Taxonomy Facts: \n";
+	    			while(vit1.hasNext()){
+	    				count++;
+	    				sol =  sol + "subsumes(" + vit1.next().toString() + "," + vit1.next().toString() + ")." + "\n";
+	    			}
+	    			solutionTextT.setText(sol);
+	      			//Debug
+	    			
+	    			it = v1.iterator();
+	            	
+	            	Object[][] rowdata = new Object[2][2];
+
+	       			rowdata[0][0] = "?" + sub.getSuperName();
+	       	 		rowdata[0][1] = (String)it.next();
+	            
+	            	rowdata[1][0] = "?" + sub.getSubName();
+	            	rowdata[1][1] = (String)it.next();
+	            
+	        		String[] colnames = new String[] {"Variable", "Binding"};
+
+	       	 		this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+	       	 		this.varBindTblT.updateUI(); 
+	  	
+	            	if(it.hasNext())
+	            		this.nextBtnT.setEnabled(true);	
 				}
-    		}
-    		
-    		//Var Var t1Var = true t2var = true
-    		if(t1Var == true && t2Var == true){
-    			
-    			try{
-    				
-    			solutionTextT.setText("");
-    			
-    			if(term1VarName.equals(term2VarName)){
-    				JOptionPane.showMessageDialog(this, "Nothing can subsume itself", "Error", JOptionPane.ERROR_MESSAGE);
-    				return;
-    			}
-    			
-    			Vector v1 = typeQuery.findAllDirectSuperClassesOfEverything();
-    			Vector v2 = typeQuery.findAllDirectSubClassesOfEverything();
-    			String sol = "";
-    			Iterator vit1 = v1.iterator();
-				Iterator vit2 = v2.iterator();
+			}//subsumes
+			else if(predicate.equalsIgnoreCase(TypeQueryParserPOSL.LUB)){
+
+				lub = poslTParser.parseElementsGLBandLUB(queryTerms);
 				
-    			int count = 0;
-    			
-    			//Debug Prints out all the solutions for easy Copy and Paste
-    			sol = "% Taxonomy Facts: \n";
-    			while(vit1.hasNext()){
-    				count++;
-    				sol =  sol + "subsumes(" + vit1.next().toString() + "," + vit1.next().toString() + ")." + "\n";
-    			}
-    			solutionTextT.setText(sol);
-      			//Debug
-    			
-    			it = v1.iterator();
-            	
-            	Object[][] rowdata = new Object[2][2];
+				if(lub.getResultVar()){
+					
+					  ArrayList<String> terms = lub.getTerms();
+	                  
+	                  String[] lubArray = new String[terms.size()];
 
-       			rowdata[0][0] = "?" + term1VarName;
-       	 		rowdata[0][1] = (String)it.next();
-            
-            	rowdata[1][0] = "?" + term2VarName;
-            	rowdata[1][1] = (String)it.next();
-            
-        		String[] colnames = new String[] {"Variable", "Binding"};
+	                  for(int i = 0; i < terms.size();i++)
+	                          lubArray[i] = terms.get(i);
 
-       	 		this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
-       	 		this.varBindTblT.updateUI(); 
-  	
-            	if(it.hasNext())
-            		this.nextBtnT.setEnabled(true);
-            		
-    		  }catch (Exception ex) {
-            
-            	JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
-                                         JOptionPane.ERROR_MESSAGE);
-				}    	
-    		}	
-    			
-    		
-    	}//sub
-    	//This will determine the GLB of all given classes and print it to the solution
-    	//window.
-    	if(glb){
-    		
-    		try{
-    		
-    		Object[][] rowdata = new Object[2][2];            
-        	String[] colnames = new String[] {"Variable", "Binding"};
-       	 	this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
-       	 	this.varBindTblT.updateUI(); 
-    		solutionTextT.setText("");
-    		
-    		String[] glbArray = new String[terms.length-1];
-    		
-    		for(int i = 1; i < terms.length;i++)
-    			glbArray[i-1] = terms[i].toPOSLString(varnames,true);
-    		
-    		String greatestLowerBound = typeQuery.greatestLowerBound(glbArray);
-    		solutionTextT.setText(greatestLowerBound);
-    		
-    		}catch (Exception ex) {
-            
-            	JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
-                                         JOptionPane.ERROR_MESSAGE);
-				}    	
-    		}
-    	//This will determine the LUB of all given classes and display it in the solution
-    	//window.
-    	if(lub){
-    		try{
-    		
-    		Object[][] rowdata = new Object[2][2];            
-        	String[] colnames = new String[] {"Variable", "Binding"};
-       	 	this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
-       	 	this.varBindTblT.updateUI(); 
-    		solutionTextT.setText("");
-    		
-    		String[] lubArray = new String[terms.length-1];
-    		
-    		for(int i = 1; i < terms.length;i++)
-    			lubArray[i-1] = terms[i].toPOSLString(varnames,true);
-    		
-    		String leastUpperBound = typeQuery.leastUpperBound(lubArray);
-    		solutionTextT.setText(leastUpperBound);
+	                  String leastUpperBound = typeQuery.leastUpperBound(lubArray);
+	                  
+	                  Object[][] rowdata = new Object[2][2];
 
-    		}catch (Exception ex) {
-            
-            	JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
-                                         JOptionPane.ERROR_MESSAGE);
-				}    	
-    		} 		
- 
-}
+	                  rowdata[0][0] = "?" + lub.getResultVarName();
+	                  rowdata[0][1] = leastUpperBound;
+
+	                  String[] colnames = new String[] {"Variable", "Binding"};
+
+	                  this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+	                  this.varBindTblT.updateUI();
+					
+				}else if(!lub.getResultVar()){
+
+					  Object[][] rowdata = new Object[2][2];
+					  String[] colnames = new String[] {"Variable", "Binding"};
+	                  this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+	                  this.varBindTblT.updateUI();
+	                  solutionTextT.setText("");
+
+	                  ArrayList<String> terms = lub.getTerms();
+	                  
+	                  String[] lubArray = new String[terms.size()];
+
+	                  for(int i = 0; i < terms.size();i++)
+	                          lubArray[i] = terms.get(i);
+
+	                  String leastUpperBound = typeQuery.leastUpperBound(lubArray);
+	                  solutionTextT.setText(leastUpperBound);	
+				}
+			}//LUB
+			else if(predicate.equalsIgnoreCase(TypeQueryParserRuleML.GLB)){
+				
+				glb = poslTParser.parseElementsGLBandLUB(queryTerms);
+				
+				if(glb.getResultVar()){
+					
+					  ArrayList<String> terms = glb.getTerms();
+	                  
+	                  String[] glbArray = new String[terms.size()];
+
+	                  for(int i = 0; i < terms.size();i++)
+	                	  glbArray[i] = terms.get(i);
+
+	                  String greatestLowerBound = typeQuery.greatestLowerBound(glbArray);
+	                  
+	                  Object[][] rowdata = new Object[2][2];
+
+	                  rowdata[0][0] = "?" + glb.getResultVarName();
+	                  rowdata[0][1] = greatestLowerBound;
+
+	                  String[] colnames = new String[] {"Variable", "Binding"};
+
+	                  this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+	                  this.varBindTblT.updateUI();
+					
+				}else if(!glb.getResultVar()){
+
+					  Object[][] rowdata = new Object[2][2];
+	                  String[] colnames = new String[] {"Variable", "Binding"};
+	                  this.varBindTblT.setModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+	                  this.varBindTblT.updateUI();
+	                  solutionTextT.setText("");
+	                  
+	                  ArrayList<String> terms = glb.getTerms();
+	                  
+	                  String[] glbArray = new String[terms.size()];
+	                  
+	                  for(int i = 0; i < terms.size();i++){
+	                	  glbArray[i] = terms.get(i);
+	                  }
+	                  
+	                  String greatestLowerBound = typeQuery.greatestLowerBound(glbArray);
+	                  solutionTextT.setText(greatestLowerBound);	
+				}
+			}//GLB			
+			
+			}catch(Exception ex){
+				JOptionPane.showMessageDialog(this, ex.getMessage(), "Type Query Parser Exeception", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+			
+	}
     private void nextBtnActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-            long t1 = new GregorianCalendar().getTimeInMillis();
+        long t1 = new GregorianCalendar().getTimeInMillis();
         BackwardReasoner.GoalList gl = (BackwardReasoner.GoalList) solit.next();
         //System.out.println(gl.toString());
         Hashtable varbind = gl.varBindings;
@@ -998,7 +1203,8 @@ public class TopDownGUI extends javax.swing.JFrame {
 
     private void queryBtnActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        long t1 = new GregorianCalendar().getTimeInMillis();
+    	nextBtn.setEnabled(false);
+    	long t1 = new GregorianCalendar().getTimeInMillis();
         String qstr = this.querytext.getText().trim();
         this.nextBtn.setEnabled(true);
         
@@ -1024,8 +1230,7 @@ public class TopDownGUI extends javax.swing.JFrame {
  
         		Element implies = new Element("Implies");
         		Attribute a1 = new Attribute("mapClosure", "universal");
-        		
-        		
+
         		implies.addAttribute(a1);
         		query.appendChild(implies);
         
@@ -1056,7 +1261,7 @@ public class TopDownGUI extends javax.swing.JFrame {
         		//dcstr = qp.parseRuleMLQuery(qstr);
        			dc = qp.parseRuleMLQuery(s1);
        		} 
-        catch (Exception ex) {
+        	catch (Exception ex) {
             //this.logger.error(ex.getMessage(), ex);
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
                                          JOptionPane.ERROR_MESSAGE);
@@ -1140,7 +1345,7 @@ public class TopDownGUI extends javax.swing.JFrame {
         if (!solit.hasNext()) {
             this.nextBtn.setEnabled(false);
         }
-long t2 = new GregorianCalendar().getTimeInMillis();
+        long t2 = new GregorianCalendar().getTimeInMillis();
         
         long time = (t2-t1);
 
@@ -1443,6 +1648,8 @@ long t2 = new GregorianCalendar().getTimeInMillis();
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
     
+    private javax.swing.ButtonGroup buttonGroup4;
+    
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1460,15 +1667,19 @@ long t2 = new GregorianCalendar().getTimeInMillis();
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JTabbedPane jTabbedPane1;
+    
     private javax.swing.JRadioButton jrbPOSL;
     private javax.swing.JRadioButton jrbRML;
     private javax.swing.JRadioButton jrbRML91;
     
-     private javax.swing.JRadioButton rdf;
-     private javax.swing.JRadioButton posl;
+    private javax.swing.JRadioButton rdf;
+    private javax.swing.JRadioButton posl;
     
     private javax.swing.JRadioButton RMLQuery;
     private javax.swing.JRadioButton POSLQuery;
+    
+    private javax.swing.JRadioButton RMLTypeQuery;
+    private javax.swing.JRadioButton POSLTypeQuery;
     
     private javax.swing.JPanel kbtab;
     private static javax.swing.JTextArea kbtext;

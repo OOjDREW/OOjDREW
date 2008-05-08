@@ -76,13 +76,18 @@ public class RDFSParser {
      * disk.
      */
     public static void parseRDFS(String filename) throws ParsingException,
-            ValidityException, IOException {
+        ValidityException, IOException {
         Builder b = new Builder();
         File f = new File(filename);
         Document doc = b.build(f);
         parseDocument(doc);
     }
 
+    public static void parseRDFSFile(File f) throws ParsingException, ValidityException, IOException {
+    	Builder b = new Builder();	
+    	Document doc = b.build(f);
+    	parseDocument(doc);
+    }
 
     /**
      * Method that parses an RDFS document contained in a string and load the

@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.*;
 import java.awt.event.*;
 import javax.swing.*;
+
 import java.awt.*;
 
 import jdrew.oo.Config;
@@ -83,6 +84,10 @@ public class BottomUpGUI extends javax.swing.JFrame {
         sysMenu.add(fileMenu);
         setJMenuBar(sysMenu);
         
+        rdfTypes = new javax.swing.JRadioButton();
+        poslTypes = new javax.swing.JRadioButton();
+        buttonGroupTypes = new javax.swing.ButtonGroup();
+        
         formatBG = new javax.swing.ButtonGroup();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         typedeftab = new javax.swing.JPanel();
@@ -99,6 +104,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
         runBtn = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jLabelTypes = new javax.swing.JLabel();
         jrbPOSL = new javax.swing.JRadioButton();
         jrbRML = new javax.swing.JRadioButton();
         jrbRML91 = new javax.swing.JRadioButton();
@@ -107,6 +113,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
         jrbCHECK = new javax.swing.JCheckBox();
         showdbgBtn = new javax.swing.JButton();
         inputLoopCounter = new javax.swing.JTextField();
+        
         
         dbgcon = new DebugConsole();
 
@@ -131,7 +138,27 @@ public class BottomUpGUI extends javax.swing.JFrame {
 		
         typedeftab.add(parseTypeBtn);
         parseTypeBtn.setBounds(591, 530, 180, 23);
-
+        
+        buttonGroupTypes.add(rdfTypes);
+        rdfTypes.setText("RDFS");
+        rdfTypes.setToolTipText("Select RDFS syntax for Type Input");
+        typedeftab.add(rdfTypes);
+        rdfTypes.setBounds(130, 530, 80, 23);
+        
+        buttonGroupTypes.add(poslTypes);
+        poslTypes.setText("POSL");
+        poslTypes.setToolTipText("Select POSL syntax for Type Input");
+        typedeftab.add(poslTypes);
+        poslTypes.setBounds(210, 530, 140, 23);
+        
+        poslTypes.setSelected(true);
+        
+        jLabelTypes.setText("Input Type Format: ");
+        typedeftab.add(jLabelTypes);
+        jLabelTypes.setBounds(10, 530, 270, 20);
+        
+        //need to add things here
+        
         jTabbedPane1.addTab("Type Definitions", typedeftab);
 
         kbtab.setLayout(null);
@@ -140,7 +167,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
 
         kbtab.add(jScrollPane2);
         jScrollPane2.setBounds(12, 10, 760, 510);
-
+                
         parseKBBtn.setText("Parse Knowledge Base");
         parseKBBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -150,7 +177,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
 
         kbtab.add(parseKBBtn);
         parseKBBtn.setBounds(591, 530, 180, 23);
-
+               
         jTabbedPane1.addTab("Knowledge Base", kbtab);
 
         outtab.setLayout(null);
@@ -174,11 +201,27 @@ public class BottomUpGUI extends javax.swing.JFrame {
 
         getContentPane().add(jTabbedPane1);
         jTabbedPane1.setBounds(10, 10, 790, 590);
-
+        //Moving
 		jLabel1.setText("Input/Output Format:");
         getContentPane().add(jLabel1);
         jLabel1.setBounds(20, 610, 130, 20);
+        
+        formatBG.add(jrbPOSL);
+        jrbPOSL.setText("POSL");
+        getContentPane().add(jrbPOSL);
+        jrbPOSL.setBounds(160, 610, 110, 23);
 
+        formatBG.add(jrbRML);
+        jrbRML.setText("RuleML 0.88+");
+        getContentPane().add(jrbRML);
+        jrbRML.setBounds(270, 610, 150, 23);
+        //Moving 
+        formatBG.add(jrbRML91);
+        jrbRML91.setSelected(true);
+        jrbRML91.setText("RuleML 0.91");
+        getContentPane().add(jrbRML91);
+        jrbRML91.setBounds(270, 635, 150, 23);
+        
         jLabel2.setText("Set Loop Counter:");
         getContentPane().add(jLabel2);
         jLabel2.setBounds(20, 635, 200, 20);
@@ -200,21 +243,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
 		getContentPane().add(jrbOLDNEW);
 		jrbOLDNEW.setBounds(440, 660, 150, 23);
 		
-        formatBG.add(jrbPOSL);
-        jrbPOSL.setText("POSL");
-        getContentPane().add(jrbPOSL);
-        jrbPOSL.setBounds(160, 610, 110, 23);
 
-        formatBG.add(jrbRML);
-        jrbRML.setText("RuleML 0.88+");
-        getContentPane().add(jrbRML);
-        jrbRML.setBounds(270, 610, 150, 23);
-        
-        formatBG.add(jrbRML91);
-        jrbRML91.setSelected(true);
-        jrbRML91.setText("RuleML 0.91");
-        getContentPane().add(jrbRML91);
-        jrbRML91.setBounds(270, 635, 150, 23);
 
         showdbgBtn.setText("Show Debug Console");
         showdbgBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -580,23 +609,51 @@ public class BottomUpGUI extends javax.swing.JFrame {
                 fr.setLoopCounter(inputLoopCounter.getText());
             } catch (Exception ex1) {
                // this.logger.error(ex1.getMessage(), ex1);
-                JOptionPane.showMessageDialog(this, ex1.getMessage(), "Invalid Number Input",
+                JOptionPane.showMessageDialog(this, ex1.getMessage(), "Invalid Loop Counter Input",
                                               JOptionPane.ERROR_MESSAGE);
             	return;
             }
         
         String typestr = this.typetext.getText();
+        
+        if(typestr.equalsIgnoreCase("")){
+        	JOptionPane.showMessageDialog(this, "Type Definition is Blank", "Error In parsing Types",
+                    JOptionPane.ERROR_MESSAGE);
+        	return;
+        }
+        
         Types.reset();
 
+        if(rdfTypes.isSelected() == true){
+               
         //logger.debug("Parsing Datatypes.");
-        try {
-            RDFSParser.parseRDFSString(typestr);
-        } catch (Exception ex) {
+        	try {
+        	
+        		RDFSParser.parseRDFSString(typestr);
+            
+        	} catch (Exception ex) {
             //this.logger.error(ex.getMessage(), ex);
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
+        		JOptionPane.showMessageDialog(this, ex.getMessage(), "Error In parsing Types",
                                           JOptionPane.ERROR_MESSAGE);
+        	}
+        }else if(poslTypes.isSelected() == true){
+        	SubsumesParser sp = new SubsumesParser(typestr);
+        	
+        	try {
+    			sp.parseSubsumes();
+    		} catch (Exception ex) {
+    		
+    			if(ex.getMessage() == null){
+        			JOptionPane.showMessageDialog(this, "Invalid POSL Format", "Error",
+	                         JOptionPane.ERROR_MESSAGE);
+    			}
+    			else{	
+    			JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
+    			                         JOptionPane.ERROR_MESSAGE);
+    			}
+    		}
+        	
         }
-
         //logger.debug("Datatypes updated - must reparse clauses.");
 
 
@@ -812,9 +869,13 @@ public class BottomUpGUI extends javax.swing.JFrame {
   }//openFile
 
     // Variables declaration - do not modify
+    private javax.swing.JRadioButton rdfTypes;
+    private javax.swing.JRadioButton poslTypes;
+    private javax.swing.ButtonGroup buttonGroupTypes;
     private javax.swing.ButtonGroup formatBG;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabelTypes;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
