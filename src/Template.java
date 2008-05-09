@@ -38,7 +38,7 @@ public class Template  {
     Types.reset();
     
     //parse types in RDF
-    RDFSParser.parseRDFSString(typestr);
+    //RDFSParser.parseRDFSString(typestr);
     
     //parse the knowledge base in POSL          
     pp.parseDefiniteClauses(kbstr);
