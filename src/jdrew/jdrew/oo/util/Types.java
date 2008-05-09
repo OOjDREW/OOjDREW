@@ -603,7 +603,7 @@ public class Types {
             classesobj[i] = new Integer(type);
         }
         Integer glb = (Integer) dag.greatestLowerBound(classesobj);
-
+        
         if (glb == null) {
             return NOTHING;
         } else {

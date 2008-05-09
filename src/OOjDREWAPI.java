@@ -109,30 +109,7 @@ public class OOjDREWAPI {
 		   this.makeEngine(Globals.CURRENTRULEML, kbstr);
 	}
 	
-	private void initializeBR(){
-		try{
-		
-		   //create a BR	
-		this.br = new BackwardReasoner();
-		
-		//The solution iterator contains all the solutions
-	    this.solit = null;
-	    
-	    //dc is the Definitive clause that contians the query
-	    this.dc = null;
-	    
-	    //Reset the Internal Symbol Table for predicates and types
-	    SymbolTable.reset();
-	    
-	    //reset the type information
-	    Types.reset();
-		}
-	    catch(Exception e){
-	    	
-	    System.out.println("Problem initializing Backward Reasoner: " + e.getMessage());
-
-	    	}
-	    }
+	
 		
 	
     /*
@@ -217,6 +194,30 @@ public class OOjDREWAPI {
     	
     }
     
+    private void initializeBR(){
+		try{
+		
+		   //create a BR	
+		this.br = new BackwardReasoner();
+		
+		//The solution iterator contains all the solutions
+	    this.solit = null;
+	    
+	    //dc is the Definitive clause that contians the query
+	    this.dc = null;
+	    
+	    //Reset the Internal Symbol Table for predicates and types
+	    SymbolTable.reset();
+	    
+	    //reset the type information
+	    Types.reset();
+		}
+	    catch(Exception e){
+	    	
+	    System.out.println("Problem initializing Backward Reasoner: " + e.getMessage());
+
+	    	}
+	    }
     
 	public void setupKnowledgebase_RuleML(int mode, String kbstr){
 		
