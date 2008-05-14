@@ -22,8 +22,11 @@ public class OOjDREWAPITest {
 	OOjDREWAPITest(){
 
 	//this.kbFile = new File("Output/RuleMLPopulatedOntology[New].ruleml");
+	
 	this.kbFile = new File("myfile40.txt");
 	this.typeFile= new File("Output/taxonomy.rdfs");
+	
+	
 	this.mode = Globals.CURRENTRULEML;
 	this.lemons = new OOjDREWAPI(mode, typeFile, kbFile);
 	}
