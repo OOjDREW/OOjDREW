@@ -183,8 +183,8 @@ public class Types {
         int id = types.size();
         types.add(name);
 
-       // Integer iID = new Integer(id);
-       // dag.addNodeWeight(iID);
+        Integer iID = new Integer(id);
+        dag.addNodeWeight(iID);
 
         return id;
     }
@@ -335,7 +335,7 @@ public class Types {
         }
 
         Integer iID = new Integer(types.indexOf(name));
-        dag.addNodeWeight(iID);
+        //dag.addNodeWeight(iID);
 
         for (int i = 0; i < parentids.length; i++) {
             dag.addEdge(iID, parentids[i]);
