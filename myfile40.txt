@@ -1,0 +1,37 @@
+<Assert>
+   <Rulebase mapClosure="universal">
+      <Atom>
+         <Rel>object</Rel>
+         <slot>
+            <Ind>id</Ind>
+            <Ind>ben1</Ind>
+         </slot>
+         <slot>
+            <Ind>id</Ind>
+            <Ind>bob1</Ind>
+         </slot>
+      </Atom>
+      <Atom>
+         <Rel>object</Rel>
+         <slot>
+            <Ind>id</Ind>
+            <Ind>ben2</Ind>
+         </slot>
+         <slot>
+            <Ind>id</Ind>
+            <Ind>bob2</Ind>
+         </slot>
+      </Atom>
+      <Atom>
+         <Rel>object</Rel>
+         <slot>
+            <Ind>id</Ind>
+            <Ind>ben3</Ind>
+         </slot>
+         <slot>
+            <Ind>id</Ind>
+            <Ind>bob3</Ind>
+         </slot>
+      </Atom>
+   </Rulebase>
+</Assert>

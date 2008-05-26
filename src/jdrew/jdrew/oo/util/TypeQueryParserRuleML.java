@@ -53,6 +53,10 @@ import nu.xom.ValidityException;
 		
 		}
 		
+		public TypeQueryParserRuleML(){
+		
+		}
+		
 		/**
 		 * Access Method to get the predicate name
 		 * 
@@ -198,8 +202,11 @@ import nu.xom.ValidityException;
 			return new LUBGLBStructure(terms, resultVarUsed, resultVarName);
 		}
 			
+		
 	}
 
+	
+	
 	/**
 	 * Class used to handle exceptions when parsing a RuleML type query
 	 */

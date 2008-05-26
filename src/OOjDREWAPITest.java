@@ -24,7 +24,7 @@ public class OOjDREWAPITest {
 	//this.kbFile = new File("Output/RuleMLPopulatedOntology[New].ruleml");
 	
 	this.kbFile = new File("myfile40.txt");
-	this.typeFile= new File("Output/taxonomy.rdfs");
+	this.typeFile= new File("taxonomy.rdfs");
 	
 	
 	this.mode = Globals.CURRENTRULEML;
@@ -86,7 +86,8 @@ public class OOjDREWAPITest {
 
 		public static void main(String args[]){
 			
-			
+			OOjDREWAPITest test = new OOjDREWAPITest();
+			test.testA();
 			
 		}
 	

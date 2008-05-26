@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<RuleML>
+<Answer>
+<Rulebase>
+    <Equal>
+      <Var>?$Anon</Var>
+      [id-&gt;bob1]
+    </Equal>
+    <Equal>
+      <Var>?Identifier</Var>
+      id-&gt;ben1
+    </Equal>
+</Rulebase>
+</Answer>
+<Answer>
+<Rulebase>
+    <Equal>
+      <Var>?$Anon</Var>
+      [id-&gt;bob2]
+    </Equal>
+    <Equal>
+      <Var>?Identifier</Var>
+      id-&gt;ben2
+    </Equal>
+</Rulebase>
+</Answer>
+<Answer>
+<Rulebase>
+    <Equal>
+      <Var>?$Anon</Var>
+      [id-&gt;bob3]
+    </Equal>
+    <Equal>
+      <Var>?Identifier</Var>
+      id-&gt;ben3
+    </Equal>
+</Rulebase>
+</Answer></RuleML>
