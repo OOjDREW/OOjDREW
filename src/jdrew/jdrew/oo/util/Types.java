@@ -74,17 +74,17 @@ public class Types {
         /**
          * The name for the integer type in the type lattice.
          */
-        public static final String INTEGER = "Integer";
+        public static final String INTEGER = "integer";
 
         /**
          * The name for the floating point number type in the type lattice.
          */
-        public static final String FLOAT = "Real";
+        public static final String FLOAT = "real";
 
         /**
          * The name for the string type in the type lattice.
          */
-        public static final String STRING = "String";
+        public static final String STRING = "string";
 
         /**
          * The integer code for the integer type.
