@@ -21,8 +21,13 @@ import java.awt.event.*;
 
 import jdrew.oo.Config;
 import jdrew.oo.util.*;
+
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import nu.xom.*;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -99,9 +104,9 @@ public class Translator extends JFrame {
         jLabel1.setBounds(new Rectangle(5, 350, 66, 15));
         jScrollPane1.setBounds(new Rectangle(5, 28, 610, 300));
         jLabel2.setBounds(new Rectangle(5, 5, 84, 15));
-        jbTypes.setBounds(new Rectangle(530, 337, 115, 23));
-        jbTypes.setText("Types");
-        jbTypes.addMouseListener(new Translator_jbTypes_mouseAdapter(this));
+       // jbTypes.setBounds(new Rectangle(530, 337, 115, 23));
+       // jbTypes.setText("Types");
+       // jbTypes.addMouseListener(new Translator_jbTypes_mouseAdapter(this));
         rmltext.setLineWrap(false);
         posltext.setLineWrap(false);
         posltext.setWrapStyleWord(true);
@@ -116,7 +121,7 @@ public class Translator extends JFrame {
         this.getContentPane().add(jLabel2, null);
         this.getContentPane().add(jScrollPane1, null);
         this.getContentPane().add(jScrollPane2, null);
-        this.getContentPane().add(jbTypes);
+       // this.getContentPane().add(jbTypes);
         this.getContentPane().add(jbToPosl, null);
         this.getContentPane().add(jbToRML, null);
         this.getContentPane().add(jbToRML91, null);
@@ -267,7 +272,7 @@ public class Translator extends JFrame {
         }//selected value != null
   }//openFile
 
-    TypeDefFrame tdf = new TypeDefFrame();
+    //TypeDefFrame tdf = new TypeDefFrame();
 
     JScrollPane jScrollPane1 = new JScrollPane();
     static JTextArea rmltext = new JTextArea();
@@ -278,7 +283,7 @@ public class Translator extends JFrame {
     JButton jbToPosl = new JButton();
     JButton jbToRML = new JButton();
     JButton jbToRML91 = new JButton();
-    JButton jbTypes = new JButton();
+    //JButton jbTypes = new JButton();
     
     /**
      * This method is called when the user closing the window.
@@ -292,9 +297,59 @@ public class Translator extends JFrame {
      */
     public void jbToRML_mouseClicked(MouseEvent e) {
             
-            currentParser =  RuleMLParser.RULEML88;
+        currentParser =  RuleMLParser.RULEML88;
             
         String posltext = this.posltext.getText().trim();
+        
+        //////Work around to avoid type definitions in translator
+        
+        String patternStr = ":[ ]*([a-zA-Z_]+)";
+
+        Pattern p = Pattern.compile(patternStr);
+        Matcher m = p.matcher(posltext);      
+        
+        ArrayList<String> terms = new ArrayList<String>();
+        
+        while(m.find()) {
+            for(int i=0; i< m.groupCount(); i++) {
+                    String matchedWithColon = m.group(i);
+                    
+                    String matched = matchedWithColon.substring(1);
+                    matched = matched.trim();
+                                        
+                    if(!terms.contains(matched) &&
+                       !matched.equals("String") &&
+                       !matched.equals("Thing") &&
+                       !matched.equals("Nothing") &&
+                       !matched.equals("Numeric") &&
+                       !matched.equals("Integer") &&
+                       !matched.equals("Real")){
+                    	
+                    		terms.add(matched);
+                    }
+                                 
+            }
+        }
+        
+        String tempOntology = "subsumes(A,B).";
+        
+        for(int i = 0; i < terms.size(); i++){
+        	String nextLine = "subsumes(A," + terms.get(i) + ").";
+        	tempOntology += "\n" + nextLine;
+        }
+
+        jdrew.oo.util.Types.reset();
+		Types.reset();
+		SubsumesParser sp = new SubsumesParser(tempOntology);
+		try {
+			sp.parseSubsumes();
+		} catch (Exception e1) {
+ 			JOptionPane.showMessageDialog(this, "Please make sure there are no spaces after a colon.\ni.e fact(number:[no space here]Integer) ", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+		}
+				
+	    //////Work around to avoid type definitions in translator
+		
         POSLParser pp = new POSLParser();
         try{
             pp.parseDefiniteClauses(posltext);
@@ -331,11 +386,64 @@ public class Translator extends JFrame {
         this.rmltext.setText(sw.getBuffer().toString());
     }
 
-        public void jbToRML91_mouseClicked(MouseEvent e) {
+    public void jbToRML91_mouseClicked(MouseEvent e) {
             
-    currentParser =  RuleMLParser.RULEML91;
+    	currentParser =  RuleMLParser.RULEML91;
             
         String posltext = this.posltext.getText().trim();
+        
+        
+        //////Work around to avoid type definitions in translator
+        
+        String patternStr = ":[ ]*([a-zA-Z_]+)";
+
+        Pattern p = Pattern.compile(patternStr);
+        Matcher m = p.matcher(posltext);      
+        
+        ArrayList<String> terms = new ArrayList<String>();
+        
+        while(m.find()) {
+            for(int i=0; i< m.groupCount(); i++) {
+                    String matchedWithColon = m.group(i);
+                    
+                    String matched = matchedWithColon.substring(1);
+                    matched = matched.trim();
+                                        
+                    if(!terms.contains(matched) &&
+                       !matched.equals("String") &&
+                       !matched.equals("Thing") &&
+                       !matched.equals("Nothing") &&
+                       !matched.equals("Numeric") &&
+                       !matched.equals("Integer") &&
+                       !matched.equals("Real")){
+                    	
+                    		terms.add(matched);
+                    }
+                                 
+            }
+        }
+        
+        String tempOntology = "subsumes(A,B).";
+        
+        for(int i = 0; i < terms.size(); i++){
+        	String nextLine = "subsumes(A," + terms.get(i) + ").";
+        	tempOntology += "\n" + nextLine;
+        }
+
+        jdrew.oo.util.Types.reset();
+		Types.reset();
+		SubsumesParser sp = new SubsumesParser(tempOntology);
+		try {
+			sp.parseSubsumes();
+		} catch (Exception e1) {
+ 			JOptionPane.showMessageDialog(this, "Please make sure there are no spaces after a colon.\ni.e fact(number:[no space here]Integer) ", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+		}
+				
+	    //////Work around to avoid type definitions in translator
+        
+        
+        
         POSLParser pp = new POSLParser();
         try{
             pp.parseDefiniteClauses(posltext);
@@ -379,6 +487,77 @@ public class Translator extends JFrame {
     public void jbToPosl_mouseClicked(MouseEvent e) {
         String rmltext = this.rmltext.getText();
       
+        ///work around to remove type dependency
+        StringTokenizer st = new StringTokenizer(rmltext,"\n");
+        String typeDoc = "<Top>\n";
+        while(st.hasMoreTokens()){
+        	String nextLine = st.nextToken().trim() + "\n";
+        	
+        	if(nextLine.contains("type=")){
+     
+        		typeDoc += nextLine;
+        	}
+        }
+        typeDoc += "</Top>";
+                
+        Builder bl = new Builder();
+   		StringReader sr = new StringReader(typeDoc);
+   		Document doc = null;
+   		
+   		try {
+			doc = bl.build(sr);
+		} catch (ValidityException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ParsingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        
+		
+		Element root = doc.getRootElement();
+        
+		Elements children = root.getChildElements();
+		
+		ArrayList<String> terms = new ArrayList<String>();
+		
+		for(int i = 0; i < children.size(); i++){
+			
+			Element nextChild = children.get(i);
+			String matched = nextChild.getAttribute(0).getValue();
+			
+            if(!terms.contains(matched) &&
+                    !matched.equals("String") &&
+                    !matched.equals("Thing") &&
+                    !matched.equals("Nothing") &&
+                    !matched.equals("Numeric") &&
+                    !matched.equals("Integer") &&
+                    !matched.equals("Real")){
+                 	
+                 		terms.add(matched);
+                 }
+		}
+		
+		String tempOntology = "subsumes(A,B).";
+	        
+	    for(int i = 0; i < terms.size(); i++){
+	    	String nextLine = "subsumes(A," + terms.get(i) + ").";
+	    	tempOntology += "\n" + nextLine;
+	    }
+	    jdrew.oo.util.Types.reset();
+	    Types.reset();
+		SubsumesParser sp = new SubsumesParser(tempOntology);
+			
+		try {
+			sp.parseSubsumes();
+		} catch (Exception e1) {
+	 		JOptionPane.showMessageDialog(this, "Please make sure there are no spaces after a colon.\ni.e fact(number:[no space here]Integer) ", "Error",
+	                   JOptionPane.ERROR_MESSAGE);
+		}
+		///work around to remove type dependency
         RuleMLParser rmp = new RuleMLParser();
         try{
             rmp.parseRuleMLString(RuleMLParser.RULEML91, rmltext);
@@ -410,7 +589,7 @@ public class Translator extends JFrame {
 	 */
     public void jbTypes_mouseClicked(MouseEvent e) {
         
-        tdf.show();
+       // tdf.show();
     }
 }
  /**
