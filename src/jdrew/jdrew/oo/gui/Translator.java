@@ -486,7 +486,6 @@ public class Translator extends JFrame {
      */
     public void jbToPosl_mouseClicked(MouseEvent e) {
         String rmltext = this.rmltext.getText();
-      
         ///work around to remove type dependency
         StringTokenizer st = new StringTokenizer(rmltext,"\n");
         String typeDoc = "<Top>\n";
