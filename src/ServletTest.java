@@ -56,8 +56,8 @@ public class ServletTest extends HttpServlet {
       throws ServletException, IOException {
     response.setContentType("text/html");
     PrintWriter out = response.getWriter();
-    System.out.println("do get worked");
-    out.println("do get worked");
+    System.out.println("Test Servlet");
+    out.println("Test Servlet");
     
     Calendar cal = new GregorianCalendar();
 	
@@ -75,6 +75,7 @@ public class ServletTest extends HttpServlet {
  	date = "date(" + date + ":Integer).";
  	
  	System.out.println(date);
+ 	out.println(date);
   }
  
  
@@ -244,11 +245,13 @@ public class ServletTest extends HttpServlet {
     
     //solit = br.iterativeDepthFirstSolutionIterator(dc);
  	solit = br.iterativeDepthFirstSolutionIterator(dc);
-    Vector data = new Vector();
+    
     int varSize = 0;
         
         while(solit.hasNext()) {
 
+        	Vector data = new Vector();
+        	
             BackwardReasoner.GoalList gl = (BackwardReasoner.GoalList) solit.
                                            next();
             
@@ -274,25 +277,30 @@ public class ServletTest extends HttpServlet {
             }
             
 			data.addElement(rowdata);
+			String[] messages = new String[data.size()];
+			MessageGenerator g = new MessageGenerator(data,varSize,"ruleml2007_ChallengeCoChair1",m.getId(),m.getProtocol(), m.getRel());
+			messages = g.Messages();
+        
+	        String appender = "";
+	        
+	        URL sender = new URL("http://10.1.3.4:9999");
+	        HttpMessage msg = new HttpMessage(sender);   
+	     	Properties props = new Properties();
+	                
+	       for(int i1 = 0; i1 < data.size();i1++){		
+	            System.out.println(i1 + ")" + messages[i1].toString());
+	            props.put("text", messages[i1].toString());
+	       		InputStream in = msg.sendGetMessage(props);
+	       }
+		   System.out.println("NEXT MESSAGE");
         }                 
-        
-      
-    	String[] messages = new String[data.size()];
-        MessageGenerator g = new MessageGenerator(data,varSize,"ruleml2007_ChallengeCoChair1",m.getId(),m.getProtocol(), m.getRel());
-            
-        messages = g.Messages();
-        
-        String appender = "";
+ 
+        MessageGenerator g = new MessageGenerator(null,varSize,"ruleml2007_ChallengeCoChair1",m.getId(),m.getProtocol(), m.getRel());
         
         URL sender = new URL("http://10.1.3.4:9999");
         HttpMessage msg = new HttpMessage(sender);   
-     	   Properties props = new Properties();
-                
-        for(int i = 0; i < data.size();i++){		
-            System.out.println(i + ")" + messages[i].toString());
-            props.put("text", messages[i].toString());
-       		InputStream in = msg.sendGetMessage(props);
-       }
+     	Properties props = new Properties();
+        
         String finalMessage = g.finalMessage(query);
         
         System.out.println(finalMessage);

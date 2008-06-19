@@ -261,65 +261,70 @@ public class WebChairRuleML2008 extends HttpServlet {
     //solit = br.iterativeDepthFirstSolutionIterator(dc);
     
  	solit = br.iterativeDepthFirstSolutionIterator(dc);
-    Vector data = new Vector();
+
     int varSize = 0;
             
-        while(solit.hasNext()) {
-        		
-            BackwardReasoner.GoalList gl = (BackwardReasoner.GoalList) solit.
-                                           next();
-            
-            Hashtable varbind = gl.varBindings;
-            javax.swing.tree.DefaultMutableTreeNode root = br.toTree();
-            root.setAllowsChildren(true);
+    while(solit.hasNext()) {
 
-            javax.swing.tree.DefaultTreeModel dtm = new DefaultTreeModel(root);
-			
-            int i = 0;
-            Object[][] rowdata = new Object[varbind.size()][2];
-            
-            varSize = varbind.size();
-            
-            Enumeration e = varbind.keys();
-            while (e.hasMoreElements()) {
-                Object k = e.nextElement();
-                Object val = varbind.get(k);
-                String ks = (String) k;
-                rowdata[i][0] = ks;
-                rowdata[i][1] = val;
-                
-                i++;
-            }
-            
-			data.addElement(rowdata);
-        }                 
+    	Vector data = new Vector();
+    	
+        BackwardReasoner.GoalList gl = (BackwardReasoner.GoalList) solit.
+                                       next();
         
-      
-    	String[] messages = new String[data.size()];
-        MessageGenerator g = new MessageGenerator(data,varSize,"ruleml2007_PublicityChair",m.getId(),m.getProtocol(), m.getRel());
-            
-        messages = g.Messages2();
+        Hashtable varbind = gl.varBindings;
+        javax.swing.tree.DefaultMutableTreeNode root = br.toTree();
+        root.setAllowsChildren(true);
+
+        javax.swing.tree.DefaultTreeModel dtm = new DefaultTreeModel(root);
+		
+        int i = 0;
+        Object[][] rowdata = new Object[varbind.size()][2];
+        varSize = varbind.size();
         
+        Enumeration e = varbind.keys();
+        while (e.hasMoreElements()) {
+            Object k = e.nextElement();
+            Object val = varbind.get(k);
+            String ks = (String) k;
+            rowdata[i][0] = ks;
+            rowdata[i][1] = val;
+            
+            i++;
+        }
+        
+		data.addElement(rowdata);
+		String[] messages = new String[data.size()];
+		MessageGenerator g = new MessageGenerator(data,varSize,"ruleml2008_WebChair",m.getId(),m.getProtocol(), m.getRel());
+		messages = g.Messages2();
+    
         String appender = "";
         
-        URL sender = new URL("http://10.1.3.4:9999");
+        URL sender = new URL("http://10.1.3.4:9997");
         HttpMessage msg = new HttpMessage(sender);   
-        Properties props = new Properties();
+     	Properties props = new Properties();
                 
-        for(int i = 0; i < data.size();i++){		
-            System.out.println(i + ")" + messages[i].toString());
-            props.put("text", messages[i].toString());
+       for(int i1 = 0; i1 < data.size();i1++){		
+            System.out.println(i1 + ")" + messages[i1].toString());
+            props.put("text", messages[i1].toString());
        		InputStream in = msg.sendGetMessage(props);
        }
-        
-        String finalMessage = g.finalMessage(query);
-        
-        System.out.println(finalMessage);
-        
-        props.put("text", finalMessage);
-   		InputStream in = msg.sendGetMessage(props); 
-        
-        System.out.println("Stop_Communication");
+	   System.out.println("NEXT MESSAGE");
+    }                 
+
+    MessageGenerator g = new MessageGenerator(null,varSize,"ruleml2008_WebChair",m.getId(),m.getProtocol(), m.getRel());
+    
+    URL sender = new URL("http://10.1.3.4:9997");
+    HttpMessage msg = new HttpMessage(sender);   
+ 	Properties props = new Properties();
+    
+    String finalMessage = g.finalMessage(query);
+    
+    System.out.println(finalMessage);
+    
+    props.put("text", finalMessage);
+		InputStream in = msg.sendGetMessage(props); 
+    
+    System.out.println("Stop_Communication");     
    		
         
   

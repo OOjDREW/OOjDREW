@@ -6,6 +6,7 @@
               as the first entry and export the buildfile again. -->
 <project basedir="." default="build" name="OOjDREWDev">
     <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="../../../../Program Files/eclipse"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
     <property name="source" value="1.6"/>
@@ -75,23 +76,13 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
-    <target name="BottomUpGUI (3)">
-        <java classname="jdrew.oo.gui.BottomUpGUI" failonerror="true" fork="yes">
-            <classpath refid="OOjDREWDev.classpath"/>
-        </java>
-    </target>
-    <target name="Template">
-        <java classname="Template" failonerror="true" fork="yes">
-            <classpath refid="OOjDREWDev.classpath"/>
-        </java>
-    </target>
-    <target name="TopDownGUI (1)">
+    <target name="TopDownGUI">
         <java classname="jdrew.oo.gui.TopDownGUI" failonerror="true" fork="yes">
             <classpath refid="OOjDREWDev.classpath"/>
         </java>
     </target>
-    <target name="Types">
-        <java classname="jdrew.oo.util.Types" failonerror="true" fork="yes">
+    <target name="BottomUpGUI">
+        <java classname="jdrew.oo.gui.BottomUpGUI" failonerror="true" fork="yes">
             <classpath refid="OOjDREWDev.classpath"/>
         </java>
     </target>
