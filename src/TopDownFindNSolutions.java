@@ -1,22 +1,21 @@
-//package jdrew;
-
-import javax.swing.tree.*;
-
-import jdrew.oo.td.*;
-import jdrew.oo.util.*;
-
-import java.awt.FileDialog;
-import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.*;
+import java.util.Iterator;
 
-public class TopDownAllSolutions  {
-    
+import jdrew.oo.td.BackwardReasoner;
+import jdrew.oo.util.DefiniteClause;
+import jdrew.oo.util.POSLParser;
+import jdrew.oo.util.RDFSParser;
+import jdrew.oo.util.RuleMLParser;
+import jdrew.oo.util.SubsumesParser;
+import jdrew.oo.util.SymbolTable;
+import jdrew.oo.util.Types;
+
+
+public class TopDownFindNSolutions {
+
 	final static int RULEML88 = 0;
 	final static int RULEML91 = 1;
 	final static int POSL = 2;
@@ -29,6 +28,8 @@ public class TopDownAllSolutions  {
     /**
      * Configuration Variables
      */
+    //set how many solutions you want to find
+    int n = 6;
     //set the type of KB you are going to use RULEML88, RULEML91, POSL are supported
     int kbType = POSL;
     //set the type of query
@@ -45,7 +46,7 @@ public class TopDownAllSolutions  {
     boolean append = false;
 	
     //query string in POSL
-    String query = "b(?x).";
+    String query = "a(?x).";
     /**
      * End of Configuration Variables
      */
@@ -152,13 +153,19 @@ public class TopDownAllSolutions  {
      String writeText ="";
 
     //get the results
-    while(solit.hasNext()) {
-            BackwardReasoner.GoalList gl = (BackwardReasoner.GoalList) solit.next();
-            String goalText = gl.toStringAll();
-            writeText = writeText + goalText + "\n";
-            //System.out.println(gl.toStringAll());
-     }
     
+     for(int i = 0; i < n; i++){
+    	 
+    	 if(solit.hasNext()){
+    		 BackwardReasoner.GoalList gl = (BackwardReasoner.GoalList) solit.next();
+    		 String goalText = gl.toStringAll();
+    		 writeText = writeText + goalText + "\n";
+    		 System.out.println(gl.toStringAll());
+    	 }else{
+    		 break;
+    	 }
+    }
+         
      FileOutputStream out;
      PrintStream print;       
      out = new FileOutputStream(ansFile,append);
@@ -170,8 +177,6 @@ public class TopDownAllSolutions  {
     catch(Exception e){
         System.out.println(e.toString());
     }
-    
-        
-   }
+	
+    }
 }
-
