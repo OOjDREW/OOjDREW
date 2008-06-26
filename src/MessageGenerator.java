@@ -77,7 +77,7 @@ public class MessageGenerator{
 			root.addNamespaceDeclaration("xsi","http://www.w3.org/2001/XMLSchema-instance");
 			
 			Attribute a3 = new Attribute("xsi:SchemaLocation", 
-										 "http://www.w3.org/2001/XMLSchema-instance","http://www.ruleml.org/0.91/xsd http://ibis.in.tum.de/research/ReactionRuleML/0.1/rr.xsd");
+										 "http://www.w3.org/2001/XMLSchema-instance","http://www.ruleml.org/0.91/xsd http://ibis.in.tum.de/research/ReactionRuleML/0.2/rr.xsd");
 			
 			root.addAttribute(a3);
 												
@@ -235,7 +235,7 @@ public class MessageGenerator{
 			messageTest = "<RuleML xmlns=\"http://www.ruleml.org/0.91/xsd\"" + "\n" +
 					"xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" + "\n" +
 					"xsi:SchemaLocation=\"http://www.ruleml.org/0.91/xsd " + "\n" +
-					"http://ibis.in.tum.de/research/ReactionRuleML/0.1/rr.xsd\">";
+					"http://ibis.in.tum.de/research/ReactionRuleML/0.2/rr.xsd\">";
 			
 			messageTest = messageTest + "\n" + "\n" +
 			"<Message mode=\"outbound\" directive=\"answer\">";
@@ -336,7 +336,7 @@ public class MessageGenerator{
 		finalMessage = "<RuleML xmlns=\"http://www.ruleml.org/0.91/xsd\"" + "\n" +
 				"xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" + "\n" +
 				"xsi:SchemaLocation=\"http://www.ruleml.org/0.91/xsd " + "\n" +
-				"http://ibis.in.tum.de/research/ReactionRuleML/0.1/rr.xsd\">";
+				"http://ibis.in.tum.de/research/ReactionRuleML/0.2/rr.xsd\">";
 		
 		finalMessage = finalMessage + "\n" + "\n" +
 		"<Message mode=\"outbound\" directive=\"no_further_answers\">";
