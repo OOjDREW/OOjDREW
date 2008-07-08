@@ -419,7 +419,7 @@ public class TopDownGUI extends javax.swing.JFrame {
         this.solTree.setCellRenderer(dtcr);
 
         javax.swing.tree.DefaultMutableTreeNode root = new
-                DefaultMutableTreeNode("No Solutions");
+                DefaultMutableTreeNode("unknown");
         javax.swing.tree.DefaultTreeModel dtm = new DefaultTreeModel(root);
 
         this.solTree.setModel(dtm);
@@ -1286,7 +1286,7 @@ public class TopDownGUI extends javax.swing.JFrame {
         solit = br.iterativeDepthFirstSolutionIterator(dc);
         if (!solit.hasNext()) {
             javax.swing.tree.DefaultMutableTreeNode root = new
-                    DefaultMutableTreeNode("No Solutions");
+                    DefaultMutableTreeNode("unknown");
             javax.swing.tree.DefaultTreeModel dtm = new DefaultTreeModel(root);
 
             this.solTree.setModel(dtm);

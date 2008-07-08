@@ -1,5 +1,13 @@
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+
+import jdrew.oo.util.ParseException;
+import nu.xom.ParsingException;
+import nu.xom.ValidityException;
+
+import antlr.RecognitionException;
+import antlr.TokenStreamException;
 
 
 public class OOjDREWAPITest {
@@ -72,12 +80,16 @@ public class OOjDREWAPITest {
 
 		try{
 		//query = lemons.appendQuery(query);
-		String s = lemons.issueQuery(Globals.CURRENTRULEML, queryA).toXML();
-
-		File x = new File("resultsA.xml");
-		FileWriter out = new FileWriter(x);
-		out.write(s);
-		out.close();
+		//String s = lemons.issueQuery(Globals.CURRENTRULEML, queryA).toXML();
+		//System.out.println(s);
+			
+			
+			
+			
+		//File x = new File("resultsA.xml");
+		//FileWriter out = new FileWriter(x);
+		//out.write(s);
+		//out.close();
 
 		}
 		catch(Exception e){e.printStackTrace();}
@@ -86,8 +98,31 @@ public class OOjDREWAPITest {
 
 		public static void main(String args[]){
 			
-			OOjDREWAPITest test = new OOjDREWAPITest();
-			test.testA();
+			File f = new File("P:\\ben.posl");
+			
+			try {
+				CODjA api = new CODjA(CODjA.POSL,f);
+				api.issueKBQuery_POSL("a(?x,?y)");
+				
+			} catch (RecognitionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TokenStreamException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ValidityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParsingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 		}
 	

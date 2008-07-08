@@ -69,7 +69,7 @@ public class Unifier {
      *  2 = RuleML Bindings
      */
     
-    int varBindTypes = POSL;
+    int varBindTypes = RuleML;
     
     /**
      * This variable stores a copy of the atoms of the two clauses.
@@ -819,7 +819,7 @@ public class Unifier {
                     return false;
                 }
                 //System.out.println("hi");
-                System.out.println("======Unifier 95=========");
+                //System.out.println("======Unifier 95=========");
                 Term x;
                 Term y;
                 

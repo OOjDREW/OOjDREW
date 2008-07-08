@@ -29,7 +29,7 @@ public class TopDownFindNSolutions {
      * Configuration Variables
      */
     //set how many solutions you want to find
-    int n = 6;
+    int n = 4;
     //set the type of KB you are going to use RULEML88, RULEML91, POSL are supported
     int kbType = POSL;
     //set the type of query
@@ -38,15 +38,16 @@ public class TopDownFindNSolutions {
     int typeDefinition = RDF;
 
     //Store your Knowledge base file, type file and answer file here
-    String kbFile = "P:\\testKB.posl";
-	String typeFile = "P:\\types.rdf";
+    String kbFile = "P:\\test.txt";
+	String typeFile = "P:\\type.xml";
     String ansFile = "p:\\out.ans";
     
     //set to true if you want to append to the current ansFile and false to have a new
     boolean append = false;
 	
     //query string in POSL
-    String query = "a(?x).";
+    // String query = "userPrefLocCentricRecommendation(startPoint->Paro:Province; userPref->[Thimphu:Province]; endPoint->Paro:Province; route->?Route; activityList->?ActivityList; totalTime->?TotalBusHours:Real).";
+    String query = "getAttractionList(?Province,  ?Attractions, [], 3:Integer).";
     /**
      * End of Configuration Variables
      */
@@ -160,7 +161,7 @@ public class TopDownFindNSolutions {
     		 BackwardReasoner.GoalList gl = (BackwardReasoner.GoalList) solit.next();
     		 String goalText = gl.toStringAll();
     		 writeText = writeText + goalText + "\n";
-    		 System.out.println(gl.toStringAll());
+    		 System.out.println(goalText);
     	 }else{
     		 break;
     	 }
