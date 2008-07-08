@@ -1258,6 +1258,7 @@ public class TopDownGUI extends javax.swing.JFrame {
        			String dcstr = null;       
 
         		//dcstr = qp.parseRuleMLQuery(qstr);
+       			System.out.println(s1);
        			dc = qp.parseRuleMLQuery(s1);
        		} 
         	catch (Exception ex) {

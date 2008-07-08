@@ -31,9 +31,10 @@ public class TypesTest {
 		"</LUB>";
 
 		
-		File f = new File("P:\\types.rdf");
+		File f = new File("P:\\types.posl");
 		
-		TaxonomyQueryAPI api = new TaxonomyQueryAPI(f);
+		TaxonomyQueryAPI api = new TaxonomyQueryAPI(TaxonomyQueryAPI.POSL,f);
+		
 		
 		//System.out.println(api.executeQueryRuleML(queryRuleML));
 		

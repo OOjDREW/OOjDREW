@@ -1,6 +1,8 @@
 package jdrew.oo.util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,17 +15,49 @@ import nu.xom.ValidityException;
 public class TaxonomyQueryAPI {
 
 	private QueryTypes typeQuery;
+    public static final int POSL = 1;
+    public static final int RDFS = 2;
 	
-	public TaxonomyQueryAPI(File typeFile) throws ValidityException, ParsingException, IOException{
+	public TaxonomyQueryAPI(int profile, File typeFile) throws ValidityException, ParsingException, IOException, SubException{
 		Types.reset();
-		RDFSParser.parseRDFSFile(typeFile);
+		
+		if(profile == RDFS){
+			RDFSParser.parseRDFSFile(typeFile);
+		}else if(profile == POSL){
+		   
+    		SubsumesParser sp = new SubsumesParser(fileToString(typeFile));
+    		sp.parseSubsumes();
+		}
+		
 		typeQuery = new QueryTypes();
 	}
 
-	public TaxonomyQueryAPI(String typeFile) throws ValidityException, ParsingException, IOException, ParseException{
+	public TaxonomyQueryAPI(int profile, String typeFile) throws ValidityException, ParsingException, IOException, ParseException, SubException{
 		Types.reset();
-		RDFSParser.parseRDFSString(typeFile);
+		if(profile == RDFS){
+			RDFSParser.parseRDFSString(typeFile);
+		}else if(profile == POSL){
+		   
+    		SubsumesParser sp = new SubsumesParser(typeFile);
+    		sp.parseSubsumes();
+		}
 		typeQuery = new QueryTypes();
+	}
+	
+	private String fileToString(File file) throws IOException{
+		
+		 FileReader inFile = new FileReader(file);
+        BufferedReader in = new BufferedReader(inFile);
+        String read ="";
+        String contents="";
+        
+        while((read = in.readLine()) != null)
+        {
+                contents = contents + read + '\n';
+        }
+        in.close();
+        
+        return contents;			
 	}
 	
 	public String executeQueryRuleML(String RuleMLTypeQuery) throws RuleMLTypeQueryExcetion, ValidityException, ParseException, ParsingException, IOException {

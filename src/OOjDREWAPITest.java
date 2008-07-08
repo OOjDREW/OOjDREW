@@ -3,6 +3,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import jdrew.oo.util.ParseException;
+import jdrew.oo.util.SubException;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
@@ -99,10 +100,35 @@ public class OOjDREWAPITest {
 		public static void main(String args[]){
 			
 			File f = new File("P:\\ben.posl");
-			
+			File tax = new File("P:\\types.posl");
 			try {
 				CODjA api = new CODjA(CODjA.POSL,f);
-				api.issueKBQuery_POSL("a(?x,?y)");
+				
+				
+				String a =
+					"<Query><Implies mapClosure=\"universal\"><Atom>" +
+			         "<Rel>a</Rel>" +
+			         "<Var>x</Var>" +
+			         "<Var>y</Var>" +
+			         "<Var>z</Var>" +
+			         "<Var>a</Var>" +
+			      "</Atom><Atom><Rel>$top</Rel></Atom></Implies></Query>";
+				String poslQuery = "a(?x,?y,?z,?a)";
+				
+				System.out.println("====Tests set 1======");
+				System.out.println(api.issueKBQuery_RuleML(a));
+				System.out.println(api.issueKBQuery_POSL(poslQuery));
+				System.out.println(api.issueTaxonomyQuery_POSL("lub(?Result, SportsCoupe, ToyotaCorolla, MiniVan)."));
+				System.out.println("====Tests set 2======");
+				
+				CODjA api2 = new CODjA(CODjA.POSL, CODjA.POSL, f, tax);
+				
+				System.out.println(api2.issueKBQuery_RuleML(a));
+				System.out.println(api2.issueKBQuery_POSL(poslQuery));
+				System.out.println(api2.issueTaxonomyQuery_POSL("lub(?Result, SportsCoupe, ToyotaCorolla, MiniVan)."));
+				
+				
+				
 				
 			} catch (RecognitionException e) {
 				// TODO Auto-generated catch block
@@ -120,6 +146,12 @@ public class OOjDREWAPITest {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (ParsingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SubException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

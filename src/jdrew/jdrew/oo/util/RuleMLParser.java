@@ -219,7 +219,7 @@ public class RuleMLParser {
     
        public DefiniteClause parseRuleMLQuery(String contents) throws
             ParseException, ParsingException, ValidityException, IOException {
-        
+    	   
         	RuleMLQueryParser rmq = new RuleMLQueryParser(clauses);
         	Builder bl = new Builder();
 	 
@@ -237,10 +237,10 @@ public class RuleMLParser {
         	
         	
        	 	dc = (DefiniteClause) it.next();
-        	System.out.println("Loaded clause: " + dc.toPOSLString());
+        	//System.out.println("Loaded clause: " + dc.toPOSLString());
         	
            }
-          System.out.println(dc.toPOSLString());
+          //System.out.println(dc.toPOSLString());
           
      	    return dc;
      	       
