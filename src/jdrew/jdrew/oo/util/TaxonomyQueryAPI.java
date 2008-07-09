@@ -18,6 +18,16 @@ public class TaxonomyQueryAPI {
     public static final int POSL = 1;
     public static final int RDFS = 2;
 	
+    /**
+	 * This method creates a TaxonomyQueryAPI object.
+	 * 
+	 * @param profile - Format for the TypeFile 1 for POSL, 2 For RDFS.
+	 * @param typeFile - A File containing the taxonomy.
+     * @throws ValidityException
+     * @throws ParsingException
+     * @throws IOException
+     * @throws SubException
+     */
 	public TaxonomyQueryAPI(int profile, File typeFile) throws ValidityException, ParsingException, IOException, SubException{
 		Types.reset();
 		
@@ -32,6 +42,17 @@ public class TaxonomyQueryAPI {
 		typeQuery = new QueryTypes();
 	}
 
+	/**
+	 * This method creates a TaxonomyQueryAPI object.
+	 * 
+	 * @param profile - Format for the TypeFile 1 for POSL, 2 For RDFS.
+	 * @param typeFile - A String containing the taxonomy.
+	 * @throws ValidityException
+	 * @throws ParsingException
+	 * @throws IOException
+	 * @throws ParseException
+	 * @throws SubException
+	 */
 	public TaxonomyQueryAPI(int profile, String typeFile) throws ValidityException, ParsingException, IOException, ParseException, SubException{
 		Types.reset();
 		if(profile == RDFS){
@@ -44,6 +65,13 @@ public class TaxonomyQueryAPI {
 		typeQuery = new QueryTypes();
 	}
 	
+	/**
+	 * This method Converts a file to a String.
+	 * 
+	 * @param the File to be converted.
+	 * @return the contents of the file as a string.
+	 * @throws IOException
+	 */
 	private String fileToString(File file) throws IOException{
 		
 		 FileReader inFile = new FileReader(file);
@@ -60,6 +88,18 @@ public class TaxonomyQueryAPI {
         return contents;			
 	}
 	
+	/**
+	 * This method will issue a Query on the KB using a RuleML Query.
+	 *
+	 * @param RuleMLTypeQuery - a RuleML query as a String.
+	 * @return returns the RuleML answer expression as a String.
+	 * 
+	 * @throws RuleMLTypeQueryExcetion
+	 * @throws ValidityException
+	 * @throws ParseException
+	 * @throws ParsingException
+	 * @throws IOException
+	 */
 	public String executeQueryRuleML(String RuleMLTypeQuery) throws RuleMLTypeQueryExcetion, ValidityException, ParseException, ParsingException, IOException {
 		
 		String answer = "<RuleML>\n\t<Answer>\n";
@@ -268,6 +308,19 @@ public class TaxonomyQueryAPI {
 		return answer;
 	}
 	
+	/**
+	 * This method will issue a Query on the KB using a POSL Query.
+	 *
+	 * @param poslTypeQuery - a POSL query as a String.
+	 * @return returns the RuleML answer expression as a String.
+	 * 
+	 * @throws ValidityException
+	 * @throws POSLTypeQueryExcetion
+	 * @throws ParseException
+	 * @throws ParsingException
+	 * @throws IOException
+	 * @throws Exception
+	 */
 	public String executeQueryPOSL(String poslTypeQuery) throws ValidityException, POSLTypeQueryExcetion, ParseException, ParsingException, IOException, Exception{
 		
 		TypeQueryParserPOSL poslTParser = new TypeQueryParserPOSL(poslTypeQuery);

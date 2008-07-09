@@ -102,7 +102,7 @@ public class OOjDREWAPITest {
 			File f = new File("P:\\ben.posl");
 			File tax = new File("P:\\types.posl");
 			try {
-				CODjA api = new CODjA(CODjA.POSL,f);
+				COjDA api = new COjDA(COjDA.POSL, COjDA.POSL, f, tax);
 				
 				
 				String a =
@@ -119,16 +119,39 @@ public class OOjDREWAPITest {
 				System.out.println(api.issueKBQuery_RuleML(a));
 				System.out.println(api.issueKBQuery_POSL(poslQuery));
 				System.out.println(api.issueTaxonomyQuery_POSL("lub(?Result, SportsCoupe, ToyotaCorolla, MiniVan)."));
+				
+				File poslFileQuery = new File("P:\\poslQuery.txt");
+				File RuleMLFileQuery = new File("P:\\RuleMLQuery.txt");
+				System.out.println(api.issueKBQuery_POSL(poslFileQuery));
+				System.out.println(api.issueKBQuery_RuleML(RuleMLFileQuery));
+				
+				
+				
 				System.out.println("====Tests set 2======");
 				
-				CODjA api2 = new CODjA(CODjA.POSL, CODjA.POSL, f, tax);
+				COjDA api2 = new COjDA(COjDA.POSL, COjDA.POSL, f, tax);
+				
+				
+				String queryRuleML =
+					"<SubsumesPlus>\n" +
+					   "<Rel>Vehicle</Rel>\n" +
+					   "<Rel>Car</Rel>\n" +
+					"</SubsumesPlus>";
+				
 				
 				System.out.println(api2.issueKBQuery_RuleML(a));
 				System.out.println(api2.issueKBQuery_POSL(poslQuery));
+				System.out.println(api2.issueKBQuery_POSL(poslFileQuery));
+				System.out.println(api2.issueKBQuery_RuleML(RuleMLFileQuery));
+				
 				System.out.println(api2.issueTaxonomyQuery_POSL("lub(?Result, SportsCoupe, ToyotaCorolla, MiniVan)."));
+				System.out.println(api2.issusTaxonomyQuery_RuleML(queryRuleML));
 				
+				File lub = new File("P:\\lub.txt");
+				File sub = new File("P:\\sub.txt");
 				
-				
+				System.out.println(api2.issueTaxonomyQuery_POSL(lub));
+				System.out.println(api2.issueTaxonomyQuery_RuleML(sub));
 				
 			} catch (RecognitionException e) {
 				// TODO Auto-generated catch block
