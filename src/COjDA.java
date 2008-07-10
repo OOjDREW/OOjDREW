@@ -110,7 +110,7 @@ public class COjDA {
 	 * This COjDA constructor requires a Knowledge base and Taxonomy to be constructed.
 	 * 
 	 * @param profile_KB - The format the KB is in.  1 For POSL, 2 for RuleML91.
-	 * @param profile_Taxonomy - The format the Taxonomy is in.  1 For POSL, 2 for RuleML91.
+	 * @param profile_Taxonomy - The format the Taxonomy is in.  1 For POSL, 3 for RDFS.
 	 * @param KB - This String contains the KB to be parsed.
 	 * @param taxonomy -This String contains the Taxonomy to be parsed.
 	 * @throws RecognitionException
@@ -148,7 +148,7 @@ public class COjDA {
 	 * This COjDA constructor requires a Knowledge base and Taxonomy to be constructed.
 	 * 
 	 * @param profile_KB - The format the KB is in.  1 For POSL, 2 for RuleML91.
-	 * @param profile_Taxonomy - The format the Taxonomy is in.  1 For POSL, 2 for RuleML91.
+	 * @param profile_Taxonomy - The format the Taxonomy is in.  1 For POSL, 3 for RDFS..
 	 * @param KB - This String contains the KB to be parsed.
 	 * @param taxonomy -This File contains the Taxonomy to be parsed.
 	 * @throws RecognitionException
@@ -182,7 +182,7 @@ public class COjDA {
 	 * This COjDA constructor requires a Knowledge base and Taxonomy to be constructed.
 	 * 
 	 * @param profile_KB - The format the KB is in.  1 For POSL, 2 for RuleML91.
-	 * @param profile_Taxonomy - The format the Taxonomy is in.  1 For POSL, 2 for RuleML91.
+	 * @param profile_Taxonomy - The format the Taxonomy is in.  1 For POSL, 3 for RDFS.
 	 * @param KB - This File contains the KB to be parsed.
 	 * @param taxonomy -This String contains the Taxonomy to be parsed.
 	 * @throws RecognitionException
@@ -216,7 +216,7 @@ public class COjDA {
 	 * This COjDA constructor requires a Knowledge base and Taxonomy to be constructed.
 	 * 
 	 * @param profile_KB - The format the KB is in.  1 For POSL, 2 for RuleML91.
-	 * @param profile_Taxonomy - The format the Taxonomy is in.  1 For POSL, 2 for RuleML91.
+	 * @param profile_Taxonomy - The format the Taxonomy is in.  1 For POSL, 3 for RDFS..
 	 * @param KB - This File contains the KB to be parsed.
 	 * @param taxonomy - This File contains the Taxonomy to be parsed.
 	 * @throws RecognitionException
