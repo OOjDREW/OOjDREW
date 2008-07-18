@@ -69,7 +69,7 @@ public class Unifier {
      *  2 = RuleML Bindings
      */
     
-    int varBindTypes = RuleML;
+    int varBindTypes = POSL;
     
     /**
      * This variable stores a copy of the atoms of the two clauses.
@@ -621,7 +621,10 @@ public class Unifier {
             if (t1.getSymbol() >= 0 && t2.getSymbol() >= 0) {
                 // Both t1 and t2 are individual constants (Ind)
                 if (t1.getSymbol() == t2.getSymbol() &&
-                    Types.isSuperClass(t2.getType(), t1.getType()) && (t1.getData() == t2.getData())) {
+                    Types.isSuperClass(t1.getType(),t2.getType()) && (t1.getData() == t2.getData())) {
+                	//System.out.println("T1: "+ t1.getType());
+                	//System.out.println("T2: " + t2.getType());
+                	//System.out.println("Ind Ind unification");
                     //Both symbols are the same, and the types are compatible (type(t2) >= type(t1))
                     return true;
                 } else {

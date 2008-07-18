@@ -1330,8 +1330,8 @@ public class TopDownGUI extends javax.swing.JFrame {
                 String ks = (String) k;
                 rowdata[i][0] = ks;
                 rowdata[i][1] = val;
-                System.out.println("ks: " + ks);
-                System.out.println("val: " + val);
+                //System.out.println("ks: " + ks);
+               // System.out.println("val: " + val);
                 i++;
             }
             String[] colnames = new String[] {"Variable", "Binding"};

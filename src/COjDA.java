@@ -438,7 +438,15 @@ public class COjDA {
 		            String val = (String)varbind.get(k);
 		            String ks = (String) k;
 		            ks = ks.substring(1);
-		            ks = "<Var>"+ ks +"</Var>";
+		            
+		            StringTokenizer st = new StringTokenizer(ks,":");
+		            if(st.countTokens() == 2){
+		            	String var = st.nextToken().trim();
+		            	String type = st.nextToken().trim();
+		            	ks = "<Var type=\"" + type+ "\">" + var + "</Var>";
+		            }else{		            
+		            	ks = "<Var>"+ ks +"</Var>";
+		            }
 		            BindingPair bp = new BindingPair(ks,val);
 		            pairs.add(bp);		            
 		        }
