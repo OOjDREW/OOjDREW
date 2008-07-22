@@ -499,5 +499,4 @@ public class COjDA {
 		return answer;
 	}
 	
-	
 }
