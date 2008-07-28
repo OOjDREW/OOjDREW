@@ -13,94 +13,12 @@ import antlr.TokenStreamException;
 
 public class OOjDREWAPITest {
 
-	/********************
-	 *    int mode      *
-	 *    File   Types  *
-	 *    File   KB     *    
-	 *    
-	 *    
-	 ********************/
-
-	 File kbFile;
-	 File typeFile;
-	 
-	 int mode;
- 
-	OOjDREWAPI lemons;
-
-	OOjDREWAPITest(){
-
-	//this.kbFile = new File("Output/RuleMLPopulatedOntology[New].ruleml");
-	
-	this.kbFile = new File("myfile40.txt");
-	this.typeFile= new File("taxonomy.rdfs");
-	
-	
-	this.mode = Globals.CURRENTRULEML;
-	this.lemons = new OOjDREWAPI(mode, typeFile, kbFile);
-	}
-
-	public void testA(){
-		/*******************************
-		 * This Query asks for any object in the system
-		 *
-		 * 
-		 * returns: id ->
-		Identifier
-		 * 
-		rest->  OtherFacts
-
-		 ********************************/
-
-		String queryA =
-		"<Query>"+
-		"<Implies mapClosure=\"universal\">"+
-		"<Atom>"+
-
-		"<Rel>object</Rel>"+
-
-		"<slot>"+
-
-		"<Ind>id</Ind>"+
-
-		"<Var>Identifier</Var>"+
-		"</slot>"+
-
-		"<resl>"+
-
-		"<Var>$Anon</Var>"+
-		"</resl>"+
-		"</Atom>"+
-		"<Atom><Rel>top$</Rel></Atom>"+
-		 "</Implies>"+
-		"</Query>";
-
-
-		//POSL"object(id->?Identifier !?Monday)";
-
-
-		try{
-		//query = lemons.appendQuery(query);
-		//String s = lemons.issueQuery(Globals.CURRENTRULEML, queryA).toXML();
-		//System.out.println(s);
-			
-			
-			
-			
-		//File x = new File("resultsA.xml");
-		//FileWriter out = new FileWriter(x);
-		//out.write(s);
-		//out.close();
-
-		}
-		catch(Exception e){e.printStackTrace();}
-
-		}
-
 		public static void main(String args[]){
 			
 			File f = new File("P:\\ben.posl");
 			File tax = new File("P:\\types.posl");
+			
+			
 			try {
 				COjDA api = new COjDA(COjDA.POSL, COjDA.POSL, f, tax);
 				
@@ -113,6 +31,7 @@ public class OOjDREWAPITest {
 			         "<Var>z</Var>" +
 			         "<Var>a</Var>" +
 			      "</Atom><Atom><Rel>$top</Rel></Atom></Implies></Query>";
+				
 				String poslQuery = "a(?x,?y,?z,?a)";
 				
 				System.out.println("====Tests set 1======");
@@ -122,6 +41,8 @@ public class OOjDREWAPITest {
 				
 				File poslFileQuery = new File("P:\\poslQuery.txt");
 				File RuleMLFileQuery = new File("P:\\RuleMLQuery.txt");
+				
+				
 				System.out.println(api.issueKBQuery_POSL(poslFileQuery));
 				System.out.println(api.issueKBQuery_RuleML(RuleMLFileQuery));
 				
@@ -152,6 +73,18 @@ public class OOjDREWAPITest {
 				
 				System.out.println(api2.issueTaxonomyQuery_POSL(lub));
 				System.out.println(api2.issueTaxonomyQuery_RuleML(sub));
+				
+				
+				
+				System.out.println("====Tests set 3======");
+				
+				File insurace = new File("P:\\ins.RuleML");
+				File carTypes = new File("P:\\carTypes.rdfs");
+								
+				COjDA api3 = new COjDA(COjDA.RULEML91, COjDA.RDFS, insurace, carTypes);
+				String poslQuery2 = "base_price(customer->[sex->male; name->\"John Doe\"; age->28]; vehicle->vehicle:ToyotaCorolla; price->?money:Integer).";
+				System.out.println(api3.issueKBQuery_POSL(poslQuery2));
+				
 				
 			} catch (RecognitionException e) {
 				// TODO Auto-generated catch block

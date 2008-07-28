@@ -471,7 +471,7 @@ public class COjDA {
 				answer = answer + "\t\t<Rulebase>\n";
 
 				
-				answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+				answer = answer + "\t\t\t<Equal>\n";
 				
 				BindingPair pair = solutionPairs.get(i);
 				answer = answer + "\t\t\t\t" + pair.getVariable() + "\n";

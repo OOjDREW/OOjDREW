@@ -131,7 +131,7 @@ public class TaxonomyQueryAPI {
 							
 				for(int i = 0; i < superClasses.length; i++){
 					answer = answer + "\t\t<Rulebase>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term1VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + superClasses[i] + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
@@ -148,7 +148,7 @@ public class TaxonomyQueryAPI {
 				
 				for(int i = 0; i < subClasses.length; i++){
 					answer = answer + "\t\t<Rulebase>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term2VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + subClasses[i] + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
@@ -167,11 +167,11 @@ public class TaxonomyQueryAPI {
     			while(vit1.hasNext()){
 
 					answer = answer + "\t\t<Rulebase>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term1VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + vit1.next().toString() + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term2VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + vit1.next().toString() + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
@@ -201,7 +201,7 @@ public class TaxonomyQueryAPI {
 							
 				for(int i = 0; i < superClasses.length; i++){
 					answer = answer + "\t\t<Rulebase>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term1VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + superClasses[i] + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
@@ -218,7 +218,7 @@ public class TaxonomyQueryAPI {
 				
 				for(int i = 0; i < subClasses.length; i++){
 					answer = answer + "\t\t<Rulebase>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term2VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + subClasses[i] + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
@@ -237,11 +237,11 @@ public class TaxonomyQueryAPI {
     			while(vit1.hasNext()){
 
 					answer = answer + "\t\t<Rulebase>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term1VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + vit1.next().toString() + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term2VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + vit1.next().toString() + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
@@ -268,7 +268,7 @@ public class TaxonomyQueryAPI {
                   String leastUpperBound = typeQuery.leastUpperBound(lubArray);
                   String resultVar = lub.getResultVarName();
 				  answer = answer + "\t\t<Rulebase>\n";
-				  answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+				  answer = answer + "\t\t\t<Equal>\n";
 				  answer = answer + "\t\t\t\t<Var>" + resultVar + "</Var>\n";
 				  answer = answer + "\t\t\t\t<Ind>" + leastUpperBound + "</Ind>\n";
 				  answer = answer + "\t\t\t</Equal>\n";
@@ -293,7 +293,7 @@ public class TaxonomyQueryAPI {
                   String greatestLowerBound = typeQuery.greatestLowerBound(glbArray);
                   String resultVar =  glb.getResultVarName();
 				  answer = answer + "\t\t<Rulebase>\n";
-				  answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+				  answer = answer + "\t\t\t<Equal>\n";
 				  answer = answer + "\t\t\t\t<Var>" + resultVar + "</Var>\n";
 				  answer = answer + "\t\t\t\t<Ind>" + greatestLowerBound + "</Ind>\n";
 				  answer = answer + "\t\t\t</Equal>\n";
@@ -351,7 +351,7 @@ public class TaxonomyQueryAPI {
 							
 				for(int i = 0; i < superClasses.length; i++){
 					answer = answer + "\t\t<Rulebase>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term1VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + superClasses[i] + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
@@ -368,7 +368,7 @@ public class TaxonomyQueryAPI {
 				
 				for(int i = 0; i < subClasses.length; i++){
 					answer = answer + "\t\t<Rulebase>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term2VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + subClasses[i] + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
@@ -387,11 +387,11 @@ public class TaxonomyQueryAPI {
     			while(vit1.hasNext()){
 
 					answer = answer + "\t\t<Rulebase>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term1VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + vit1.next().toString() + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term2VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + vit1.next().toString() + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
@@ -421,7 +421,7 @@ public class TaxonomyQueryAPI {
 							
 				for(int i = 0; i < superClasses.length; i++){
 					answer = answer + "\t\t<Rulebase>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term1VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + superClasses[i] + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
@@ -438,7 +438,7 @@ public class TaxonomyQueryAPI {
 				
 				for(int i = 0; i < subClasses.length; i++){
 					answer = answer + "\t\t<Rulebase>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term2VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + subClasses[i] + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
@@ -457,11 +457,11 @@ public class TaxonomyQueryAPI {
     			while(vit1.hasNext()){
 
 					answer = answer + "\t\t<Rulebase>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term1VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + vit1.next().toString() + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
-					answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+					answer = answer + "\t\t\t<Equal>\n";
 					answer = answer + "\t\t\t\t<Var>" + term2VarName + "</Var>\n";
 					answer = answer + "\t\t\t\t<Ind>" + vit1.next().toString() + "</Ind>\n";
 					answer = answer + "\t\t\t</Equal>\n";
@@ -488,7 +488,7 @@ public class TaxonomyQueryAPI {
                   String leastUpperBound = typeQuery.leastUpperBound(lubArray);
                   String resultVar = lub.getResultVarName();
 				  answer = answer + "\t\t<Rulebase>\n";
-				  answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+				  answer = answer + "\t\t\t<Equal>\n";
 				  answer = answer + "\t\t\t\t<Var>" + resultVar + "</Var>\n";
 				  answer = answer + "\t\t\t\t<Ind>" + leastUpperBound + "</Ind>\n";
 				  answer = answer + "\t\t\t</Equal>\n";
@@ -513,7 +513,7 @@ public class TaxonomyQueryAPI {
                   String greatestLowerBound = typeQuery.greatestLowerBound(glbArray);
                   String resultVar =  glb.getResultVarName();
 				  answer = answer + "\t\t<Rulebase>\n";
-				  answer = answer + "\t\t\t<Equal oriented=\"yes\">\n";
+				  answer = answer + "\t\t\t<Equal>\n";
 				  answer = answer + "\t\t\t\t<Var>" + resultVar + "</Var>\n";
 				  answer = answer + "\t\t\t\t<Ind>" + greatestLowerBound + "</Ind>\n";
 				  answer = answer + "\t\t\t</Equal>\n";

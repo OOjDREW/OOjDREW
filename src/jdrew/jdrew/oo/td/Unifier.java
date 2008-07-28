@@ -453,8 +453,9 @@ public class Unifier {
                     if (!t2str.startsWith("?$ANON")) {
 
                         if (t1.getSide() == GOAL) {
-                        	
+                        //	System.out.println("1");
                         	if(varBindType == POSL){
+                        	
                             this.goal.goalList.varBindings.put(t2str,
                                     t1.toPOSLString(this.goal.goalList.
                                     variableNames, true));
@@ -467,9 +468,9 @@ public class Unifier {
                             }
                             
                         } else {
-                        	
+                        	//System.out.println("2");
                         	if(varBindType == POSL){
-                        	
+                        		
                             this.goal.goalList.varBindings.put(t2str,
                                     t1.toPOSLString(this.subGoalList.
                                     variableNames, true));
@@ -491,7 +492,7 @@ public class Unifier {
                     if (!t2str.startsWith("?$ANON")) {
 
                         if (t1.getSide() == GOAL) {
-                        	
+                        	//System.out.println("3");
                         	if(varBindType == POSL){
                         	
                             this.subGoalList.varBindings.put(t2str,
@@ -506,9 +507,9 @@ public class Unifier {
                             }                           
                             
                         } else {
-                        	
+                        //	System.out.println("4");
                         	if(varBindType == POSL){
-                        	
+                        	 
                             this.subGoalList.varBindings.put(t2str,
                                     t1.toPOSLString(this.subGoalList.
                                     variableNames, true));
@@ -546,8 +547,9 @@ public class Unifier {
                     if (!t1str.startsWith("?$ANON")) {
 
                         if (t2.getSide() == GOAL) {
-                        	
-                        	if(varBindType == POSL){              
+                        	//System.out.println("5");
+                        	if(varBindType == POSL){
+                        		
                         			this.goal.goalList.varBindings.put(t1str,
                                     t2.toPOSLString(this.goal.goalList.
                                     variableNames, true));
@@ -561,16 +563,31 @@ public class Unifier {
                             
                             
                         } else {
-                        	
+                        	//System.out.println("6");
                         	if(varBindType == POSL){
-                        	
+                        		
+                        		String posl = t2.toPOSLString(this.subGoalList.variableNames, true);                        		                            		  
+                        		                        		
+                        		if(posl.contains("->")){
+                        			posl = posl.substring(posl.indexOf("->") + 2);
+                        		}
+                        		
                             this.goal.goalList.varBindings.put(t1str,
-                                    t2.toPOSLString(this.subGoalList.
-                                    variableNames, true));
+                            		posl);
                         	}
                         	if(varBindType == RuleML){
+                        		
+                        		String ruleML = t2.toRuleMLString(this.subGoalList.variableNames,2);
+                        		int firstIndex = ruleML.indexOf("</Ind>");
+                        		int secondIndex = ruleML.indexOf("</slot>");
+                        		
+                        		if(firstIndex != -1 && secondIndex != -1)
+                        			ruleML = ruleML.substring(firstIndex+6, secondIndex);
+                        		
+                        		//System.out.println(ruleML);
+                        		
                         		this.goal.goalList.varBindings.put(t1str,
-                        				t2.toRuleMLString(this.subGoalList.variableNames,2));
+                        				ruleML);
                             } 
                         }
                     }
@@ -583,9 +600,9 @@ public class Unifier {
                     if (!t1str.startsWith("?$ANON")) {
 
                         if (t2.getSide() == GOAL) {
-                        	
+                        	//System.out.println("7");
                         	if(varBindType == POSL){
-                        		
+                        	
                             this.subGoalList.varBindings.put(t1str,
                                     t2.toPOSLString(this.goal.goalList.
                                     variableNames, true));
@@ -597,9 +614,9 @@ public class Unifier {
                         	}
                             
                         } else {
-                        	
+                        	//System.out.println("8");
                         	if(varBindType == POSL){
-                            
+                        		
                         		this.subGoalList.varBindings.put(t1str,
                                     t2.toPOSLString(this.subGoalList.
                                     variableNames, true));
@@ -647,8 +664,9 @@ public class Unifier {
                         if (!t1str.startsWith("?$ANON")) {
 
                             if (t2.getSide() == GOAL) {
-                            	
-                            	if(varBindType == POSL){                           	
+                            	//System.out.println("9");
+                            	if(varBindType == POSL){    
+                            			
                             	this.goal.goalList.varBindings.put(t1str,
                                         t2.toPOSLString(this.goal.goalList.
                                         variableNames, true));
@@ -661,17 +679,29 @@ public class Unifier {
                             	}
                                 
                             } else {
+                            	//System.out.println("10");
                             	if(varBindType == POSL){ 
                             		
+                          		                          		
+                            		String posl = t2.toPOSLString(this.subGoalList.variableNames, true);                        		                            		  
+                            		if(posl.contains("->")){
+                            			posl = posl.substring(posl.indexOf("->") + 2);
+                            		}
+                            		                           		
                                 this.goal.goalList.varBindings.put(t1str,
-                                        t2.toPOSLString(this.subGoalList.
-                                        variableNames, true));
+                                		posl);
                             	}
                             	if(varBindType == RuleML){ 
+
+                            		String ruleML = t2.toRuleMLString(this.subGoalList.variableNames,2);
+                            		int firstIndex = ruleML.indexOf("</Ind>");
+                            		int secondIndex = ruleML.indexOf("</slot>");
+                            		
+                            		if(firstIndex != -1 && secondIndex != -1)
+                            			ruleML = ruleML.substring(firstIndex+6, secondIndex);
                             		
                                     this.goal.goalList.varBindings.put(t1str,
-                                            t2.toRuleMLString(this.subGoalList.
-                                            variableNames, 2));
+                                    		ruleML);
                                 	}                           	
                             }
                         }
@@ -684,8 +714,9 @@ public class Unifier {
                         if (!t1str.startsWith("?$ANON")) {
 
                             if (t2.getSide() == GOAL) {
-                            	
+                            	//System.out.println("11");
                             	if(varBindType == POSL){ 
+                            		
                             		this.subGoalList.varBindings.put(t1str,
                                         t2.toPOSLString(this.goal.goalList.
                                         variableNames, true));
@@ -698,8 +729,9 @@ public class Unifier {
                             	}
                             	
                             } else {
-                            	
+                            	//System.out.println("12");
                             	if(varBindType == POSL){ 
+                            		
                             		this.subGoalList.varBindings.put(t1str,
                                         t2.toPOSLString(this.subGoalList.
                                         variableNames, true));
@@ -734,9 +766,9 @@ public class Unifier {
                         if (!t2str.startsWith("?$ANON")) {
 
                             if (t1.getSide() == GOAL) {
-                            	
+                            //	System.out.println("13");
                             	if(varBindType == POSL){ 
-                            	
+                            		
                                 this.goal.goalList.varBindings.put(t2str,
                                         t1.toPOSLString(this.goal.goalList.
                                         variableNames, true));
@@ -748,9 +780,9 @@ public class Unifier {
                                             variableNames,2));
                                 	}
                             } else {
-                            	
+                            	//System.out.println("14");
                             	if(varBindType == POSL){ 
-                                
+                            		
                             		this.goal.goalList.varBindings.put(t2str,
                                         t1.toPOSLString(this.subGoalList.
                                         variableNames, true));
@@ -773,8 +805,9 @@ public class Unifier {
                         if (!t2str.startsWith("?$ANON")) {
 
                             if (t1.getSide() == GOAL) {
-                            
+                            	//System.out.println("15");
                             	if(varBindType == POSL){ 
+                            		
                             		this.subGoalList.varBindings.put(t2str,
                                         t1.toPOSLString(this.goal.goalList.
                                         variableNames, true));
@@ -786,8 +819,9 @@ public class Unifier {
                             	}
                             	
                             } else {
-                            	
+                            	//System.out.println("16");
                             	if(varBindType == POSL){ 
+                            		
                             		this.subGoalList.varBindings.put(t2str,
                                         t1.toPOSLString(this.subGoalList.
                                         variableNames, true));
@@ -848,8 +882,9 @@ public class Unifier {
                     if (!ystr.startsWith("?$ANON")) {
                     	
                         if (x.getSide() == GOAL) {
-                            
+                        //	System.out.println("17");
                         	if(varBindType == POSL){ 
+                        		
                         		this.goal.goalList.varBindings.put(ystr,
                                     x.toPOSLString(this.goal.goalList.
                                     variableNames, true));
@@ -860,8 +895,9 @@ public class Unifier {
                                     variableNames,2));
                         	}                        	
                         } else {
-                        	
+                        //	System.out.println("18");
                         	if(varBindType == POSL){ 
+                        		
                         		this.goal.goalList.varBindings.put(ystr,
                                     x.toPOSLString(this.subGoalList.
                                     variableNames, true));
@@ -882,7 +918,7 @@ public class Unifier {
                     if (!ystr.startsWith("?$ANON")) {
 
                         if (x.getSide() == GOAL) {
-                        	
+                        	//System.out.println("19");
                         	if(varBindType == POSL){ 
                         		
                         		this.subGoalList.varBindings.put(ystr,
@@ -896,8 +932,9 @@ public class Unifier {
                                     variableNames, 2));	
                         	}                       	
                         } else {
+                        	//System.out.println("20");
                         	if(varBindType == POSL){ 
-                            
+                        		
                         		this.subGoalList.varBindings.put(ystr,
                                     x.toPOSLString(this.subGoalList.
                                     variableNames, true));
