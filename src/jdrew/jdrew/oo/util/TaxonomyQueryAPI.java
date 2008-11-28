@@ -27,8 +27,9 @@ public class TaxonomyQueryAPI {
      * @throws ParsingException
      * @throws IOException
      * @throws SubException
+     * @throws ParseException 
      */
-	public TaxonomyQueryAPI(int profile, File typeFile) throws ValidityException, ParsingException, IOException, SubException{
+	public TaxonomyQueryAPI(int profile, File typeFile) throws ValidityException, ParsingException, IOException, SubException, ParseException{
 		Types.reset();
 		
 		if(profile == RDFS){

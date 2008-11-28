@@ -1,6 +1,10 @@
 package jdrew.oo.util;
 
+import java.io.IOException;
 import java.util.*;
+
+import nu.xom.ParsingException;
+import nu.xom.ValidityException;
 
 /**
 *
@@ -28,7 +32,7 @@ public class SubsumesParser {
 	
 	/** A Vector of RDFObjects in the type system after parsing. */
 	Vector RDFObjects = new Vector();
-
+	String finalRDFSString = "";
 	/** 
 	 * This is the constructor for the subsumes parser.  All it needs is a string to be
 	 * parsed.
@@ -45,12 +49,17 @@ public class SubsumesParser {
 	 * This method will parse the given String when the SubsumesParser was created. 
 	 *
 	 * @throws SubException - a Exception that could occur depending on invalid formatting
+	 * @throws IOException 
+	 * @throws ParsingException 
+	 * @throws ParseException 
+	 * @throws ValidityException 
 	 */
 	
-	public void parseSubsumes() throws SubException{
+	public void parseSubsumes() throws SubException, ValidityException, ParseException, ParsingException, IOException{
 		this.buildSubsumeObjects();
 		this.buildRDFObjects();
-		this.buildTypes();
+		RDFSParser.parseRDFSString(finalRDFSString);
+		//this.buildTypes();
 	}
 	
 	/**
@@ -123,6 +132,7 @@ public class SubsumesParser {
 	 * RDF objects contain the the parent class and all of its sub classes.
 	 */
 	public void buildRDFObjects(){
+		String allRDFSObjects = "";
 		
 		Iterator it = subsumeObjects.iterator();
 		String superClass;
@@ -210,9 +220,30 @@ public class SubsumesParser {
 				parents[i] = parOb.toString();
 			}
 
-			RDFObject ro = new RDFObject(mainClass,parents);			
+			RDFObject ro = new RDFObject(mainClass,parents);	
+			
+			String rdfStringSingle = "<rdf:Description rdf:ID=\""+ro.getName()+"\">" +"\n" + 
+			"<rdf:type rdf:resource=\"http://www.w3.org/2000/01/rdf-schema#Class\"/>\n";
+			
+			String[] parentz = ro.getParents();
+			
+			for(int i = 0; i <parentz.length; i++){
+				rdfStringSingle = rdfStringSingle + "<rdfs:subClassOf rdf:resource=\"#" + parentz[i]+ "\"/>\n";			
+			}
+			rdfStringSingle = "\n" + rdfStringSingle + "</rdf:Description>\n";
+			allRDFSObjects = allRDFSObjects + rdfStringSingle;		
 			RDFObjects.add(ro);
 		}	
+
+		
+		  finalRDFSString =
+		  "<rdf:RDF\n" + 	 
+		  "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n" +
+		  "xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\"\n" + 
+		  "xml:base=\"http://example.org/schemas/vehicles\">\n" +
+		  allRDFSObjects + "\n" +
+		  "</rdf:RDF>";
+
 	}
 	/**
 	 * This method will create the RDFS Types.  Once the RDF Objects have been created
