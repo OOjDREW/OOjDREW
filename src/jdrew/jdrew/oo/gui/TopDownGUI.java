@@ -1220,10 +1220,19 @@ public class TopDownGUI extends javax.swing.JFrame {
       			Document doc = bl.build(sr);
                
       			Element root = doc.getRootElement();
-       			Element atom = root.getFirstChildElement("Atom");
-        
-       			Element atom2 = new Element(atom);
-                
+      			Element and = null;
+      			Element atom2 = null;
+      		      		
+      			if(root.getFirstChildElement("And") != null){
+      				and = root.getFirstChildElement("And");
+      				Elements children = and.getChildElements();
+      				atom2 = new Element(and);
+      				
+      			}else{
+      				Element atom = root.getFirstChildElement("Atom");    
+      				atom2 = new Element(atom);
+         		}
+       			
  				Element query = new Element("Query");
  				Document queryDoc = new Document(query);
  
@@ -1258,6 +1267,8 @@ public class TopDownGUI extends javax.swing.JFrame {
        			String dcstr = null;       
 
         		//dcstr = qp.parseRuleMLQuery(qstr);
+       			System.out.println(s1);
+       			//s1 ="<Query><Implies mapClosure=\"universal\"><And><Atom><Rel>ben</Rel><Ind>a</Ind></Atom><Atom><Rel>ben</Rel><Ind>b</Ind></Atom></And><Atom><Rel>$top</Rel></Atom></Implies></Query>";
        			System.out.println(s1);
        			dc = qp.parseRuleMLQuery(s1);
        		} 
