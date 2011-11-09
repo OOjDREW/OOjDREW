@@ -559,15 +559,21 @@ public class Translator extends JFrame {
 
 	StringTokenizer st = new StringTokenizer(posl91Text, ":");
 	int substitutions = 0;
+	posl1Text = st.nextToken();
 	while(st.hasMoreTokens())
 	{
-		String upToToken = st.nextToken();
-		posl1Text += upToToken;
-		if(st.hasMoreTokens())
-		{
+		String afterToken = st.nextToken();
+			if(afterToken.charAt(0) != '-')
+			{
 			substitutions++;
-			posl1Text += "^^";
-		}
+				posl1Text += "^^";
+			}
+			else
+			{
+				// Replace removed token
+				posl1Text += ':';
+			}
+			posl1Text += afterToken;
 	}
 	// Create modal popup to tell user conversion completed successfully.
 	confirmationDialog((JButton)e.getSource(), "POSL 0.91 was converted to POSL 1.0 without errors.\n" + substitutions + " substitution(s) were made.");
