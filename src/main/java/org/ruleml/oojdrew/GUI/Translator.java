@@ -16,7 +16,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 package org.ruleml.oojdrew.GUI;
-
+import java.io.FileReader;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.awt.Rectangle;
@@ -49,6 +49,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import nu.xom.Attribute;
+import nu.xom.Builder;
+import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.Elements;
+import nu.xom.ParsingException;
+import nu.xom.ValidityException;
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
@@ -129,15 +135,18 @@ public class Translator extends JFrame {
         JMenuBar sysMenu = new JMenuBar();
         sysMenu.add(fileMenu);
         setJMenuBar(sysMenu);
-            
+
         getContentPane().setLayout(null);
-        jbToPosl.setBounds(new Rectangle(50, 338, 115, 23));
+        jbToPosl.setBounds(new Rectangle(50, 338, 90, 23));
         jbToPosl.setText("To POSL");
         jbToPosl.addMouseListener(new Translator_jbToPosl_mouseAdapter(this));
-        jbToRML.setBounds(new Rectangle(200, 338, 120, 23));
+        jbPosl91To1.setBounds(new Rectangle(155, 338, 180, 23));
+        jbPosl91To1.setText("Upgrade POSL 0.91 to 1.0");
+        jbPosl91To1.addMouseListener(new Translator_jbPOSL91TO1_mouseAdapter(this));
+        jbToRML.setBounds(new Rectangle(350, 338, 120, 23));
         jbToRML.setText("To RuleML 0.88");
         jbToRML.addMouseListener(new Translator_jbToRML_mouseAdapter(this));
-        jbToRML91.setBounds(new Rectangle(350, 338, 150, 23));
+        jbToRML91.setBounds(new Rectangle(485, 338, 125, 23));
         jbToRML91.addMouseListener(new Translator_jbToRML91_mouseAdapter(this));
         jbToRML91.setText("To RuleML 0.91");
         this.addWindowListener(new Translator_windowAdapter(this));
@@ -164,9 +173,10 @@ public class Translator extends JFrame {
         this.getContentPane().add(jScrollPane2, null);
        // this.getContentPane().add(jbTypes);
         this.getContentPane().add(jbToPosl, null);
+        this.getContentPane().add(jbPosl91To1, null);
         this.getContentPane().add(jbToRML, null);
         this.getContentPane().add(jbToRML91, null);
-        
+
         this.setSize(630,730);
         this.setTitle("RuleML <-> POSL Converter");
         this.setResizable(false);
@@ -325,6 +335,7 @@ public class Translator extends JFrame {
     JLabel jLabel1 = new JLabel();
     JLabel jLabel2 = new JLabel();
     JButton jbToPosl = new JButton();
+    JButton jbPosl91To1 = new JButton();
     JButton jbToRML = new JButton();
     JButton jbToRML91 = new JButton();
     //JButton jbTypes = new JButton();
@@ -525,6 +536,48 @@ public class Translator extends JFrame {
         }
 
         this.rmltext.setText(os.toString());
+    }
+
+    private static void confirmationDialog(Component parent, String text) {
+        JOptionPane pane = new JOptionPane(text, JOptionPane.INFORMATION_MESSAGE);
+      JDialog dialog = pane.createDialog(parent, "Information");
+      // Make dialog modal
+      dialog.setModalityType(Dialog.ModalityType.DOCUMENT_MODAL);
+      dialog.setVisible(true);
+      return;
+   }
+
+    /**
+     * This method upgrades POSL 0.91 to POSL 1.0.
+     */
+    public void jbPOSL91TO1_mouseClicked(MouseEvent e) {
+	// TODO: implement!
+	try
+	{
+	String posl91Text = this.posltext.getText();
+	String posl1Text = new String();
+
+	StringTokenizer st = new StringTokenizer(posl91Text, ":");
+	int substitutions = 0;
+	while(st.hasMoreTokens())
+	{
+		String upToToken = st.nextToken();
+		posl1Text += upToToken;
+		if(st.hasMoreTokens())
+		{
+			substitutions++;
+			posl1Text += "^^";
+		}
+	}
+	// Create modal popup to tell user conversion completed successfully.
+	confirmationDialog((JButton)e.getSource(), "POSL 0.91 was converted to POSL 1.0 without errors.\n" + substitutions + " substitution(s) were made.");
+	this.posltext.setText(posl1Text);
+	}
+	catch(Exception exception)
+	{
+		// Create modal popup displaying the error message
+		confirmationDialog((JButton)e.getSource(), "An error occurred while upgrading POSL text field, the text was not changed.\nError: " + exception.getMessage());
+	}
     }
 
     /**
@@ -800,6 +853,29 @@ class Translator_jbToPosl_mouseAdapter extends MouseAdapter {
 
     public void mouseClicked(MouseEvent e) {
         adaptee.jbToPosl_mouseClicked(e);
+    }
+}
+/**
+ * This class implements a MouseAdapter
+ *
+ * <p>Title: OO jDREW</p>
+ *
+ * <p>Description: Reasoning Engine for the Semantic Web - Supporting OO RuleML
+ * 0.88</p>
+ *
+ * <p>Copyright: Copyright (c) 2011</p>
+ *
+ * @author Daniel Latimer
+ * @version
+ */
+class Translator_jbPOSL91TO1_mouseAdapter extends MouseAdapter {
+    private Translator adaptee;
+    Translator_jbPOSL91TO1_mouseAdapter(Translator adaptee) {
+        this.adaptee = adaptee;
+    }
+
+    public void mouseClicked(MouseEvent e) {
+        adaptee.jbPOSL91TO1_mouseClicked(e);
     }
 }
  /**
