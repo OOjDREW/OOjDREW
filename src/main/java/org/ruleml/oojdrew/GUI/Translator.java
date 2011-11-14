@@ -140,19 +140,19 @@ public class Translator extends JFrame {
         jbToPosl.setBounds(new Rectangle(50, 338, 90, 23));
         jbToPosl.setText("To POSL");
         jbToPosl.addMouseListener(new Translator_jbToPosl_mouseAdapter(this));
-        jbPosl91To1.setBounds(new Rectangle(155, 338, 180, 23));
+        jbPosl91To1.setBounds(new Rectangle(174, 338, 180, 23));
         jbPosl91To1.setText("Upgrade POSL 0.91 to 1.0");
         jbPosl91To1.addMouseListener(new Translator_jbPOSL91TO1_mouseAdapter(this));
-        jbToRML.setBounds(new Rectangle(350, 338, 120, 23));
+        jbToRML.setBounds(new Rectangle(388, 338, 120, 23));
         jbToRML.setText("To RuleML 0.88");
         jbToRML.addMouseListener(new Translator_jbToRML_mouseAdapter(this));
-        jbToRML91.setBounds(new Rectangle(485, 338, 125, 23));
+        jbToRML91.setBounds(new Rectangle(542, 338, 145, 23));
         jbToRML91.addMouseListener(new Translator_jbToRML91_mouseAdapter(this));
-        jbToRML91.setText("To RuleML 0.91");
+        jbToRML91.setText("To RuleML 0.91/1.0");
         this.addWindowListener(new Translator_windowAdapter(this));
-        jScrollPane2.setBounds(new Rectangle(5, 370, 610, 300));
+        jScrollPane2.setBounds(new Rectangle(5, 370, 685, 300));
         jLabel1.setBounds(new Rectangle(5, 350, 66, 15));
-        jScrollPane1.setBounds(new Rectangle(5, 28, 610, 300));
+        jScrollPane1.setBounds(new Rectangle(5, 28, 685, 300));
         jLabel2.setBounds(new Rectangle(5, 5, 84, 15));
        // jbTypes.setBounds(new Rectangle(530, 337, 115, 23));
        // jbTypes.setText("Types");
@@ -547,6 +547,39 @@ public class Translator extends JFrame {
       return;
    }
 
+    public int posl091TO1(String input, StringBuilder posl1Text) throws Exception
+    {
+	int substitutions = 0;
+	try
+	{
+		StringTokenizer st = new StringTokenizer(input, ":");
+		if(st.hasMoreTokens())
+		{
+			posl1Text.append(st.nextToken());
+			while(st.hasMoreTokens())
+			{
+				String afterToken = st.nextToken();
+					if(afterToken.charAt(0) != '-')
+					{
+					substitutions++;
+						posl1Text.append("^^");
+					}
+					else
+					{
+						// Replace removed token
+						posl1Text.append(':');
+					}
+					posl1Text.append(afterToken);
+			}
+		}
+	    }
+	catch(Exception exception)
+	{
+		throw(exception);
+	}
+	return substitutions;
+    }
+
     /**
      * This method upgrades POSL 0.91 to POSL 1.0.
      */
@@ -554,31 +587,12 @@ public class Translator extends JFrame {
 	// TODO: implement!
 	try
 	{
-	String posl91Text = this.posltext.getText();
-	String posl1Text = new String();
-
-	StringTokenizer st = new StringTokenizer(posl91Text, ":");
-	int substitutions = 0;
-	posl1Text = st.nextToken();
-	while(st.hasMoreTokens())
-	{
-		String afterToken = st.nextToken();
-			if(afterToken.charAt(0) != '-')
-			{
-			substitutions++;
-				posl1Text += "^^";
-			}
-			else
-			{
-				// Replace removed token
-				posl1Text += ':';
-			}
-			posl1Text += afterToken;
-	}
-	// Create modal popup to tell user conversion completed successfully.
-	confirmationDialog((JButton)e.getSource(), "POSL 0.91 was converted to POSL 1.0 without errors.\n" + substitutions + " substitution(s) were made.");
-	this.posltext.setText(posl1Text);
-	}
+		String posl91Text = this.posltext.getText();
+		StringBuilder posl1Text = new StringBuilder();
+		int substitutions = posl091TO1(posl91Text, posl1Text);
+		confirmationDialog((JButton)e.getSource(), "POSL 0.91 was converted to POSL 1.0 without errors.\n" + substitutions + " substitution(s) were made.");
+		this.posltext.setText(posl1Text.toString());
+        }
 	catch(Exception exception)
 	{
 		// Create modal popup displaying the error message
@@ -686,9 +700,24 @@ public class Translator extends JFrame {
             sb.append("\n");
         }
 
-        this.posltext.setText(sb.toString());
+        // Upgrade to POSL 1.0
+        String posl091Text = sb.toString();
+        StringBuilder posl1Text = new StringBuilder();
+        try
+        {
+	        int substitutions = posl091TO1(posl091Text, posl1Text);
+        }
+        catch(Exception exception)
+        {
+		posl1Text = new StringBuilder(posl091Text);
+		confirmationDialog((JButton)e.getSource(),
+			"An error occurred while upgrading POSL 0.91 to 1.0, the POSL output "
+			+ " is in version 0.91.\nError: " + exception.getMessage());
+        }
+
+        this.posltext.setText(posl1Text.toString());
     }
-	
+
 	/**
 	 * This method is called when the user clicks on the button to define type 
 	 * information.
