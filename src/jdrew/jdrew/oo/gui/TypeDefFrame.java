@@ -135,7 +135,7 @@ public class TypeDefFrame extends JFrame {
         String typetext = this.typetext.getText().trim();
         jdrew.oo.util.Types.reset();
         try{
-            jdrew.oo.util.RDFSParser.parseRDFSString(typetext);
+            jdrew.oo.parsing.RDFSParser.parseRDFSString(typetext);
         }catch (Exception ex){
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
                                           JOptionPane.ERROR_MESSAGE);

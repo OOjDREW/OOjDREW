@@ -8,48 +8,26 @@
 //
 // Disclaimer: Please see disclaimer.txt in the root directory of this package.
 
-package jdrew.oo.util.parsing;
-
-import jdrew.oo.util.*;
-import java.util.*;
-
-/**
- * This Class was generated with ANTLR, you can download the grammar use to create
- * the class from OOjDREW's homepage.
- * <p>Title: OO jDREW</p>
- *
- * <p>Description: Reasoning Engine for the Semantic Web - Supporting OO RuleML
- * 0.88</p>
- *
- * <p>Copyright: Copyright (c) 2005</p>
- *
- * @author Marcel A. Ball
- * @version 0.89
- */
+package jdrew.oo.parsing.generated;
 
 import java.io.InputStream;
+import java.io.Reader;
+import java.util.Hashtable;
+
+import antlr.ByteBuffer;
+import antlr.CharBuffer;
+import antlr.CharStreamException;
+import antlr.CharStreamIOException;
+import antlr.InputBuffer;
+import antlr.LexerSharedInputState;
+import antlr.NoViableAltForCharException;
+import antlr.RecognitionException;
+import antlr.Token;
+import antlr.TokenStream;
 import antlr.TokenStreamException;
 import antlr.TokenStreamIOException;
 import antlr.TokenStreamRecognitionException;
-import antlr.CharStreamException;
-import antlr.CharStreamIOException;
-import antlr.ANTLRException;
-import java.io.Reader;
-import java.util.Hashtable;
-import antlr.CharScanner;
-import antlr.InputBuffer;
-import antlr.ByteBuffer;
-import antlr.CharBuffer;
-import antlr.Token;
-import antlr.CommonToken;
-import antlr.RecognitionException;
-import antlr.NoViableAltForCharException;
-import antlr.MismatchedCharException;
-import antlr.TokenStream;
-import antlr.ANTLRHashString;
-import antlr.LexerSharedInputState;
 import antlr.collections.impl.BitSet;
-import antlr.SemanticException;
 
 public class POSLLexer extends antlr.CharScanner implements
         POSLParserTokenTypes, TokenStream {

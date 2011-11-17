@@ -8,38 +8,23 @@
 //
 // Disclaimer: Please see disclaimer.txt in the root directory of this package.
 
-package jdrew.oo.util.parsing;
+package jdrew.oo.parsing.generated;
 
-import jdrew.oo.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
-import java.util.*;
-
-/**
- * This Class was generated with ANTLR, you can download the grammar use to create
- * the class from OOjDREW's homepage.
- * <p>Title: OO jDREW</p>
- *
- * <p>Description: Reasoning Engine for the Semantic Web - Supporting OO RuleML
- * 0.88</p>
- *
- * <p>Copyright: Copyright (c) 2005</p>
- *
- * @author Marcel A. Ball
- * @version 0.89
- */
-
-import antlr.TokenBuffer;
-import antlr.TokenStreamException;
-import antlr.TokenStreamIOException;
-import antlr.ANTLRException;
-import antlr.LLkParser;
-import antlr.Token;
-import antlr.TokenStream;
-import antlr.RecognitionException;
+import jdrew.oo.util.DefiniteClause;
+import jdrew.oo.util.SymbolTable;
+import jdrew.oo.util.Term;
+import jdrew.oo.util.Types;
 import antlr.NoViableAltException;
-import antlr.MismatchedTokenException;
-import antlr.SemanticException;
 import antlr.ParserSharedInputState;
+import antlr.RecognitionException;
+import antlr.Token;
+import antlr.TokenBuffer;
+import antlr.TokenStream;
+import antlr.TokenStreamException;
 import antlr.collections.impl.BitSet;
 
 public class POSLParser extends antlr.LLkParser implements POSLParserTokenTypes {

@@ -8,10 +8,8 @@
 //
 // Disclaimer: Please see disclaimer.txt in the root directory of this package.
 
-package jdrew.oo.util.parsing;
+package jdrew.oo.parsing.generated;
 
-import jdrew.oo.util.*;
-import java.util.*;
 
 /**
  * This Class was generated with ANTLR, you can download the grammar use to create

@@ -22,6 +22,12 @@ import java.awt.*;
 import java.awt.event.*;
 
 import jdrew.oo.Config;
+import jdrew.oo.parsing.POSLParser;
+import jdrew.oo.parsing.RDFSParser;
+import jdrew.oo.parsing.RuleMLParser;
+import jdrew.oo.parsing.SubsumesParser;
+import jdrew.oo.parsing.TypeQueryParserPOSL;
+import jdrew.oo.parsing.TypeQueryParserRuleML;
 import jdrew.oo.td.*;
 
 import jdrew.oo.util.*;

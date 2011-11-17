@@ -14,14 +14,14 @@ import nu.xom.ValidityException;
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
 
+import jdrew.oo.parsing.POSLParser;
+import jdrew.oo.parsing.ParseException;
+import jdrew.oo.parsing.RDFSParser;
+import jdrew.oo.parsing.RuleMLParser;
+import jdrew.oo.parsing.SubsumesException;
 import jdrew.oo.td.BackwardReasoner;
 import jdrew.oo.util.DefiniteClause;
-import jdrew.oo.util.POSLParser;
 
-import jdrew.oo.util.ParseException;
-import jdrew.oo.util.RDFSParser;
-import jdrew.oo.util.RuleMLParser;
-import jdrew.oo.util.SubsumesException;
 import jdrew.oo.util.TaxonomyQueryAPI;
 
 /**

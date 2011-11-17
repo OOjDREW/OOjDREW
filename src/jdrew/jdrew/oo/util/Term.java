@@ -11,6 +11,7 @@ package jdrew.oo.util;
 import java.util.*;
 import java.util.regex.*;
 import jdrew.oo.*;
+import jdrew.oo.parsing.RuleMLParser;
 import nu.xom.*;
 
 /**

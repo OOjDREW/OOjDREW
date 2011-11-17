@@ -6,10 +6,12 @@
 //
 // Disclaimer: Please see disclaimer.txt in the root directory of this package.
 
-package jdrew.oo.util;
+package jdrew.oo.parsing;
 
 import java.io.*;
 import java.util.*;
+
+import jdrew.oo.util.Types;
 
 import nu.xom.*;
 import org.apache.log4j.*;

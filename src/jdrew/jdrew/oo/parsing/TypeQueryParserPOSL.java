@@ -10,11 +10,16 @@
 * @author Ben Craig
 * @version 0.96
 */
-package jdrew.oo.util;
+package jdrew.oo.parsing;
 
 import java.io.IOException;
 
 import java.util.ArrayList;
+
+import jdrew.oo.util.DefiniteClause;
+import jdrew.oo.util.LUBGLBStructure;
+import jdrew.oo.util.SubsumesStructure;
+import jdrew.oo.util.Term;
 
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;

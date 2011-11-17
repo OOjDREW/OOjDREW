@@ -8,6 +8,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
+import jdrew.oo.parsing.POSLTypeQueryExcetion;
+import jdrew.oo.parsing.ParseException;
+import jdrew.oo.parsing.RDFSParser;
+import jdrew.oo.parsing.RuleMLTypeQueryExcetion;
+import jdrew.oo.parsing.SubsumesException;
+import jdrew.oo.parsing.SubsumesParser;
+import jdrew.oo.parsing.TypeQueryParserPOSL;
+import jdrew.oo.parsing.TypeQueryParserRuleML;
+
 import nu.xom.Elements;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;

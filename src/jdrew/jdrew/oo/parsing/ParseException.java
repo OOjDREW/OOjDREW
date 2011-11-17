@@ -6,7 +6,7 @@
 //
 // Disclaimer: Please see disclaimer.txt in the root directory of this package.
 
-package jdrew.oo.util;
+package jdrew.oo.parsing;
 
 /**
  * An exception that is thrown if there is an error parsing input correctly.

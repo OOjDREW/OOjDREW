@@ -1,7 +1,11 @@
-package jdrew.oo.util;
+package jdrew.oo.parsing;
 
 import java.io.IOException;
 import java.util.*;
+
+import jdrew.oo.util.DefiniteClause;
+import jdrew.oo.util.Term;
+import jdrew.oo.util.Types;
 
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;

@@ -6,8 +6,10 @@
 //
 // Disclaimer: Please see disclaimer.txt in the root directory of this package.
 
-package jdrew.oo.util;
+package jdrew.oo.parsing;
 
+import jdrew.oo.parsing.generated.POSLLexer;
+import jdrew.oo.util.DefiniteClause;
 import jdrew.oo.util.parsing.*;
 
 import java.util.*;
@@ -74,7 +76,7 @@ public class POSLParser {
     public DefiniteClause parseDefiniteClause(String clause) throws RecognitionException, TokenStreamException{
         StringReader sr = new StringReader(clause);
         POSLLexer lex = new POSLLexer(sr);
-        jdrew.oo.util.parsing.POSLParser pp = new jdrew.oo.util.parsing.POSLParser(lex);
+        jdrew.oo.parsing.generated.POSLParser pp = new jdrew.oo.parsing.generated.POSLParser(lex);
         return pp.clause(true);
     }
 
@@ -167,7 +169,7 @@ public class POSLParser {
      */
     private void parseReader(Reader r) throws RecognitionException, TokenStreamException {
         POSLLexer lex = new POSLLexer(r);
-        jdrew.oo.util.parsing.POSLParser pp = new jdrew.oo.util.parsing.POSLParser(lex);
+        jdrew.oo.parsing.generated.POSLParser pp = new jdrew.oo.parsing.generated.POSLParser(lex);
         pp.rulebase(this.clauses);
     }
 }

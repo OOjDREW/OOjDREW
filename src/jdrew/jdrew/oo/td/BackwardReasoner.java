@@ -14,6 +14,7 @@ import java.util.*;
 import javax.swing.tree.*;
 
 import jdrew.oo.builtins.*;
+import jdrew.oo.parsing.POSLParser;
 import jdrew.oo.td.builtins.*;
 import jdrew.oo.util.*;
 

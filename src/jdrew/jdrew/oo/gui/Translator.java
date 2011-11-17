@@ -20,6 +20,9 @@ import javax.swing.*;
 import java.awt.event.*;
 
 import jdrew.oo.Config;
+import jdrew.oo.parsing.POSLParser;
+import jdrew.oo.parsing.RuleMLParser;
+import jdrew.oo.parsing.SubsumesParser;
 import jdrew.oo.util.*;
 
 import java.util.*;

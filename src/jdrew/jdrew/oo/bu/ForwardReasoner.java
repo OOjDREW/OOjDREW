@@ -12,6 +12,7 @@ import java.util.*;
 
 import jdrew.oo.bu.builtins.*;
 import jdrew.oo.builtins.*;
+import jdrew.oo.parsing.RuleMLParser;
 import jdrew.oo.util.*;
 
 import org.apache.log4j.*;

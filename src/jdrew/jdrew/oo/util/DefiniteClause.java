@@ -11,6 +11,7 @@ package jdrew.oo.util;
 import java.util.*;
 
 import jdrew.oo.Config;
+import jdrew.oo.parsing.RuleMLParser;
 
 import nu.xom.*;
 
