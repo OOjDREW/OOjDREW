@@ -9,27 +9,48 @@
 
 package jdrew.oo.gui;
 
-import java.util.*;
-import java.awt.*;
-
-import java.io.*;
-
-import javax.swing.*;
-//import com.borland.jbcl.layout.XYLayout;
-//import com.borland.jbcl.layout.*;
-import java.awt.event.*;
-
-import jdrew.oo.Config;
-import jdrew.oo.parsing.POSLParser;
-import jdrew.oo.parsing.RuleMLParser;
-import jdrew.oo.parsing.SubsumesParser;
-import jdrew.oo.util.*;
-
-import java.util.*;
+import java.awt.FileDialog;
+import java.awt.Frame;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import nu.xom.*;
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import jdrew.oo.parsing.POSLParser;
+import jdrew.oo.parsing.RuleMLParser;
+import jdrew.oo.parsing.SubsumesParser;
+import jdrew.oo.util.DefiniteClause;
+import jdrew.oo.util.Types;
+import nu.xom.Attribute;
+import nu.xom.Builder;
+import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.Elements;
+import nu.xom.ParsingException;
+import nu.xom.ValidityException;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;

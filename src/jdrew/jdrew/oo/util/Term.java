@@ -8,11 +8,12 @@
 
 package jdrew.oo.util;
 
-import java.util.*;
-import java.util.regex.*;
-import jdrew.oo.*;
+import java.util.Vector;
+
+import jdrew.oo.Config;
 import jdrew.oo.parsing.RuleMLParser;
-import nu.xom.*;
+import nu.xom.Attribute;
+import nu.xom.Element;
 
 /**
  * An object that represents a logic term (Ind, Var, Cterm Plex, Atom). 

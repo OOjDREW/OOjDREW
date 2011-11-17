@@ -14,29 +14,54 @@ package jdrew.oo.gui;
  * Created on March 3, 2005, 2:57 PM
  */
 
-import java.util.*;
-import java.io.*;
-import javax.swing.*;
-import javax.swing.tree.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.FileDialog;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
-import jdrew.oo.Config;
+import javax.swing.AbstractAction;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+
 import jdrew.oo.parsing.POSLParser;
 import jdrew.oo.parsing.RDFSParser;
 import jdrew.oo.parsing.RuleMLParser;
 import jdrew.oo.parsing.SubsumesParser;
 import jdrew.oo.parsing.TypeQueryParserPOSL;
 import jdrew.oo.parsing.TypeQueryParserRuleML;
-import jdrew.oo.td.*;
+import jdrew.oo.td.BackwardReasoner;
+import jdrew.oo.util.DefiniteClause;
+import jdrew.oo.util.LUBGLBStructure;
+import jdrew.oo.util.QueryTypes;
+import jdrew.oo.util.SubsumesStructure;
+import jdrew.oo.util.SymbolTable;
+import jdrew.oo.util.Term;
+import jdrew.oo.util.Types;
+import nu.xom.Attribute;
+import nu.xom.Builder;
+import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.Elements;
 
-import jdrew.oo.util.*;
-
-import org.apache.log4j.*;
-import nu.xom.*;
-
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.*;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 /**
  *

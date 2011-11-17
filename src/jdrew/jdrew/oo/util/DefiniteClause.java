@@ -8,12 +8,10 @@
 
 package jdrew.oo.util;
 
-import java.util.*;
+import java.util.Vector;
 
-import jdrew.oo.Config;
 import jdrew.oo.parsing.RuleMLParser;
-
-import nu.xom.*;
+import nu.xom.Element;
 
 /**
  *

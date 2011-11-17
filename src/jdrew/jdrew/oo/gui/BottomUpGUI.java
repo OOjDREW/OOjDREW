@@ -8,26 +8,42 @@
 
 package jdrew.oo.gui;
 
-import java.io.*;
-import java.util.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.FileDialog;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
-import java.awt.*;
+import javax.swing.AbstractAction;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 
-import jdrew.oo.Config;
-import jdrew.oo.bu.*;
+import jdrew.oo.bu.ForwardReasoner;
 import jdrew.oo.parsing.POSLParser;
 import jdrew.oo.parsing.RDFSParser;
 import jdrew.oo.parsing.RuleMLParser;
 import jdrew.oo.parsing.SubsumesParser;
-import jdrew.oo.util.*;
-import nu.xom.*;
+import jdrew.oo.util.DefiniteClause;
+import jdrew.oo.util.SymbolTable;
+import jdrew.oo.util.Types;
+import nu.xom.Attribute;
+import nu.xom.Element;
 
-import org.apache.log4j.*;
-
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.*;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 /**
  * This class implements a GUI front-end for the OO jDREW Bottom up module.

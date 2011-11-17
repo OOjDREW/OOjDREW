@@ -8,12 +8,8 @@
 
 package jdrew.oo.util;
 
-import java.io.*;
-import java.util.*;
-
-
-import org.apache.log4j.*;
-import ptolemy.graph.*;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  *

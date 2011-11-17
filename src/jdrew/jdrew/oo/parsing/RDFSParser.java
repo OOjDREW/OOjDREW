@@ -8,13 +8,18 @@
 
 package jdrew.oo.parsing;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Vector;
 
 import jdrew.oo.util.Types;
-
-import nu.xom.*;
-import org.apache.log4j.*;
+import nu.xom.Builder;
+import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.Elements;
+import nu.xom.ParsingException;
+import nu.xom.ValidityException;
 
 /**
  * This class implements a parser for type sorts definitions in RDFS syntax;

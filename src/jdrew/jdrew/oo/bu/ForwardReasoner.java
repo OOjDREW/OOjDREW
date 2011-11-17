@@ -8,16 +8,52 @@
 
 package jdrew.oo.bu;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
-import jdrew.oo.bu.builtins.*;
-import jdrew.oo.builtins.*;
+import jdrew.oo.bu.builtins.AssertBuiltin;
+import jdrew.oo.bu.builtins.BUBuiltin;
+import jdrew.oo.builtins.AbsBuiltin;
+import jdrew.oo.builtins.AddBuiltin;
+import jdrew.oo.builtins.Builtin;
+import jdrew.oo.builtins.CeilingBuiltin;
+import jdrew.oo.builtins.ContainsBuiltin;
+import jdrew.oo.builtins.ContainsIgnoreCaseBuiltin;
+import jdrew.oo.builtins.CosBuiltin;
+import jdrew.oo.builtins.DivideBuiltin;
+import jdrew.oo.builtins.EndsWithBuiltin;
+import jdrew.oo.builtins.EqualBuiltin;
+import jdrew.oo.builtins.FloorBuiltin;
+import jdrew.oo.builtins.GreaterThanBuiltin;
+import jdrew.oo.builtins.GreaterThanOrEqualBuiltin;
+import jdrew.oo.builtins.IntegerDivideBuiltin;
+import jdrew.oo.builtins.LessThanBuiltin;
+import jdrew.oo.builtins.LessThanOrEqualBuiltin;
+import jdrew.oo.builtins.ModBuiltin;
+import jdrew.oo.builtins.MultiplyBuiltin;
+import jdrew.oo.builtins.NotEqualBuiltin;
+import jdrew.oo.builtins.PowBuiltin;
+import jdrew.oo.builtins.RoundBuiltin;
+import jdrew.oo.builtins.SinBuiltin;
+import jdrew.oo.builtins.StartsWithBuiltin;
+import jdrew.oo.builtins.StringConcatBuiltin;
+import jdrew.oo.builtins.StringEqualIgnoreCaseBuiltin;
+import jdrew.oo.builtins.StringLengthBuiltin;
+import jdrew.oo.builtins.StringLowerCaseBuiltin;
+import jdrew.oo.builtins.StringUpperCaseBuiltin;
+import jdrew.oo.builtins.SubstringBuiltin;
+import jdrew.oo.builtins.SubtractBuiltin;
+import jdrew.oo.builtins.TanBuiltin;
 import jdrew.oo.parsing.RuleMLParser;
-import jdrew.oo.util.*;
-
-import org.apache.log4j.*;
-
-import ptolemy.graph.*;
+import jdrew.oo.util.DefiniteClause;
+import jdrew.oo.util.Term;
+import ptolemy.graph.DirectedGraph;
+import ptolemy.graph.Edge;
+import ptolemy.graph.Node;
 
 /**
  * This class implements the forward reasoner (bottom-up) modules of OO jDREW;

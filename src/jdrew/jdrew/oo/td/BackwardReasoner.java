@@ -8,18 +8,53 @@
 
 package jdrew.oo.td;
 
-import java.io.*;
-import java.util.*;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Stack;
+import java.util.Vector;
 
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 
-import jdrew.oo.builtins.*;
+import jdrew.oo.builtins.AbsBuiltin;
+import jdrew.oo.builtins.AddBuiltin;
+import jdrew.oo.builtins.Builtin;
+import jdrew.oo.builtins.CeilingBuiltin;
+import jdrew.oo.builtins.ContainsBuiltin;
+import jdrew.oo.builtins.ContainsIgnoreCaseBuiltin;
+import jdrew.oo.builtins.CosBuiltin;
+import jdrew.oo.builtins.DivideBuiltin;
+import jdrew.oo.builtins.EndsWithBuiltin;
+import jdrew.oo.builtins.EqualBuiltin;
+import jdrew.oo.builtins.FloorBuiltin;
+import jdrew.oo.builtins.GreaterThanBuiltin;
+import jdrew.oo.builtins.GreaterThanOrEqualBuiltin;
+import jdrew.oo.builtins.IntegerDivideBuiltin;
+import jdrew.oo.builtins.LessThanBuiltin;
+import jdrew.oo.builtins.LessThanOrEqualBuiltin;
+import jdrew.oo.builtins.ModBuiltin;
+import jdrew.oo.builtins.MultiplyBuiltin;
+import jdrew.oo.builtins.NotEqualBuiltin;
+import jdrew.oo.builtins.PowBuiltin;
+import jdrew.oo.builtins.RoundBuiltin;
+import jdrew.oo.builtins.SinBuiltin;
+import jdrew.oo.builtins.StartsWithBuiltin;
+import jdrew.oo.builtins.StringConcatBuiltin;
+import jdrew.oo.builtins.StringEqualIgnoreCaseBuiltin;
+import jdrew.oo.builtins.StringLengthBuiltin;
+import jdrew.oo.builtins.StringLowerCaseBuiltin;
+import jdrew.oo.builtins.StringUpperCaseBuiltin;
+import jdrew.oo.builtins.SubstringBuiltin;
+import jdrew.oo.builtins.SubtractBuiltin;
+import jdrew.oo.builtins.TanBuiltin;
 import jdrew.oo.parsing.POSLParser;
-import jdrew.oo.td.builtins.*;
-import jdrew.oo.util.*;
-
-
-import org.apache.log4j.*;
+import jdrew.oo.td.builtins.AssertBuiltin;
+import jdrew.oo.td.builtins.RegisterBuiltin;
+import jdrew.oo.td.builtins.TDBuiltin;
+import jdrew.oo.util.DefiniteClause;
+import jdrew.oo.util.EngineException;
+import jdrew.oo.util.SymbolTable;
+import jdrew.oo.util.Term;
 
 /**
  * Based upon the backward reasoner from the original jDREW by Bruce Spencer.
