@@ -22,13 +22,16 @@ package jdrew.oo.util;
  * @author Ben L. Craig
  * @version 0.93
  */
-public class SubException extends Exception {
-    public SubException() {
-        super();
-    }
+public class SubsumesException extends Exception {
 
-    public SubException(String message) {
-        super("Only subsumes facts are allowed.  \n More details in the following message: " + '\n' + message);
-    }
-    
+	public SubsumesException() {
+		super();
+	}
+
+	public SubsumesException(String message) {
+		super(
+				"Only subsumes facts are allowed.  \n More details in the following message: "
+						+ '\n' + message);
+	}
+
 }

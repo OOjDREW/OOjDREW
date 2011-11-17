@@ -48,14 +48,14 @@ public class SubsumesParser {
 	/**
 	 * This method will parse the given String when the SubsumesParser was created. 
 	 *
-	 * @throws SubException - a Exception that could occur depending on invalid formatting
+	 * @throws SubsumesException - a Exception that could occur depending on invalid formatting
 	 * @throws IOException 
 	 * @throws ParsingException 
 	 * @throws ParseException 
 	 * @throws ValidityException 
 	 */
 	
-	public void parseSubsumes() throws SubException, ValidityException, ParseException, ParsingException, IOException{
+	public void parseSubsumes() throws SubsumesException, ValidityException, ParseException, ParsingException, IOException{
 		this.buildSubsumeObjects();
 		this.buildRDFObjects();
 		RDFSParser.parseRDFSString(finalRDFSString);
@@ -67,9 +67,9 @@ public class SubsumesParser {
 	 * objects for them.  The objects contain a 2 strings one for the super class and one 
 	 * for the sub class.
 	 * 
-	 * @throws SubException a Exception that could occur depending on invalid formatting
+	 * @throws SubsumesException a Exception that could occur depending on invalid formatting
 	 */
-	public void buildSubsumeObjects() throws SubException{
+	public void buildSubsumeObjects() throws SubsumesException{
 		
 		 Vector rdfsObjects = new Vector();
 	 	 //Parsing the POSL String given
@@ -77,7 +77,7 @@ public class SubsumesParser {
 		 try{
 		 pp.parseDefiniteClauses(parseString);
 		 }catch(Exception e){
-			 throw new SubException("Incorrect POSL syntax");
+			 throw new SubsumesException("Incorrect POSL syntax");
 		 }
 		 //Obtaining the Parsed subsume objects	 
 		 Iterator it = pp.iterator();
@@ -90,17 +90,17 @@ public class SubsumesParser {
 		    
 		    Term[] atoms = dc.atoms;
 	    	if(atoms.length != 1){
-	    		throw new SubException("Types cannot contain a rule.");
+	    		throw new SubsumesException("Types cannot contain a rule.");
 	       	}
 	    	Term t1 = atoms[0];
 	    	String predicate = t1.getSymbolString();
 	    	if(!predicate.equals("subsumes")){
-	    		throw new SubException("Only subsumes facts can be in type definition.");	
+	    		throw new SubsumesException("Only subsumes facts can be in type definition.");	
 	    	}
 	    	Term[] terms = t1.getSubTerms();
 	    	
     		if(terms.length != 3){
-    			throw new SubException("Subsumes facts can only have 2 arguments.");
+    			throw new SubsumesException("Subsumes facts can only have 2 arguments.");
     		}
     		String[] varnames = dc.variableNames;
     		String term1 = terms[1].toPOSLString(varnames,true);
@@ -113,11 +113,11 @@ public class SubsumesParser {
     	    String term2Sub = term2.substring(0,1);
     	    
     	    if(term1Sub.equals("?")){
-    	    	throw new SubException("Subsumes facts cannot contain variables in type definitions");
+    	    	throw new SubsumesException("Subsumes facts cannot contain variables in type definitions");
     	    	
     	    }
     	    if(term2Sub.equals("?")){
-    	    	throw new SubException("Subsumes facts cannot contain variables in type definitions");
+    	    	throw new SubsumesException("Subsumes facts cannot contain variables in type definitions");
     	    	
     	    }
     	    

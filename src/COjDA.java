@@ -21,7 +21,7 @@ import jdrew.oo.util.POSLParser;
 import jdrew.oo.util.ParseException;
 import jdrew.oo.util.RDFSParser;
 import jdrew.oo.util.RuleMLParser;
-import jdrew.oo.util.SubException;
+import jdrew.oo.util.SubsumesException;
 import jdrew.oo.util.TaxonomyQueryAPI;
 
 /**
@@ -119,9 +119,9 @@ public class COjDA {
 	 * @throws ParseException
 	 * @throws ParsingException
 	 * @throws IOException
-	 * @throws SubException
+	 * @throws SubsumesException
 	 */
-	COjDA(int profile_KB, int profile_Taxonomy, String KB, String taxonomy) throws RecognitionException, TokenStreamException, ValidityException, ParseException, ParsingException, IOException, SubException{
+	COjDA(int profile_KB, int profile_Taxonomy, String KB, String taxonomy) throws RecognitionException, TokenStreamException, ValidityException, ParseException, ParsingException, IOException, SubsumesException{
 		
 		noTaxonomy = false;
 
@@ -157,9 +157,9 @@ public class COjDA {
 	 * @throws ParseException
 	 * @throws ParsingException
 	 * @throws IOException
-	 * @throws SubException
+	 * @throws SubsumesException
 	 */
-	COjDA(int profile_KB, int profile_Taxonomy, String KB, File taxonomy) throws RecognitionException, TokenStreamException, ValidityException, ParseException, ParsingException, IOException, SubException{
+	COjDA(int profile_KB, int profile_Taxonomy, String KB, File taxonomy) throws RecognitionException, TokenStreamException, ValidityException, ParseException, ParsingException, IOException, SubsumesException{
 		noTaxonomy = false;
 		
 		if(profile_Taxonomy == POSL){
@@ -191,9 +191,9 @@ public class COjDA {
 	 * @throws ValidityException
 	 * @throws ParseException
 	 * @throws ParsingException
-	 * @throws SubException
+	 * @throws SubsumesException
 	 */
-	COjDA(int profile_KB, int profile_Taxonomy, File KB, String taxonomy) throws RecognitionException, TokenStreamException, IOException, ValidityException, ParseException, ParsingException, SubException{
+	COjDA(int profile_KB, int profile_Taxonomy, File KB, String taxonomy) throws RecognitionException, TokenStreamException, IOException, ValidityException, ParseException, ParsingException, SubsumesException{
 		noTaxonomy = false;
 		
 		if(profile_Taxonomy == POSL){
@@ -225,9 +225,9 @@ public class COjDA {
 	 * @throws ValidityException
 	 * @throws ParseException
 	 * @throws ParsingException
-	 * @throws SubException
+	 * @throws SubsumesException
 	 */
-	COjDA(int profile_KB, int profile_Taxonomy, File KB, File taxonomy) throws RecognitionException, TokenStreamException, IOException, ValidityException, ParseException, ParsingException, SubException{
+	COjDA(int profile_KB, int profile_Taxonomy, File KB, File taxonomy) throws RecognitionException, TokenStreamException, IOException, ValidityException, ParseException, ParsingException, SubsumesException{
 		noTaxonomy = false;
 		
 		if(profile_Taxonomy == POSL){

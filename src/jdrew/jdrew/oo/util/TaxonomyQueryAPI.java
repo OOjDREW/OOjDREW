@@ -26,10 +26,10 @@ public class TaxonomyQueryAPI {
      * @throws ValidityException
      * @throws ParsingException
      * @throws IOException
-     * @throws SubException
+     * @throws SubsumesException
      * @throws ParseException 
      */
-	public TaxonomyQueryAPI(int profile, File typeFile) throws ValidityException, ParsingException, IOException, SubException, ParseException{
+	public TaxonomyQueryAPI(int profile, File typeFile) throws ValidityException, ParsingException, IOException, SubsumesException, ParseException{
 		Types.reset();
 		
 		if(profile == RDFS){
@@ -52,9 +52,9 @@ public class TaxonomyQueryAPI {
 	 * @throws ParsingException
 	 * @throws IOException
 	 * @throws ParseException
-	 * @throws SubException
+	 * @throws SubsumesException
 	 */
-	public TaxonomyQueryAPI(int profile, String typeFile) throws ValidityException, ParsingException, IOException, ParseException, SubException{
+	public TaxonomyQueryAPI(int profile, String typeFile) throws ValidityException, ParsingException, IOException, ParseException, SubsumesException{
 		Types.reset();
 		if(profile == RDFS){
 			RDFSParser.parseRDFSString(typeFile);
