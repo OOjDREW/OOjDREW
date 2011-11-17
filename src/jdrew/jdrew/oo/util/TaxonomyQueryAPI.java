@@ -6,17 +6,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Vector;
 
-import jdrew.oo.parsing.POSLTypeQueryExcetion;
+import jdrew.oo.parsing.POSLTypeQueryException;
 import jdrew.oo.parsing.ParseException;
 import jdrew.oo.parsing.RDFSParser;
-import jdrew.oo.parsing.RuleMLTypeQueryExcetion;
+import jdrew.oo.parsing.RuleMLTypeQueryException;
 import jdrew.oo.parsing.SubsumesException;
 import jdrew.oo.parsing.SubsumesParser;
 import jdrew.oo.parsing.TypeQueryParserPOSL;
 import jdrew.oo.parsing.TypeQueryParserRuleML;
-
 import nu.xom.Elements;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
@@ -104,13 +102,13 @@ public class TaxonomyQueryAPI {
 	 * @param RuleMLTypeQuery - a RuleML query as a String.
 	 * @return returns the RuleML answer expression as a String.
 	 * 
-	 * @throws RuleMLTypeQueryExcetion
+	 * @throws RuleMLTypeQueryException
 	 * @throws ValidityException
 	 * @throws ParseException
 	 * @throws ParsingException
 	 * @throws IOException
 	 */
-	public String executeQueryRuleML(String RuleMLTypeQuery) throws RuleMLTypeQueryExcetion, ValidityException, ParseException, ParsingException, IOException {
+	public String executeQueryRuleML(String RuleMLTypeQuery) throws RuleMLTypeQueryException, ValidityException, ParseException, ParsingException, IOException {
 		
 		String answer = "<RuleML>\n\t<Answer>\n";
 		
@@ -325,13 +323,13 @@ public class TaxonomyQueryAPI {
 	 * @return returns the RuleML answer expression as a String.
 	 * 
 	 * @throws ValidityException
-	 * @throws POSLTypeQueryExcetion
+	 * @throws POSLTypeQueryException
 	 * @throws ParseException
 	 * @throws ParsingException
 	 * @throws IOException
 	 * @throws Exception
 	 */
-	public String executeQueryPOSL(String poslTypeQuery) throws ValidityException, POSLTypeQueryExcetion, ParseException, ParsingException, IOException, Exception{
+	public String executeQueryPOSL(String poslTypeQuery) throws ValidityException, POSLTypeQueryException, ParseException, ParsingException, IOException, Exception{
 		
 		TypeQueryParserPOSL poslTParser = new TypeQueryParserPOSL(poslTypeQuery);
 		Term[] queryTerms = poslTParser.parseForPredicate();

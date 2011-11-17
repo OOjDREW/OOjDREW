@@ -8,13 +8,19 @@
 
 package jdrew.oo.parsing;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.Iterator;
+import java.util.Vector;
+
 import jdrew.oo.parsing.generated.POSLLexer;
 import jdrew.oo.util.DefiniteClause;
-import jdrew.oo.util.parsing.*;
-
-import java.util.*;
-import java.io.*;
-import antlr.*;
+import antlr.RecognitionException;
+import antlr.TokenStreamException;
 /**
  * <p>Title: OO jDREW</p>
  *
