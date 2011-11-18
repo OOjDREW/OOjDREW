@@ -708,38 +708,22 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
     private Term parsePlex(Element plex) throws ParseException {
         Elements els = plex.getChildElements();
         Vector subterms = new Vector();
+               
         for (int i = 0; i < els.size(); i++) {
             Element el = els.get(i);
-            if (el.getLocalName().equals(tagNames.PLEX)) {
-                subterms.add(parsePlex(el));
-            } else if (el.getLocalName().equals(tagNames.EXPR)) {
-                subterms.add(parseExpression(el));
-            } else if (el.getLocalName().equals(tagNames.IND)) {
-                subterms.add(parseInd(el));
-            } else if (el.getLocalName().equals(tagNames.DATA)) {
-                subterms.add(parseData(el));
-            } else if (el.getLocalName().equals(tagNames.SKOLEM)) {
-                subterms.add(parseSkolem(el));
-            } else if (el.getLocalName().equals(tagNames.VAR)) {
-                subterms.add(parseVar(el));
-            } else if (el.getLocalName().equals(tagNames.SLOT)) {
-                subterms.add(parseSlot(el));
-            } else if (el.getLocalName().equals(tagNames.RESL)) {
-                subterms.add(parseResl(el));
-            } else if (el.getLocalName().equals(tagNames.REPO)) {
-                subterms.add(parseRepo(el));
-            } else {
+            
+            if (!parseDefaultElement(el, subterms))
+            {
                 throw new ParseException(
                         "Plex should only contain Plex, Cterm, Ind, Data, Var and slot, repo, resl.");
             }
-
         }
 
         Term t = new Term(SymbolTable.IPLEX, SymbolTable.INOROLE, Types.IOBJECT,
                           subterms);
         return t;
     }
-
+    
     /**
      * Method to parse a Expr (Expresion)
      *
@@ -751,7 +735,6 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
      *
      * @throws ParseException Thrown if there is an error parsing the Expr.
      */
-          
     private Term parseExpression(Element expr) throws ParseException {
         
         Elements els = expr.getChildElements();
@@ -764,10 +747,9 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
         }
 		
 		Element fun = null;
-		if(foundOp){
-			
-			Elements ctorTag = op.getChildElements();
-			fun = ctorTag.get(0);
+		if(foundOp) {
+			Elements funTag = op.getChildElements();
+			fun = funTag.get(0);
         }
         
         if(!foundOp){
@@ -794,29 +776,12 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
         Vector subterms = new Vector();
         for (int i = 1; i < els.size(); i++) {
             Element el = els.get(i);
-            if (el.getLocalName().equals(tagNames.PLEX)) {
-                subterms.add(parsePlex(el));
-            } else if (el.getLocalName().equals(tagNames.EXPR)) {
-                subterms.add(parseExpression(el));
-            } else if (el.getLocalName().equals(tagNames.IND)) {
-                subterms.add(parseInd(el));
-            } else if (el.getLocalName().equals(tagNames.DATA)) {
-                subterms.add(parseData(el));
-            } else if (el.getLocalName().equals(tagNames.SKOLEM)) {
-                subterms.add(parseSkolem(el));
-            } else if (el.getLocalName().equals(tagNames.VAR)) {
-                subterms.add(parseVar(el));
-            } else if (el.getLocalName().equals(tagNames.SLOT)) {
-                subterms.add(parseSlot(el));
-            } else if (el.getLocalName().equals(tagNames.RESL)) {
-                subterms.add(parseResl(el));
-            } else if (el.getLocalName().equals(tagNames.REPO)) {
-                subterms.add(parseRepo(el));
-            } else {
-                throw new ParseException(
+            
+            if (!parseDefaultElement(el, subterms))
+            {
+            	throw new ParseException(
                         "Expr should only contain Plex, Expr, Ind, Data, Var and slot, repo, resl.");
             }
-
         }
 
         Term t = new Term(symbol, SymbolTable.INOROLE, typeid, subterms);
@@ -874,37 +839,20 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
         int startIndex = getFirstChildElementIndex(children, 0) + 1;
         for (int i = startIndex; i < children.size(); i++) {
             Element el = children.get(i);
-            if (el.getLocalName().equals(tagNames.PLEX)) {
-                subterms.add(parsePlex(el));
-            } else if (el.getLocalName().equals(tagNames.EXPR)) {
-                subterms.add(parseExpression(el));
-            } else if (el.getLocalName().equals(tagNames.IND)) {
-                subterms.add(parseInd(el));
-            } else if (el.getLocalName().equals(tagNames.DATA)) {
-                subterms.add(parseData(el));
-            } else if (el.getLocalName().equals(tagNames.SKOLEM)){
-                subterms.add(parseSkolem(el));
-            } else if (el.getLocalName().equals(tagNames.VAR)) {
-                subterms.add(parseVar(el));
-            } else if (el.getLocalName().equals(tagNames.SLOT)) {
-                subterms.add(parseSlot(el));
-            } else if (el.getLocalName().equals(tagNames.RESL)) {
-                subterms.add(parseResl(el));
-            } else if (el.getLocalName().equals(tagNames.REPO)) {
-                subterms.add(parseRepo(el));
-            } else if (el.getLocalName().equals(tagNames.OID)) {
+            
+            if (el.getLocalName().equals(tagNames.OID)) {
                 if (foundoid) {
                     throw new ParseException(
                             "Atom should only contain one oid element.");
                 }
                 subterms.add(parseOid(el));
                 foundoid = true;
-            } else {
+            } else if (!parseDefaultElement(el, subterms)) {
                 throw new ParseException(
                         "Atom should only contain Plex, Expr, Ind, Data, Var, slot, repo, resl and oid.");
             }
-         	
         }
+        
 		//if foundoid is false
 		//no idea what this is doing
         if (!foundoid) {
@@ -925,7 +873,6 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
         }
 
 		
-
         Term t = new Term(symbol, SymbolTable.INOROLE, Types.IOBJECT, subterms);
         t.setAtom(true);
         return t;
@@ -1229,6 +1176,43 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
     }
     
     /**
+     * Parses the given element and adds parsed data to subterms
+     * 
+     * Known elements are: Plex, Expr, Ind, Data, Var, slot, repo, resl
+     * 
+     * @param el Element to parse
+     * @param subterms Subterm to add parsed subterm to
+     * @return True if elements has been found and parsed, otherwise false
+     * @throws ParseException
+     */
+    private boolean parseDefaultElement(Element el, Vector subterms) throws ParseException
+    {
+        if (el.getLocalName().equals(tagNames.PLEX)) {
+            subterms.add(parsePlex(el));
+        } else if (el.getLocalName().equals(tagNames.EXPR)) {
+            subterms.add(parseExpression(el));
+        } else if (el.getLocalName().equals(tagNames.IND)) {
+            subterms.add(parseInd(el));
+        } else if (el.getLocalName().equals(tagNames.DATA)) {
+            subterms.add(parseData(el));
+        } else if (el.getLocalName().equals(tagNames.SKOLEM)) {
+            subterms.add(parseSkolem(el));
+        } else if (el.getLocalName().equals(tagNames.VAR)) {
+            subterms.add(parseVar(el));
+        } else if (el.getLocalName().equals(tagNames.SLOT)) {
+            subterms.add(parseSlot(el));
+        } else if (el.getLocalName().equals(tagNames.RESL)) {
+            subterms.add(parseResl(el));
+        } else if (el.getLocalName().equals(tagNames.REPO)) {
+            subterms.add(parseRepo(el));
+        } else {
+        	return false;
+        }
+        
+        return true;
+    }
+    
+    /**
      * Get the first element with the given name
      * @param elements Element to search for the child
      * @param childName Name of the element to look for
@@ -1289,7 +1273,6 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
     /**
      * Updates the current settings given by the configuration UI
      */
-	@Override
 	public void preferenceChange(PreferenceChangeEvent arg0) {
 		readConfig();
 	}
