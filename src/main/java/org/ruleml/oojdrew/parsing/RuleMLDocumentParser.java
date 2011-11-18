@@ -4,6 +4,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 import nu.xom.Attribute;
 import nu.xom.Document;
@@ -11,6 +13,7 @@ import nu.xom.Element;
 import nu.xom.Elements;
 
 import org.apache.log4j.Logger;
+import org.ruleml.oojdrew.Config;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.SymbolTable;
@@ -32,7 +35,7 @@ import org.ruleml.oojdrew.util.Types;
  * @version 0.93
  */
 
-public class RuleMLDocumentParser implements IRuleMLParser {
+public class RuleMLDocumentParser implements IRuleMLParser, PreferenceChangeListener {
 
     private Hashtable skolemMap;
 
@@ -59,6 +62,9 @@ public class RuleMLDocumentParser implements IRuleMLParser {
 
     Logger logger = Logger.getLogger("jdrew.oo.util.RuleMLParser");
 
+    Config config;
+    boolean compatibilityMode;
+
     /**
      * Constructs the back-end parser.
      *
@@ -71,7 +77,12 @@ public class RuleMLDocumentParser implements IRuleMLParser {
         // Set default RuleML version
         this.ruleMLversion = RuleMLVersion.RuleML91;
         this.tagNames = new RuleMLTagNames(ruleMLversion);
+        
+        this.config = new Config();
+        readConfig();
     }
+    
+    
 
     /**
      * This method is used to parse a RuleML 0.91 document that is stored in
@@ -406,8 +417,6 @@ public class RuleMLDocumentParser implements IRuleMLParser {
             throw new ParseException(
                     "Implies element must have 2 child elements.");
         }
-        
-        boolean compatibilityMode = true; // TODO: Make changeable via GUI
         
         int currentIndex = getFirstChildElementIndex(children, 0);
         Element firstChild = children.get(currentIndex);
@@ -1275,4 +1284,15 @@ public class RuleMLDocumentParser implements IRuleMLParser {
     	return count;
     }
 
+
+
+	@Override
+	public void preferenceChange(PreferenceChangeEvent arg0) {
+		readConfig();
+	}
+	
+	public void readConfig()
+	{
+		this.compatibilityMode = config.getRuleMLCompatibilityModeEnabled();
+	}
 }
