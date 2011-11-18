@@ -411,11 +411,11 @@ public class RuleMLDocumentParser implements IRuleMLParser, PreferenceChangeList
                         "Only universal inner closures are currently supported.");
             }
         }
-		//implies need 2 child elements
+		// Implies must have two children (excluding OID elements)
         Elements children = implies.getChildElements();
         if (getElementCount(children) != 2) {
             throw new ParseException(
-                    "Implies element must have 2 child elements.");
+                    "Implies element must contain a premise and a conclusion element.");
         }
         
         int currentIndex = getFirstChildElementIndex(children, 0);
@@ -428,34 +428,28 @@ public class RuleMLDocumentParser implements IRuleMLParser, PreferenceChangeList
         Element premise;
         Element conclusion;
         
-		if (firstChildName.equals(tagNames.PREMISE100))
+        // Check if implies starts with premise element
+		if (firstChildName.equals(tagNames.PREMISE100) || firstChildName.equals(tagNames.PREMISE))
 		{
-			// TODO: remove: ruleMLversion = RuleMLVersion.RuleML100;
 			premise = firstChild.getChildElements().get(0);
 			conclusion = secondChild.getChildElements().get(0);
-		} else if (firstChildName.equals(tagNames.CONCLUSION100))
+		}
+		// If implies starts with conclusion element
+		else if (firstChildName.equals(tagNames.CONCLUSION100) || firstChildName.equals(tagNames.CONCLUSION))
 		{
-			// TODO: remove: ruleMLversion = RuleMLVersion.RuleML100;
 			premise = secondChild.getChildElements().get(0);
 			conclusion = firstChild.getChildElements().get(0);
 		}
-		else if (firstChildName.equals(tagNames.PREMISE))
-		{
-			premise = firstChild.getChildElements().get(0);
-			conclusion = secondChild.getChildElements().get(0);
-		}
-		else if (firstChildName.equals(tagNames.CONCLUSION))
-		{
-			premise = children.get(1).getChildElements().get(0);
-			conclusion = firstChild.getChildElements().get(0);
-		}
+		// No premise or conclusion tag available
 		else if (compatibilityMode)
 		{
+			// Use backwards compatibility 
 	        premise = firstChild;
 	        conclusion = secondChild;
 		}
 		else
 		{
+			// Use default order
 	        premise = secondChild;
 	        conclusion = firstChild;
 		}
