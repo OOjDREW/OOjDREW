@@ -21,8 +21,6 @@ import nu.xom.ValidityException;
 
 import org.ruleml.oojdrew.util.DefiniteClause;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 /**
  * A class for parsing RuleML. This is broken into two section. The
  * RuleMLParser class which is the public interface that users access; and the
@@ -149,10 +147,8 @@ public class RuleMLParser {
 		{
 		case RuleML88:
 		case RuleML91:
-			parser = new RuleML91Parser(clauses);
-			break;
 		case RuleML100:
-			throw new NotImplementedException();
+			parser = new RuleMLDocumentParser(clauses);
 		}
 
 		if (parser == null)

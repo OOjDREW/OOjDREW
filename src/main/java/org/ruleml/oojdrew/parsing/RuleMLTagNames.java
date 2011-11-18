@@ -10,7 +10,6 @@ public class RuleMLTagNames {
     public final String ASSERT = "Assert";
     public final String AND = "And";
     public final String ATOM = "Atom";
-    public final String MAPCLOSURE = "mapClosure";
     public final String UNIVERSAL = "universal";
     public final String IMPLIES = "Implies";
     public final String TYPE = "type";
@@ -29,25 +28,35 @@ public class RuleMLTagNames {
     
 	public final String DATA = "Data";
     
-	public final String OP = "op";
+	public final String OP;
 	
 	public final String QUERY = "Query";
 	
 	public final String EXPR; 
 	public final String FUN; 
+    public final String MAPCLOSURE;
+    
+    public final String PREMISE100 = "if";
+    public final String CONCLUSION100 = "then";
+    
+    public final String PREMISE = "body";
+    public final String CONCLUSION = "head";
 	
 	public RuleMLTagNames(RuleMLVersion ruleMLversion)
 	{
-		switch (ruleMLversion)
+		if (ruleMLversion == RuleMLVersion.RuleML91 || ruleMLversion == RuleMLVersion.RuleML100)
 		{
-		case RuleML88:
-			EXPR = "Cterm";
-			FUN = "Ctor";
-			break;
-		default: // RuleML91
 			EXPR = "Expr";
 			FUN = "Fun";
-			break;
+			MAPCLOSURE  = "mapClosure";
+			OP = "op";
+		}
+		else // RuleML 0.88
+		{
+			EXPR = "Cterm";
+			FUN = "Ctor";
+			MAPCLOSURE = "innerclose";
+			OP = "opr";
 		}
 	}
 }

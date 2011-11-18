@@ -32,7 +32,7 @@ import org.ruleml.oojdrew.util.Types;
  * @version 0.93
  */
 
-public class RuleML91Parser implements IRuleMLParser {
+public class RuleMLDocumentParser implements IRuleMLParser {
 
     private Hashtable skolemMap;
 
@@ -48,7 +48,7 @@ public class RuleML91Parser implements IRuleMLParser {
     /**
      * This is used to indicate if the document has an inner close attribute.
      */
-    private boolean hasiclose = false;
+    private boolean hasMapClosure = false;
     
     /**
      * RuleML tag names
@@ -65,7 +65,7 @@ public class RuleML91Parser implements IRuleMLParser {
      * @param clauses Vector The vector to use as a buffer - this is generally
      * passed by the RuleMLParser front-end.
      */
-    public RuleML91Parser(Vector clauses) {
+    public RuleMLDocumentParser(Vector clauses) {
         this.clauses = clauses;
         
         // Set default RuleML version
@@ -93,22 +93,28 @@ public class RuleML91Parser implements IRuleMLParser {
         String rootName = root.getLocalName();
 		if (rootName.equals(tagNames.RULEML))
 		{
-			root = root.getFirstChildElement(tagNames.ASSERT);
+			root = getFirstChildElement(root, tagNames.ASSERT);
 			if (root == null)
 			{
 	            throw new ParseException(
 	                    "Assert has to be the first child of the RuleML element!");
 			}
-			firstChild = root.getFirstChildElement(tagNames.RULEBASE);
+			firstChild = getFirstChildElement(root, tagNames.RULEBASE);
+			if (firstChild == null)
+			{
+				firstChild = root;
+			}
 		} 
 		else if (rootName.equals(tagNames.ASSERT))
 		{
-			firstChild = root.getFirstChildElement(tagNames.RULEBASE);
+			firstChild = getFirstChildElement(root, tagNames.RULEBASE);
 			if (firstChild == null)
 			{
 				// If no Rulebase element exists, it has to be RuleML 0.88
-				firstChild = root.getFirstChildElement(tagNames.AND);
 				ruleMLversion = RuleMLVersion.RuleML88;
+				tagNames = new RuleMLTagNames(ruleMLversion);
+				
+				firstChild = getFirstChildElement(root, tagNames.AND);
 			}
 		}
 		
@@ -119,7 +125,7 @@ public class RuleML91Parser implements IRuleMLParser {
         }
 
         if (firstChild.getAttribute(tagNames.MAPCLOSURE) != null) {
-            hasiclose = true;
+            hasMapClosure = true;
             if (!firstChild.getAttributeValue(tagNames.MAPCLOSURE).equals(tagNames.UNIVERSAL)) {
                 throw new ParseException(
                         "Only universal inner closures are currently supported.");
@@ -214,7 +220,7 @@ public class RuleML91Parser implements IRuleMLParser {
 		
         Element atom = atoms.get(0);
 
-        if (!hasiclose)
+        if (!hasMapClosure)
         {
             String closure = atom.getAttributeValue(tagNames.CLOSURE);
             if (closure == null) {
@@ -307,7 +313,7 @@ public class RuleML91Parser implements IRuleMLParser {
             this.varClasses = new Hashtable();
         }
 		
-        if (!hasiclose) {
+        if (!hasMapClosure) {
             //No inner close - should have
             String closure = atom.getAttributeValue(tagNames.CLOSURE);
             if (closure == null) {
@@ -380,7 +386,7 @@ public class RuleML91Parser implements IRuleMLParser {
 
         Vector newclauses = new Vector();
 
-        if (!hasiclose) {
+        if (!hasMapClosure) {
             //No inner close - should have
             String closure = implies.getAttributeValue(tagNames.CLOSURE);
             if (closure == null) {
@@ -395,19 +401,62 @@ public class RuleML91Parser implements IRuleMLParser {
             }
         }
 		//implies need 2 child elements
-        Elements els = implies.getChildElements();
-        if (els.size() != 2) {
+        Elements children = implies.getChildElements();
+        if (getElementCount(children) != 2) {
             throw new ParseException(
-                    "Implies element should have 2 child elements.");
+                    "Implies element must have 2 child elements.");
         }
+        
+        boolean compatibilityMode = true; // TODO: Make changeable via GUI
+        
+        int currentIndex = getFirstChildElementIndex(children, 0);
+        Element firstChild = children.get(currentIndex);
+        String firstChildName = firstChild.getLocalName();
+        
+        currentIndex = getFirstChildElementIndex(children, currentIndex + 1);
+        Element secondChild = children.get(currentIndex);
+        
+        Element premise;
+        Element conclusion;
+        
+		if (firstChildName.equals(tagNames.PREMISE100))
+		{
+			// TODO: remove: ruleMLversion = RuleMLVersion.RuleML100;
+			premise = firstChild.getChildElements().get(0);
+			conclusion = secondChild.getChildElements().get(0);
+		} else if (firstChildName.equals(tagNames.CONCLUSION100))
+		{
+			// TODO: remove: ruleMLversion = RuleMLVersion.RuleML100;
+			premise = secondChild.getChildElements().get(0);
+			conclusion = firstChild.getChildElements().get(0);
+		}
+		else if (firstChildName.equals(tagNames.PREMISE))
+		{
+			premise = firstChild.getChildElements().get(0);
+			conclusion = secondChild.getChildElements().get(0);
+		}
+		else if (firstChildName.equals(tagNames.CONCLUSION))
+		{
+			premise = children.get(1).getChildElements().get(0);
+			conclusion = firstChild.getChildElements().get(0);
+		}
+		else if (compatibilityMode)
+		{
+	        premise = firstChild;
+	        conclusion = secondChild;
+		}
+		else
+		{
+	        premise = secondChild;
+	        conclusion = firstChild;
+		}
 
         Vector atoms = new Vector();
-
-        Element head = els.get(1);
-        if (head.getLocalName().equals(tagNames.ATOM)) {
-            atoms.add(parseAtom(head, true, false));
-        } else if (head.getLocalName().equals(tagNames.NEG)){
-            Elements headatms = head.getChildElements(tagNames.ATOM);
+        
+        if (conclusion.getLocalName().equals(tagNames.ATOM)) {
+            atoms.add(parseAtom(conclusion, true, false));
+        } else if (conclusion.getLocalName().equals(tagNames.NEG)){
+            Elements headatms = conclusion.getChildElements(tagNames.ATOM);
             if(headatms.size() != 1)
                 throw new ParseException("Neg should have one ATOM element");
 
@@ -434,20 +483,19 @@ public class RuleML91Parser implements IRuleMLParser {
                     "Second element of Implies should always be an Atom or Neg element.");
         }
 
-        Element body = els.get(0);
-        if (body.getLocalName().equals(tagNames.ATOM)) {
-            atoms.add(parseAtom(body, false, false));
-        } else if (body.getLocalName().equals(tagNames.NAF)) {
-            atoms.add(parseNaf(body));
-        } else if (body.getLocalName().equals(tagNames.ASSERT)) {
-            atoms.add(parseAssert(body));
-        } else if (body.getLocalName().equals(tagNames.NEG)) {
-            atoms.add(parseAtom(body, false, true));
+        if (premise.getLocalName().equals(tagNames.ATOM)) {
+            atoms.add(parseAtom(premise, false, false));
+        } else if (premise.getLocalName().equals(tagNames.NAF)) {
+            atoms.add(parseNaf(premise));
+        } else if (premise.getLocalName().equals(tagNames.ASSERT)) {
+            atoms.add(parseAssert(premise));
+        } else if (premise.getLocalName().equals(tagNames.NEG)) {
+            atoms.add(parseAtom(premise, false, true));
         }
-        else if (body.getLocalName().equals(tagNames.AND)) {
-            els = body.getChildElements();
-            for (int i = 0; i < els.size(); i++) {
-                Element el = els.get(i);
+        else if (premise.getLocalName().equals(tagNames.AND)) {
+            children = premise.getChildElements();
+            for (int i = 0; i < children.size(); i++) {
+                Element el = children.get(i);
                 if (el.getLocalName().equals(tagNames.ATOM)) {
                     atoms.add(parseAtom(el, false, false));
                 } else if (el.getLocalName().equals(tagNames.NAF)) {
@@ -475,7 +523,6 @@ public class RuleML91Parser implements IRuleMLParser {
             Term t = (Term)it.next();
             this.fixVarTypes(t, types);
             logger.debug("Fixed atom : " + i++);
-
         }
 
         DefiniteClause dc = new DefiniteClause(atoms, variableNames);
@@ -783,45 +830,39 @@ public class RuleML91Parser implements IRuleMLParser {
      
     private Term parseAtom(Element atom, boolean head, boolean neg) throws ParseException {
         
-        Elements els = atom.getChildElements();
         boolean foundoid = false;
-		
+               
+        Elements children = atom.getChildElements();
+        
 		//checking for op tag before the rel
-        Element op = els.get(0);
-        
-        boolean optionalOp = false;
-        
-        if (op.getLocalName().equals(tagNames.OP)) {
-        	   optionalOp = true;
-        }   
+        Element op = getFirstChildElement(atom, tagNames.OP);
         
         Element rel = null;
         
-        if(optionalOp){   
+        if(op != null){   
         	Elements relTag = op.getChildElements();
         	rel = relTag.get(0);
-        
         }
-         
-        if(!optionalOp){
-        	rel = els.get(0);
-        	
-        } 
+        else {
+        	rel = getFirstChildElement(atom, tagNames.REL);
+        }
                 
-        if (!rel.getLocalName().equals(tagNames.REL)) {
+        if (rel == null) {
             throw new ParseException(
                     "First child of op in an atom must be a Rel element.");
         }
 		
         String relname = rel.getValue().trim();
-        if(neg)
+        if(neg) {
             relname = "$neg-" + relname;
+        }
 
         int symbol = SymbolTable.internSymbol(relname);
 
         Vector subterms = new Vector();
-        for (int i = 1; i < els.size(); i++) {
-            Element el = els.get(i);
+        int startIndex = getFirstChildElementIndex(children, 0) + 1;
+        for (int i = startIndex; i < children.size(); i++) {
+            Element el = children.get(i);
             if (el.getLocalName().equals(tagNames.PLEX)) {
                 subterms.add(parsePlex(el));
             } else if (el.getLocalName().equals(tagNames.EXPR)) {
@@ -849,7 +890,7 @@ public class RuleML91Parser implements IRuleMLParser {
                 foundoid = true;
             } else {
                 throw new ParseException(
-                        "Atom should only contain Plex, Cterm, Ind, Data, Var, slot, repo, resl and oid.");
+                        "Atom should only contain Plex, Expr, Ind, Data, Var, slot, repo, resl and oid.");
             }
          	
         }
@@ -1174,6 +1215,64 @@ public class RuleML91Parser implements IRuleMLParser {
             ht.put(key, new Integer(type));
         }
         return ht;
+    }
+    
+    /**
+     * Get the first element with the given name
+     * @param elements Element to search for the child
+     * @param childName Name of the element to look for
+     * @return First element which is labeled with childName 
+     */
+    private Element getFirstChildElement(Element element, String childName)
+    {
+    	Elements children = element.getChildElements();
+    	for (int i = 0; i < children.size(); i++)
+    	{
+    		Element child = children.get(i);
+    		if (child.getLocalName().equals(childName))
+    		{
+    			return child;
+    		}
+    	}
+    	return null;
+    }
+   
+    /**
+     * Get the first element which is not labeled with OID
+     * @param elements Elements to search for child
+     * @param startIndex Start index to start search at
+     * @return Index of the first element which is not labeled with OID 
+     */
+    private int getFirstChildElementIndex(Elements elements, int startIndex)
+    {
+    	for (int i = startIndex; i < elements.size(); i++)
+    	{
+    		Element child = elements.get(i);
+    		if (!child.getLocalName().equals(tagNames.OID))
+    		{
+    			return i;
+    		}
+    	}
+    	return -1;
+    }
+    
+    /**
+     * Gets the count of elements which do not have OID as element name
+     * @param elements Elements to count
+     * @return Amount of elements which do not have OID as element name
+     */
+    private int getElementCount(Elements elements)
+    {
+    	int count = 0;
+    	for (int i = 0; i < elements.size(); i++)
+    	{
+    		Element child = elements.get(i);
+    		if (!child.getLocalName().equals(tagNames.OID))
+    		{
+    			count++;
+    		}
+    	}
+    	return count;
     }
 
 }
