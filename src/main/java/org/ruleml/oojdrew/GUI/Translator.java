@@ -51,6 +51,8 @@ import nu.xom.ValidityException;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.ruleml.oojdrew.Config;
+import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.parsing.POSLParser;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
@@ -79,10 +81,15 @@ public class Translator extends JFrame {
       */
        
     public static RuleMLVersion ruleMLversion = RuleMLVersion.RuleML88;
+    
+    private RuleMLParser rmlParser;
+    
      /**
       * This is the constructor for the Translator.
       */   
-    public Translator() {
+    public Translator(RuleMLParser rmlParser) {
+    	this.rmlParser = rmlParser;
+    	
         try {
             jbInit();
         } catch (Exception exception) {
@@ -163,8 +170,11 @@ public class Translator extends JFrame {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
-        Translator translator = new Translator();
+        Configuration config = new Config();
+        RuleMLParser rmlParser = new RuleMLParser(config);
+    	
+    	
+        Translator translator = new Translator(rmlParser);
         BasicConfigurator.configure();
         Logger root = Logger.getRootLogger();
         root.setLevel(Level.DEBUG);
@@ -585,16 +595,15 @@ public class Translator extends JFrame {
 	                   JOptionPane.ERROR_MESSAGE);
 		}
 		///work around to remove type dependency
-        RuleMLParser rmp = new RuleMLParser();
 		try
 		{
-			rmp.parseRuleMLString(RuleMLVersion.RuleML91, rmltext);
+			rmlParser.parseRuleMLString(RuleMLVersion.RuleML91, rmltext);
 		} catch (Exception ex)
 		{
 
 			try
 			{
-				rmp.parseRuleMLString(RuleMLVersion.RuleML88, rmltext);
+				rmlParser.parseRuleMLString(RuleMLVersion.RuleML88, rmltext);
 			} catch (Exception ex2)
 			{
 				JOptionPane.showMessageDialog(this, ex2.getMessage(), "Error",
@@ -603,7 +612,7 @@ public class Translator extends JFrame {
         }
 
         StringBuffer sb = new StringBuffer();
-        Iterator it = rmp.iterator();
+        Iterator it = rmlParser.iterator();
         while(it.hasNext()){
             DefiniteClause dc = (DefiniteClause)it.next();
             sb.append(dc.toPOSLString());

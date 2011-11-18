@@ -14,6 +14,7 @@ import nu.xom.Elements;
 
 import org.apache.log4j.Logger;
 import org.ruleml.oojdrew.Config;
+import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.SymbolTable;
@@ -62,8 +63,8 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
 
     Logger logger = Logger.getLogger("jdrew.oo.util.RuleMLParser");
 
-    Config config;
-    boolean compatibilityMode;
+    private Configuration config;
+    private boolean compatibilityMode;
 
     /**
      * Constructs the back-end parser.
@@ -71,14 +72,14 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
      * @param clauses Vector The vector to use as a buffer - this is generally
      * passed by the RuleMLParser front-end.
      */
-    public RuleMLDocumentParser(Vector clauses) {
+    public RuleMLDocumentParser(Configuration config, Vector clauses) {
         this.clauses = clauses;
         
         // Set default RuleML version
         this.ruleMLversion = RuleMLVersion.RuleML91;
         this.tagNames = new RuleMLTagNames(ruleMLversion);
         
-        this.config = new Config();
+        this.config = config;
         readConfig();
     }
     
@@ -1288,6 +1289,7 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
     /**
      * Updates the current settings given by the configuration UI
      */
+	@Override
 	public void preferenceChange(PreferenceChangeEvent arg0) {
 		readConfig();
 	}

@@ -38,7 +38,7 @@ public class COjDA {
 	int varSize = 0;
 	BackwardReasoner br;
     DefiniteClause dc;
-    RuleMLParser rp = new RuleMLParser();
+    RuleMLParser rp;
     POSLParser pp = new POSLParser();
     RDFSParser rr;
     TaxonomyQueryAPI taxonomyAPI;
@@ -64,7 +64,7 @@ public class COjDA {
      * @throws ParseException
      * @throws ParsingException
      */
-	COjDA(int profile_KB, File KB) throws RecognitionException, TokenStreamException, IOException, ValidityException, ParseException, ParsingException{
+	public COjDA(RuleMLParser rmlParser, int profile_KB, File KB) throws RecognitionException, TokenStreamException, IOException, ValidityException, ParseException, ParsingException{
 		
 		if(profile_KB == POSL){
 				
@@ -74,11 +74,16 @@ public class COjDA {
 			
 		}else if(profile_KB == RULEML91){
 			
-			rp = new RuleMLParser();
+			rp = rmlParser;
             rp.parseRuleMLString(RuleMLVersion.RuleML91, fileToString(KB));
             intialize_engine(rp.iterator());
 		}
 		
+	}
+	
+	public COjDA(int profile_KB, File KB) throws RecognitionException, TokenStreamException, ValidityException, IOException, ParseException, ParsingException
+	{
+		this(new RuleMLParser(new Config()), profile_KB, KB);
 	}
 	
 	/**

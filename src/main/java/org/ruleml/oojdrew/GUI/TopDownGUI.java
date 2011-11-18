@@ -48,6 +48,8 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.ruleml.oojdrew.Config;
+import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.TopDown.BackwardReasoner;
 import org.ruleml.oojdrew.parsing.POSLParser;
 import org.ruleml.oojdrew.parsing.RDFSParser;
@@ -85,11 +87,15 @@ public class TopDownGUI extends javax.swing.JFrame {
 	
     BackwardReasoner br;
     Iterator solit;
+    
+    private RuleMLParser rmlParser;
+    
     //Logger logger = Logger.getLogger("jdrew.oo.gui.TopDownGUI");
     /** Creates new form TopDownGUI */
-    public TopDownGUI() {
+    public TopDownGUI(RuleMLParser rmlParser) {
         initComponents();
         br = new BackwardReasoner();
+        this.rmlParser = rmlParser;
     }
 
     /** This method is called from within the constructor to
@@ -1300,15 +1306,14 @@ public class TopDownGUI extends javax.swing.JFrame {
     			
     			System.out.println(s1);
     			
-    			//System.out.println(s1);     
-       			RuleMLParser qp = new RuleMLParser();  
+    			//System.out.println(s1);      
        			String dcstr = null;       
 
         		//dcstr = qp.parseRuleMLQuery(qstr);
        			System.out.println(s1);
        			//s1 ="<Query><Implies mapClosure=\"universal\"><And><Atom><Rel>ben</Rel><Ind>a</Ind></Atom><Atom><Rel>ben</Rel><Ind>b</Ind></Atom></And><Atom><Rel>$top</Rel></Atom></Implies></Query>";
        			System.out.println(s1);
-       			dc = qp.parseRuleMLQuery(s1);
+       			dc = rmlParser.parseRuleMLQuery(s1);
        		} 
         	catch (Exception ex) {
             //this.logger.error(ex.getMessage(), ex);
@@ -1426,34 +1431,19 @@ public class TopDownGUI extends javax.swing.JFrame {
             }
 
             br.loadClauses(pp.iterator());
-        } else if (this.jrbRML.isSelected()) {
-        	
-        	ruleMLverison = RuleMLVersion.RuleML88;
-        	       	
-            RuleMLParser rmp = new RuleMLParser();
-            try {
-                rmp.parseRuleMLString(ruleMLverison, kbstr);
-            } catch (Exception ex) {
-                //this.logger.error(ex.getMessage(), ex);
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
-                                              JOptionPane.ERROR_MESSAGE);
-            }
-
-            br.loadClauses(rmp.iterator());
-        } else if(this.jrbRML91.isSelected()){
+        } else if (this.jrbRML.isSelected() || this.jrbRML91.isSelected()) {
         	
         	ruleMLverison = RuleMLVersion.RuleML91;
-        	
-            RuleMLParser rmp = new RuleMLParser();
+        	       	
             try {
-                rmp.parseRuleMLString(ruleMLverison, kbstr);
+                rmlParser.parseRuleMLString(ruleMLverison, kbstr);
             } catch (Exception ex) {
                 //this.logger.error(ex.getMessage(), ex);
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
                                               JOptionPane.ERROR_MESSAGE);
             }
 
-            br.loadClauses(rmp.iterator());        	
+            br.loadClauses(rmlParser.iterator());
         }
     }
 
@@ -1529,7 +1519,11 @@ public class TopDownGUI extends javax.swing.JFrame {
                 BasicConfigurator.configure();
                 Logger root = Logger.getRootLogger();
                 root.setLevel(Level.DEBUG);
-                TopDownGUI frame = new TopDownGUI();
+                
+                Configuration config = new Config();
+                RuleMLParser rmlParser = new RuleMLParser(config);
+                
+                TopDownGUI frame = new TopDownGUI(rmlParser);
                 TextPaneAppender tpa = new TextPaneAppender(new PatternLayout(
                         "%-5p %d [%t]:  %m%n"), "Debug");
                 tpa.setTextPane(frame.dbgcon.getTextPane());

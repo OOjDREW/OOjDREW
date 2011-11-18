@@ -21,7 +21,7 @@ import java.util.prefs.Preferences;
  * @author Marcel A. Ball
  * @version 0.89
  */
-public class Config {
+public class Config implements Configuration {
     /**
      * This variable specifies the default output format that is produced
      * when toString() calls are made on Term and DefiniteClause Objects.

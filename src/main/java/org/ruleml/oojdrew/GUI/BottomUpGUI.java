@@ -38,6 +38,8 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.ruleml.oojdrew.Config;
+import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.BottomUp.ForwardReasoner;
 import org.ruleml.oojdrew.BottomUp.ForwardReasoner.RuleDescriptionLanguage;
 import org.ruleml.oojdrew.parsing.POSLParser;
@@ -72,13 +74,16 @@ public class BottomUpGUI extends javax.swing.JFrame {
     int posl = 0;
    
     public static RuleMLVersion ruleMLversion = RuleMLVersion.RuleML88;
+    
+    private RuleMLParser rmlParser;
 
     //Logger logger = Logger.getLogger("jdrew.oo.gui.BottomUpGUI");
 
     /** Creates new form BottomUpGUI */
-    public BottomUpGUI() {
+    public BottomUpGUI(RuleMLParser rmlParser) {
         initComponents();
         fr = new ForwardReasoner();
+        this.rmlParser = rmlParser;
     }
 
     /** This method is called from within the constructor to
@@ -542,41 +547,24 @@ public class BottomUpGUI extends javax.swing.JFrame {
 
             fr.loadClauses(pp.iterator());
         } //ruleml 0.88
-         if (this.jrbRML.isSelected()) {
-         	
-            ruleMLversion = RuleMLVersion.RuleML88;
-            
-            RuleMLParser rmp = new RuleMLParser();
+         if (this.jrbRML.isSelected() || this.jrbRML91.isSelected()) {
+        	 
+            ruleMLversion = RuleMLVersion.RuleML91;
+
             try {
-                rmp.parseRuleMLString(ruleMLversion, kbstr);
+                rmlParser.parseRuleMLString(RuleMLVersion.RuleML91, kbstr);
             } catch (Exception ex) {
                 //this.logger.error(ex.getMessage(), ex);
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
                                               JOptionPane.ERROR_MESSAGE);
             }
 
-			Iterator it = rmp.iterator();
+			Iterator it = rmlParser.iterator();
 
-            fr.loadClauses(rmp.iterator());
+            fr.loadClauses(rmlParser.iterator());
           //ruleml 0.91
-        }else if(this.jrbRML91.isSelected()){
-        	
-        	ruleMLversion = RuleMLVersion.RuleML91;
-        	
-        	RuleMLParser rmp = new RuleMLParser();
-            try {
-                rmp.parseRuleMLString(ruleMLversion, kbstr);
-            } catch (Exception ex) {
-                //this.logger.error(ex.getMessage(), ex);
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
-                                              JOptionPane.ERROR_MESSAGE);
-            }
-
-			Iterator it = rmp.iterator();
-
-            fr.loadClauses(rmp.iterator());
-        	
         }
+         
 		//Testing for stratification if user wants to.
 		if(jrbCHECK.isSelected()){
 				
@@ -705,8 +693,11 @@ public class BottomUpGUI extends javax.swing.JFrame {
                 BasicConfigurator.configure();
                 Logger root = Logger.getRootLogger();
                 root.setLevel(Level.DEBUG);
+                
+                Configuration config = new Config();
+                RuleMLParser rmlParser = new RuleMLParser(config);
 
-                BottomUpGUI frame = new BottomUpGUI();
+                BottomUpGUI frame = new BottomUpGUI(rmlParser);
                 frame.setSize(800,750);
                 TextPaneAppender tpa = new TextPaneAppender(new PatternLayout(
                         "%-5p %d [%t]:  %m%n"), "Debug");
