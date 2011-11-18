@@ -1,0 +1,74 @@
+<Assert>
+<Rulebase mapClosure="universal">
+<oid><Ind>Asserted content, i.e. rules and facts</Ind></oid>
+
+<Implies>
+    <And>
+        <Atom>
+            <op><Rel>premium</Rel></op>
+            <Var>customer</Var>
+        </Atom>
+        <Atom>
+            <op><Rel>regular</Rel></op>
+            <Var>product</Var>
+        </Atom>
+    </And>
+    <Atom>
+        <op><Rel>discount</Rel></op>
+        <Var>customer</Var>
+        <Var>product</Var>
+        <Ind>5.0 percent</Ind>
+    </Atom>
+</Implies>
+
+<Implies>
+    <And>
+        <Atom>
+            <op><Rel>premium</Rel></op>
+            <Var>customer</Var>
+        </Atom>
+        <Atom>
+            <op><Rel>luxury</Rel></op>
+            <Var>product</Var>
+        </Atom>
+    </And>
+    <Atom>
+        <op><Rel>discount</Rel></op>
+        <Var>customer</Var>
+        <Var>product</Var>
+        <Ind>7.5 percent</Ind>
+    </Atom>
+</Implies>
+
+<Implies>
+    <Atom>
+        <op><Rel>spending</Rel></op>
+        <Var>customer</Var>
+        <Ind>min 5000 euro</Ind>
+        <Ind>previous year</Ind>
+    </Atom>
+    <Atom>
+        <op><Rel>premium</Rel></op>
+        <Var>customer</Var>
+    </Atom>
+</Implies>
+
+<Atom>
+    <op><Rel>luxury</Rel></op>
+    <Ind>Porsche</Ind>
+</Atom>
+
+<Atom>
+    <op><Rel>regular</Rel></op>
+    <Ind>Honda</Ind>
+</Atom>
+
+<Atom>
+    <op><Rel>spending</Rel></op>
+    <Ind>Peter Miller</Ind>
+    <Ind>min 5000 euro</Ind>
+    <Ind>previous year</Ind>
+</Atom>
+
+</Rulebase>
+</Assert>
