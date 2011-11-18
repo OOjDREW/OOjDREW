@@ -8,6 +8,8 @@
 
 package org.ruleml.oojdrew;
 
+import java.util.prefs.Preferences;
+
 /**
  * <p>Title: OO jDREW</p>
  *
@@ -68,4 +70,21 @@ public class Config {
      * <Var>$anonvar1</Var> or ?$ANON1; for RuleML and POSL respectively).
      */
     public static boolean PRINTANONVARNAMES = false;
+    
+    private Preferences preferences;
+    
+    public Config()
+    {
+    	this.preferences = Preferences.userNodeForPackage(getClass());
     }
+    
+    public boolean getRuleMLCompatibilityModeEnabled()
+    {
+    	return preferences.getBoolean("RuleMLCompatibilityMode", true);
+    }
+    
+    public void setRuleMLCompatibilityModeEnabled(boolean enabled)
+    {
+    	preferences.putBoolean("RuleMLCompatibilityMode", enabled);
+    }
+}

@@ -104,10 +104,12 @@ public class TopDownGUI extends javax.swing.JFrame {
         ExitActionTD exitAction = new ExitActionTD("Exit");
         OpenActionTD openAction = new OpenActionTD("Open File");
     	OpenWebSourceActionTD webAction = new OpenWebSourceActionTD("Open Web Source");
+    	ShowSettingsDialog settingsDialogAction = new ShowSettingsDialog("Settings");
     	
         //adding the connection action and exit action to the menu
         fileMenu.add(openAction);
         fileMenu.add(webAction);
+        fileMenu.add(settingsDialogAction);
         fileMenu.addSeparator();            
         fileMenu.add(exitAction);
                 
@@ -1878,3 +1880,19 @@ public class TopDownGUI extends javax.swing.JFrame {
   	TopDownGUI.openWebSource();
   }
 }//Open Action
+ 
+class ShowSettingsDialog extends AbstractAction
+{
+	private SettingsDialog dialog;
+	
+	public ShowSettingsDialog(String name)
+	{
+		super(name);
+		this.dialog = new SettingsDialog();
+	}
+	
+	public void actionPerformed(ActionEvent e)
+	{
+		dialog.show();
+	}
+}
