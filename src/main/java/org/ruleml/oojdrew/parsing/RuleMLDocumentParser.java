@@ -1277,14 +1277,17 @@ public class RuleMLDocumentParser implements IRuleMLParser, PreferenceChangeList
     	}
     	return count;
     }
-
-
-
-	@Override
+    
+    /**
+     * Updates the current settings given by the configuration UI
+     */
 	public void preferenceChange(PreferenceChangeEvent arg0) {
 		readConfig();
 	}
 	
+	/**
+	 * Sets new configuration parameters given by the current configuration
+	 */
 	public void readConfig()
 	{
 		this.compatibilityMode = config.getRuleMLCompatibilityModeEnabled();
