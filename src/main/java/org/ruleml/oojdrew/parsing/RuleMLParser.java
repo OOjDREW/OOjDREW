@@ -141,7 +141,7 @@ public class RuleMLParser {
 	public void parseDocument(RuleMLVersion version, Document doc)
 			throws ParseException, ParsingException, ValidityException
 	{
-		IRuleMLParser parser = null;
+		RuleMLDocumentParser parser = null;
 
 		switch (version)
 		{
@@ -159,35 +159,22 @@ public class RuleMLParser {
 
 		parser.parseRuleMLDocument(doc);
 	}
-    
-    //XOm element
-    
-       public DefiniteClause parseRuleMLQuery(String contents) throws
-            ParseException, ParsingException, ValidityException, IOException {
-    	   
-        	RuleMLQueryParser rmq = new RuleMLQueryParser(clauses);
-        	Builder bl = new Builder();
-	 
-       		StringReader sr = new StringReader(contents);
-     	    Document doc = bl.build(sr);
         
-     	    rmq.parseRuleMLDocument(doc);
-     	    //make new parser
-     	    //get the one out     	    
-     	    Iterator it = clauses.iterator();
-     	    
-     	        DefiniteClause dc = null;   	
-       
-       	   while (it.hasNext()) {
-        	
-        	
-       	 	dc = (DefiniteClause) it.next();
-        	//System.out.println("Loaded clause: " + dc.toPOSLString());
-        	
-           }
-          //System.out.println(dc.toPOSLString());
-          
-     	    return dc;
-    	}
-   
+   public DefiniteClause parseRuleMLQuery(String contents) throws
+        ParseException, ParsingException, ValidityException, IOException {
+
+		parseRuleMLString(RuleMLVersion.RuleML91, contents);
+		
+		Iterator it = clauses.iterator();
+
+		DefiniteClause dc = null;
+		while (it.hasNext())
+		{
+			dc = (DefiniteClause) it.next();
+			// System.out.println("Loaded clause: " + dc.toPOSLString());
+		}
+		// System.out.println(dc.toPOSLString());
+
+		return dc;
+	}
 }

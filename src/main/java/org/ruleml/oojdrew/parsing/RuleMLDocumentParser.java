@@ -35,7 +35,7 @@ import org.ruleml.oojdrew.util.Types;
  * @version 0.93
  */
 
-public class RuleMLDocumentParser implements IRuleMLParser, PreferenceChangeListener {
+public class RuleMLDocumentParser implements PreferenceChangeListener {
 
     private Hashtable skolemMap;
 
@@ -97,7 +97,7 @@ public class RuleMLDocumentParser implements IRuleMLParser, PreferenceChangeList
             
     public void parseRuleMLDocument(Document doc) throws ParseException {
         this.skolemMap = new Hashtable();
-        
+               
         Element root = doc.getRootElement();        
         Element firstChild = null;
         
@@ -128,9 +128,17 @@ public class RuleMLDocumentParser implements IRuleMLParser, PreferenceChangeList
 				firstChild = getFirstChildElement(root, tagNames.AND);
 			}
 		}
+		else if (rootName.equals(tagNames.QUERY))
+		{
+			// Queries do not have close 
+			hasMapClosure = false;
+			// Use query element as first child
+			firstChild = root;
+		}
 		
         if (firstChild == null) 
         {
+        	// Note: first child only can get null if root is no query element
             throw new ParseException(
                     "RuleML or Assert element must contain an Rulebase or an And element!");
         }
@@ -141,9 +149,8 @@ public class RuleMLDocumentParser implements IRuleMLParser, PreferenceChangeList
                 throw new ParseException(
                         "Only universal inner closures are currently supported.");
             }
-
         } else {
-            logger.info("Document root has not innerclose attribute. Indiviual clauses must have closure attributes.");
+            logger.info("Document root has no mapClosure attribute. Indiviual clauses must have closure attributes.");
         }
 	
         Elements els = firstChild.getChildElements();
