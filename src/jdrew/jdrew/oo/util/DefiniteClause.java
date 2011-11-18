@@ -11,6 +11,7 @@ package jdrew.oo.util;
 import java.util.Vector;
 
 import jdrew.oo.parsing.RuleMLParser;
+import jdrew.oo.parsing.RuleMLParser.RuleMLVersion;
 import nu.xom.Element;
 
 /**
@@ -86,7 +87,7 @@ public class DefiniteClause {
         if (jdrew.oo.Config.PRPRINT) {
             return toPOSLString();
         } else {
-            return toRuleMLString(RuleMLParser.RULEML88);
+            return toRuleMLString(RuleMLVersion.RuleML88);
         }
      }      
 
@@ -96,16 +97,16 @@ public class DefiniteClause {
      * variable. If PRPRINT is true - then the POSL format is used for output,
      * otherwise RuleML (0.88 + rests or 0.91) is used.
      *  
-     * @param format int - this is to determine what RuleML parser to use.
+     * @param version RuleMLVersion - this is to determine what RuleML parser to use.
      *
      * @return String The string representation of the clause.
      */
           
-    public String toString(int format) {
+    public String toString(RuleMLVersion version) {
         if (jdrew.oo.Config.PRPRINT) {
             return toPOSLString();
         } else {
-            return toRuleMLString(format);
+            return toRuleMLString(version);
         }
     }
 
@@ -144,13 +145,13 @@ public class DefiniteClause {
      * This method is called by the toString() method if jdrew.oo.Config.PRPRINT
      * is false, and can be called by user code.
      *
-     * @param format int - this is to determine what RuleML parser to use.
+     * @param version RuleMLVersion - this is to determine what RuleML parser to use.
      *
      * @return String The RuleML representation stored in a Java String object.
      */
      
-    public String toRuleMLString(int format) {
-        Element rml = this.toRuleML(format);
+    public String toRuleMLString(RuleMLVersion version) {
+        Element rml = this.toRuleML(version);
         java.io.StringWriter sw = new java.io.StringWriter();
         nu.xom.Serializer sl = new nu.xom.Serializer(sw);
         sl.setIndent(3);
@@ -171,32 +172,32 @@ public class DefiniteClause {
      * This method is called by the toRuleMLString() method, and can be called
      * by user code.
      *
-     * @param format int - this is to determine what RuleML parser to use.
+     * @param version int - this is to determine what RuleML parser to use.
      *
      * @return Element The RuleML representation of the clause stored as a XOM
      * tree.
      */
           
-    public Element toRuleML(int format) {
+    public Element toRuleML(RuleMLVersion version) {
 		
         Element el;
         if (atoms.length == 1) {
 
-            el = atoms[0].toRuleML(variableNames, true, format);
+            el = atoms[0].toRuleML(variableNames, true, version);
         } else {
             el = new Element("Implies");
             if (atoms.length > 2) {
                 Element el2 = new Element("And");
                 for (int i = 1; i < atoms.length; i++) {
 
-                    el2.appendChild(atoms[i].toRuleML(variableNames, false, format));
+                    el2.appendChild(atoms[i].toRuleML(variableNames, false, version));
                 }
                 el.appendChild(el2);
             } else {
-                el.appendChild(atoms[1].toRuleML(variableNames, false, format));
+                el.appendChild(atoms[1].toRuleML(variableNames, false, version));
             }
 
-            el.appendChild(atoms[0].toRuleML(variableNames, true, format));
+            el.appendChild(atoms[0].toRuleML(variableNames, true, version));
 
         }
         //Each atom no longer needs a closure attribute, the closure is

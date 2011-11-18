@@ -41,6 +41,7 @@ import javax.swing.JTextArea;
 
 import jdrew.oo.parsing.POSLParser;
 import jdrew.oo.parsing.RuleMLParser;
+import jdrew.oo.parsing.RuleMLParser.RuleMLVersion;
 import jdrew.oo.parsing.SubsumesParser;
 import jdrew.oo.util.DefiniteClause;
 import jdrew.oo.util.Types;
@@ -76,7 +77,7 @@ public class Translator extends JFrame {
       * This keeps track of the current Parser being used
       */
        
-    public static int currentParser =  RuleMLParser.RULEML88;
+    public static RuleMLVersion ruleMLversion = RuleMLVersion.RuleML88;
      /**
       * This is the constructor for the Translator.
       */   
@@ -321,7 +322,7 @@ public class Translator extends JFrame {
      */
     public void jbToRML_mouseClicked(MouseEvent e) {
             
-        currentParser =  RuleMLParser.RULEML88;
+        ruleMLversion = RuleMLVersion.RuleML88;
             
         String posltext = this.posltext.getText().trim();
         
@@ -393,7 +394,7 @@ public class Translator extends JFrame {
 
         while(it.hasNext()){
             DefiniteClause dc = (DefiniteClause)it.next();
-            and.appendChild(dc.toRuleML(currentParser));
+            and.appendChild(dc.toRuleML(ruleMLversion));
         }
 
         java.io.StringWriter sw = new java.io.StringWriter();
@@ -412,7 +413,7 @@ public class Translator extends JFrame {
 
     public void jbToRML91_mouseClicked(MouseEvent e) {
             
-    	currentParser =  RuleMLParser.RULEML91;
+    	ruleMLversion =  RuleMLVersion.RuleML91;
             
         String posltext = this.posltext.getText().trim();
         
@@ -488,7 +489,7 @@ public class Translator extends JFrame {
 
         while(it.hasNext()){
             DefiniteClause dc = (DefiniteClause)it.next();
-            and.appendChild(dc.toRuleML(currentParser));
+            and.appendChild(dc.toRuleML(ruleMLversion));
         }
 
         java.io.StringWriter sw = new java.io.StringWriter();
@@ -582,17 +583,20 @@ public class Translator extends JFrame {
 		}
 		///work around to remove type dependency
         RuleMLParser rmp = new RuleMLParser();
-        try{
-            rmp.parseRuleMLString(RuleMLParser.RULEML91, rmltext);
-        }catch(Exception ex){
-                
-                try{
-                rmp.parseRuleMLString(RuleMLParser.RULEML88, rmltext);
-                }
-                catch(Exception ex2){
-                        JOptionPane.showMessageDialog(this, ex2.getMessage(), "Error",
-                                         JOptionPane.ERROR_MESSAGE);
-                }
+		try
+		{
+			rmp.parseRuleMLString(RuleMLVersion.RuleML91, rmltext);
+		} catch (Exception ex)
+		{
+
+			try
+			{
+				rmp.parseRuleMLString(RuleMLVersion.RuleML88, rmltext);
+			} catch (Exception ex2)
+			{
+				JOptionPane.showMessageDialog(this, ex2.getMessage(), "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
         }
 
         StringBuffer sb = new StringBuffer();

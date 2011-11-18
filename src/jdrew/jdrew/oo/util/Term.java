@@ -12,6 +12,7 @@ import java.util.Vector;
 
 import jdrew.oo.Config;
 import jdrew.oo.parsing.RuleMLParser;
+import jdrew.oo.parsing.RuleMLParser.RuleMLVersion;
 import nu.xom.Attribute;
 import nu.xom.Element;
 
@@ -479,16 +480,16 @@ public class Term implements Comparable {
      * This method is used when you do not have access to the variable names;
      * variables are output as ?Varx - where x is the variable id.
      *
-     * @param format int - this is to determine what RuleML parser to use.
+     * @param version RuleMLVersion - this is to determine what RuleML parser to use.
      *
      * @return java.lang.String value - the String representation of this term.
      */
-    public String toString(int format) {
+    public String toString(RuleMLVersion version) {
         if (Config.PRPRINT) {
             return this.toPOSLString(true);
         } else {
         	
-            return this.toRuleMLString(format);
+            return this.toRuleMLString(version);
         }
     }
 
@@ -499,18 +500,18 @@ public class Term implements Comparable {
      * POSL syntax, otherwise it will produce a string in OO RuleML XML
      * syntax.
      *
-     * @param format int - this is to determine what RuleML parser to use.
+     * @param version RuleMLVersion - this is to determine what RuleML parser to use.
      *
      * @param varNames String[] - this string array contains the variable names
      *
      * @return java.lang.String value - the String representation of this term.
      */
-    public String toString(String[] varNames, int format) {
+    public String toString(String[] varNames, RuleMLVersion version) {
         if (Config.PRPRINT) {
             return this.toPOSLString(varNames, true);
         } else {
         	
-            return this.toRuleMLString(varNames, format);
+            return this.toRuleMLString(varNames, version);
         
         }
     }
@@ -951,16 +952,16 @@ public class Term implements Comparable {
      * This version is for the case where you do not have access to the
      * variable names for the term.
      * 
-     * @param format int - this is to determine what RuleML parser to use.
+     * @param version RuleMLVersion - this is to determine what RuleML parser to use.
      *
      * @return java.lang.String value - The OO RuleML syntax representation of
      * this, stored as a "pretty printed" string.
      */
      
      
-    public String toRuleMLString(int format) {
+    public String toRuleMLString(RuleMLVersion version) {
     	
-        Element rml = this.toRuleML(true, format);
+        Element rml = this.toRuleML(true, version);
         java.io.StringWriter sw = new java.io.StringWriter();
         nu.xom.Serializer sl = new nu.xom.Serializer(sw);
         sl.setIndent(3);
@@ -981,14 +982,14 @@ public class Term implements Comparable {
      * use when outputting - these are stored in the DefiniteClause object
      * associated with the term.
      *
-     * @param format int - this is to determine what RuleML parser to use. 
+     * @param version RuleMLVersion - this is to determine what RuleML parser to use. 
      *
      * @return String A string containing the OO RuleML XML representation of
      * this term.
      */
-    public String toRuleMLString(String[] varNames, int format) {
+    public String toRuleMLString(String[] varNames, RuleMLVersion version) {
     	
-        Element rml = this.toRuleML(varNames, true, format);
+        Element rml = this.toRuleML(varNames, true, version);
         java.io.StringWriter sw = new java.io.StringWriter();
         nu.xom.Serializer sl = new nu.xom.Serializer(sw);
         sl.setIndent(3);
@@ -1007,7 +1008,7 @@ public class Term implements Comparable {
      *
      * This version is for when you do not have access to the variable names.
      *
-     * @param format int - this is to determine what RuleML parser to use.
+     * @param version RuleMLVersion - this is to determine what RuleML parser to use.
      *
      * @param boolean head - If true then the atom is the head of a rule. 
      * 
@@ -1015,9 +1016,9 @@ public class Term implements Comparable {
      * this, as a Element value.
      */
 
-    public Element toRuleML(boolean head, int format) {
+    public Element toRuleML(boolean head, RuleMLVersion version) {
     	   	   		
-   	if(format == RuleMLParser.RULEML91){
+   	if(version == RuleMLVersion.RuleML91){
    		
    		   			
    		Element el = null;
@@ -1029,19 +1030,19 @@ public class Term implements Comparable {
             } else if (this.isAtom() && this.symbol == SymbolTable.IASSERT) {
                 el = new Element("Assert");
                 if (this.subTerms.length == 1) {
-                    el.insertChild(subTerms[0].toRuleML(true,format), 0);
+                    el.insertChild(subTerms[0].toRuleML(true,version), 0);
                 } else {
                     Element el2 = new Element("Implies");
                     if (this.subTerms.length > 2) {
                         Element el3 = new Element("And");
                         for (int i = 1; i < this.subTerms.length; i++) {
-                            el3.appendChild(this.subTerms[i].toRuleML(false,format));
+                            el3.appendChild(this.subTerms[i].toRuleML(false,version));
                         }
                         el2.appendChild(el3);
                     } else {
-                        el2.appendChild(this.subTerms[1].toRuleML(false,format));
+                        el2.appendChild(this.subTerms[1].toRuleML(false,version));
                     }
-                    el2.appendChild(this.subTerms[0].toRuleML(true,format));
+                    el2.appendChild(this.subTerms[0].toRuleML(true,version));
                     el.appendChild(el2);
 
                 }
@@ -1070,7 +1071,7 @@ public class Term implements Comparable {
             }
 
             for (int i = 0; i < this.subTerms.length && !dst; i++) {
-                el.insertChild(this.subTerms[i].toRuleML(head,format), el.getChildCount());
+                el.insertChild(this.subTerms[i].toRuleML(head,version), el.getChildCount());
             }
         } else {
             if(this.role == SymbolTable.IOID && !jdrew.oo.Config.PRINTGENOIDS && head){
@@ -1149,7 +1150,7 @@ public class Term implements Comparable {
     	
         //Print the Clauses in RULEML88 Format
     	    	
-    	if(format == RuleMLParser.RULEML88){
+    	if(version == RuleMLVersion.RuleML88){
     	
     	Element el = null;
         boolean dst = false;
@@ -1160,19 +1161,19 @@ public class Term implements Comparable {
             } else if (this.isAtom() && this.symbol == SymbolTable.IASSERT) {
                 el = new Element("Assert");
                 if (this.subTerms.length == 1) {
-                    el.insertChild(subTerms[0].toRuleML(true,format), 0);
+                    el.insertChild(subTerms[0].toRuleML(true,version), 0);
                 } else {
                     Element el2 = new Element("Implies");
                     if (this.subTerms.length > 2) {
                         Element el3 = new Element("And");
                         for (int i = 1; i < this.subTerms.length; i++) {
-                            el3.appendChild(this.subTerms[i].toRuleML(false,format));
+                            el3.appendChild(this.subTerms[i].toRuleML(false,version));
                         }
                         el2.appendChild(el3);
                     } else {
-                        el2.appendChild(this.subTerms[1].toRuleML(false,format));
+                        el2.appendChild(this.subTerms[1].toRuleML(false,version));
                     }
-                    el2.appendChild(this.subTerms[0].toRuleML(true,format));
+                    el2.appendChild(this.subTerms[0].toRuleML(true,version));
                     el.appendChild(el2);
 
                 }
@@ -1192,7 +1193,7 @@ public class Term implements Comparable {
             }
 
             for (int i = 0; i < this.subTerms.length && !dst; i++) {
-                el.insertChild(this.subTerms[i].toRuleML(head,format), el.getChildCount());
+                el.insertChild(this.subTerms[i].toRuleML(head,version), el.getChildCount());
             }
         } else {
             if(this.role == SymbolTable.IOID && !jdrew.oo.Config.PRINTGENOIDS && head){
@@ -1282,17 +1283,17 @@ public class Term implements Comparable {
      * @param varNames String[] The variable names associated with the term;
      * these are stored in the DefiniteClause object associated with the term.
      *
-     * @param format int - this is to determine what RuleML parser to use.
+     * @param version int - this is to determine what RuleML parser to use.
      *
      * @return Element The OO RuleML syntax representation of this, as an
      * Element value.
      */
          
-    public Element toRuleML(String[] varNames, boolean head, int format) {
+    public Element toRuleML(String[] varNames, boolean head, RuleMLVersion version) {
     	
     	//Printing the Clauses in RuleML 0.91 Format
     			
-		if(format == RuleMLParser.RULEML91){
+		if(version == RuleMLVersion.RuleML91){
 
         Element el = null;
         boolean dst = false;
@@ -1302,19 +1303,19 @@ public class Term implements Comparable {
             } else if (this.isAtom() && this.symbol == SymbolTable.IASSERT) {
                 el = new Element("Assert");
                 if (this.subTerms.length == 1) {
-                    el.insertChild(subTerms[0].toRuleML(varNames, true,format), 0);
+                    el.insertChild(subTerms[0].toRuleML(varNames, true,version), 0);
                 } else {
                     Element el2 = new Element("Implies");
                     if (this.subTerms.length > 2) {
                         Element el3 = new Element("And");
                         for (int i = 1; i < this.subTerms.length; i++) {
-                            el3.appendChild(this.subTerms[i].toRuleML(varNames, false,format));
+                            el3.appendChild(this.subTerms[i].toRuleML(varNames, false,version));
                         }
                         el2.appendChild(el3);
                     } else {
-                        el2.appendChild(this.subTerms[1].toRuleML(varNames, false,format));
+                        el2.appendChild(this.subTerms[1].toRuleML(varNames, false,version));
                     }
-                    el2.appendChild(this.subTerms[0].toRuleML(varNames, true,format));
+                    el2.appendChild(this.subTerms[0].toRuleML(varNames, true,version));
                     el.appendChild(el2);
 
                 }
@@ -1345,7 +1346,7 @@ public class Term implements Comparable {
             }
 
             for (int i = 0; i < this.subTerms.length && !dst; i++) {
-                Element tmp = this.subTerms[i].toRuleML(varNames, head,format);
+                Element tmp = this.subTerms[i].toRuleML(varNames, head,version);
                 if(tmp != null)
                     el.insertChild(tmp, el.getChildCount());
             }
@@ -1431,7 +1432,7 @@ public class Term implements Comparable {
     	
     	//RuleML 0.88 Format	
       	
-      	if(format == RuleMLParser.RULEML88){
+      	if(version == RuleMLVersion.RuleML88){
       	
       	Element el = null;
         boolean dst = false;
@@ -1441,19 +1442,19 @@ public class Term implements Comparable {
             } else if (this.isAtom() && this.symbol == SymbolTable.IASSERT) {
                 el = new Element("Assert");
                 if (this.subTerms.length == 1) {
-                    el.insertChild(subTerms[0].toRuleML(varNames, true,format), 0);
+                    el.insertChild(subTerms[0].toRuleML(varNames, true,version), 0);
                 } else {
                     Element el2 = new Element("Implies");
                     if (this.subTerms.length > 2) {
                         Element el3 = new Element("And");
                         for (int i = 1; i < this.subTerms.length; i++) {
-                            el3.appendChild(this.subTerms[i].toRuleML(varNames, false,format));
+                            el3.appendChild(this.subTerms[i].toRuleML(varNames, false,version));
                         }
                         el2.appendChild(el3);
                     } else {
-                        el2.appendChild(this.subTerms[1].toRuleML(varNames, false,format));
+                        el2.appendChild(this.subTerms[1].toRuleML(varNames, false,version));
                     }
-                    el2.appendChild(this.subTerms[0].toRuleML(varNames, true,format));
+                    el2.appendChild(this.subTerms[0].toRuleML(varNames, true,version));
                     el.appendChild(el2);
 
                 }
@@ -1475,7 +1476,7 @@ public class Term implements Comparable {
             }
 
             for (int i = 0; i < this.subTerms.length && !dst; i++) {
-                Element tmp = this.subTerms[i].toRuleML(varNames, head,format);
+                Element tmp = this.subTerms[i].toRuleML(varNames, head,version);
                 if(tmp != null)
                     el.insertChild(tmp, el.getChildCount());
             }

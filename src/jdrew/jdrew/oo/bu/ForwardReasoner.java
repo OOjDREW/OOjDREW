@@ -49,6 +49,7 @@ import jdrew.oo.builtins.SubstringBuiltin;
 import jdrew.oo.builtins.SubtractBuiltin;
 import jdrew.oo.builtins.TanBuiltin;
 import jdrew.oo.parsing.RuleMLParser;
+import jdrew.oo.parsing.RuleMLParser.RuleMLVersion;
 import jdrew.oo.util.DefiniteClause;
 import jdrew.oo.util.Term;
 import ptolemy.graph.DirectedGraph;
@@ -80,7 +81,13 @@ import ptolemy.graph.Node;
  */
 public class ForwardReasoner {
 
-	public static int rem = jdrew.oo.gui.BottomUpGUI.currentParser;
+	public static RuleMLVersion rem = jdrew.oo.gui.BottomUpGUI.ruleMLversion;
+	
+	public static enum RuleDescriptionLanguage
+	{
+		POSL,
+		RuleML
+	}
 
     /**
      * This Hashtable stores all known facts that have already been processed.
@@ -312,11 +319,9 @@ public class ForwardReasoner {
 
     /**
      * This method will return a string that will contain the new facts and old facts
-     * in ruleML or posl form
-     * If type is equal to true then it will display in posl
-     * If type is equal to false then it will display ruleml
+     * in RuleML or POSL form
      */
-    public String printClauses(int type, int format) {
+    public String printClauses(RuleDescriptionLanguage type, RuleMLVersion version) {
     	    	
     	String out = "";
     	
@@ -331,7 +336,7 @@ public class ForwardReasoner {
             	DefiniteClause dc = (DefiniteClause) it.next();
             	            	
             	stringsPOSL.addElement(dc.toPOSLString());
-            	stringsRULEML.addElement(dc.toRuleMLString(format));
+            	stringsRULEML.addElement(dc.toRuleMLString(version));
             	            	            	            	
             	i++;
         	}
@@ -339,26 +344,29 @@ public class ForwardReasoner {
 
 		if(flip){
 			
-			if(type == 0){
-			
-			//System.out.println("\n%Old Facts: ");
-			out = out + "%Old Facts: \n";
-			Iterator iter2 = stringsPOSL.iterator();
-				while(iter2.hasNext()){
-					String out2 = (String)iter2.next();
-					//System.out.println(out2);
+			if (type == RuleDescriptionLanguage.POSL)
+			{
+				// System.out.println("\n%Old Facts: ");
+				out = out + "%Old Facts: \n";
+				Iterator iter2 = stringsPOSL.iterator();
+				while (iter2.hasNext())
+				{
+					String out2 = (String) iter2.next();
+					// System.out.println(out2);
 					out = out + out2 + "\n";
 				}
 			}
 		
-			if(type == RuleMLParser.RULEML88 || type == RuleMLParser.RULEML91){
-			out = out + "%Old Facts: \n";
-			Iterator iter2 = stringsRULEML.iterator();	
-				while(iter2.hasNext()){
-					String out2 = (String)iter2.next();
-					//System.out.println(out2);
+			if (type == RuleDescriptionLanguage.RuleML)
+			{
+				out = out + "%Old Facts: \n";
+				Iterator iter2 = stringsRULEML.iterator();
+				while (iter2.hasNext())
+				{
+					String out2 = (String) iter2.next();
+					// System.out.println(out2);
 					out = out + out2 + "\n";
-				}				
+				}
 			}
 		
 			
@@ -375,7 +383,7 @@ public class ForwardReasoner {
             Vector v = (Vector) oldFacts.get(key);
             it = v.iterator();
             
-            if(type == 0){
+            if(type == RuleDescriptionLanguage.POSL){
       
             	while (it.hasNext()) {
               	  DefiniteClause dc = (DefiniteClause) it.next();
@@ -397,7 +405,7 @@ public class ForwardReasoner {
         	
         	}
         
-        	if(type == RuleMLParser.RULEML88 || type == RuleMLParser.RULEML91){
+        	if(type == RuleDescriptionLanguage.RuleML){
         		
         		while (it.hasNext()) {
               	  DefiniteClause dc = (DefiniteClause) it.next();
@@ -406,13 +414,13 @@ public class ForwardReasoner {
              	    boolean print = true;
                     while(iter.hasNext()){
               		String test = (String)iter.next();
-                		if(test.equals(dc.toRuleMLString(format))){
+                		if(test.equals(dc.toRuleMLString(version))){
                 			print = false;
                 		}
                 }
     			
     				if(print){
-    					out = out + dc.toRuleMLString(format) + "\n";   
+    					out = out + dc.toRuleMLString(version) + "\n";   
                 	}
            		}
          		

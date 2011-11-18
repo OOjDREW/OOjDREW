@@ -42,6 +42,7 @@ import jdrew.oo.parsing.RuleMLParser;
 import jdrew.oo.parsing.SubsumesParser;
 import jdrew.oo.parsing.TypeQueryParserPOSL;
 import jdrew.oo.parsing.TypeQueryParserRuleML;
+import jdrew.oo.parsing.RuleMLParser.RuleMLVersion;
 import jdrew.oo.td.BackwardReasoner;
 import jdrew.oo.util.DefiniteClause;
 import jdrew.oo.util.LUBGLBStructure;
@@ -69,7 +70,7 @@ import org.apache.log4j.PatternLayout;
  */
 public class TopDownGUI extends javax.swing.JFrame {
 
-	public static int currentParser = RuleMLParser.RULEML88;
+	public static RuleMLVersion ruleMLverison = RuleMLVersion.RuleML88;
 
 	Iterator it = null;
 	String term1VarName = "";
@@ -308,8 +309,9 @@ public class TopDownGUI extends javax.swing.JFrame {
         kbtab.add(jLabel2);
         jLabel2.setBounds(10, 530, 100, 20);
 
-        jTabbedPane1.addTab("Knowledge Base", kbtab);
-
+        kbtab.setName("Knowledge Base");
+        jTabbedPane1.addTab(kbtab.getName(), kbtab);
+        
         qtab.setLayout(null);
 		ttab.setLayout(null);
 		
@@ -439,6 +441,9 @@ public class TopDownGUI extends javax.swing.JFrame {
         getContentPane().add(showDbgBtn);
         showDbgBtn.setBounds(600, 610, 190, 23);
         showDbgBtn.getAccessibleContext().setAccessibleName("Console");
+        
+        int kbTabIndex = jTabbedPane1.indexOfTab(kbtab.getName());
+        jTabbedPane1.setSelectedIndex(kbTabIndex);
 
         pack();
 
@@ -1421,11 +1426,11 @@ public class TopDownGUI extends javax.swing.JFrame {
             br.loadClauses(pp.iterator());
         } else if (this.jrbRML.isSelected()) {
         	
-        	currentParser = RuleMLParser.RULEML88;
+        	ruleMLverison = RuleMLVersion.RuleML88;
         	       	
             RuleMLParser rmp = new RuleMLParser();
             try {
-                rmp.parseRuleMLString(RuleMLParser.RULEML88, kbstr);
+                rmp.parseRuleMLString(ruleMLverison, kbstr);
             } catch (Exception ex) {
                 //this.logger.error(ex.getMessage(), ex);
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
@@ -1435,11 +1440,11 @@ public class TopDownGUI extends javax.swing.JFrame {
             br.loadClauses(rmp.iterator());
         } else if(this.jrbRML91.isSelected()){
         	
-        	currentParser = RuleMLParser.RULEML91;
+        	ruleMLverison = RuleMLVersion.RuleML91;
         	
             RuleMLParser rmp = new RuleMLParser();
             try {
-                rmp.parseRuleMLString(RuleMLParser.RULEML91, kbstr);
+                rmp.parseRuleMLString(ruleMLverison, kbstr);
             } catch (Exception ex) {
                 //this.logger.error(ex.getMessage(), ex);
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",

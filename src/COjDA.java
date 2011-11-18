@@ -18,6 +18,7 @@ import jdrew.oo.parsing.POSLParser;
 import jdrew.oo.parsing.ParseException;
 import jdrew.oo.parsing.RDFSParser;
 import jdrew.oo.parsing.RuleMLParser;
+import jdrew.oo.parsing.RuleMLParser.RuleMLVersion;
 import jdrew.oo.parsing.SubsumesException;
 import jdrew.oo.td.BackwardReasoner;
 import jdrew.oo.util.DefiniteClause;
@@ -73,7 +74,7 @@ public class COjDA {
 		}else if(profile_KB == RULEML91){
 			
 			rp = new RuleMLParser();
-            rp.parseRuleMLString(RuleMLParser.RULEML91, fileToString(KB));
+            rp.parseRuleMLString(RuleMLVersion.RuleML91, fileToString(KB));
             intialize_engine(rp.iterator());
 		}
 		
@@ -100,7 +101,7 @@ public class COjDA {
 			
 		}else if(profile_KB == RULEML91){
 
-            rp.parseRuleMLString(RuleMLParser.RULEML91,KB);
+            rp.parseRuleMLString(RuleMLVersion.RuleML91,KB);
             intialize_engine(rp.iterator());
 		}
 		
@@ -138,7 +139,7 @@ public class COjDA {
 			
 		}else if(profile_KB == RULEML91){
 
-            rp.parseRuleMLString(RuleMLParser.RULEML91,KB);
+            rp.parseRuleMLString(RuleMLVersion.RuleML91,KB);
             intialize_engine(rp.iterator());
 		}
 		
@@ -173,7 +174,7 @@ public class COjDA {
 			intialize_engine(pp.iterator());
 			
 		}else if(profile_KB == RULEML91){
-            rp.parseRuleMLString(RuleMLParser.RULEML91,KB);
+            rp.parseRuleMLString(RuleMLVersion.RuleML91, KB);
             intialize_engine(rp.iterator());
 		}
 
@@ -206,7 +207,7 @@ public class COjDA {
 			pp.parseDefiniteClauses(fileToString(KB));
 			intialize_engine(pp.iterator());
 		}else if(profile_KB == RULEML91){
-            rp.parseRuleMLString(RuleMLParser.RULEML91,fileToString(KB));
+            rp.parseRuleMLString(RuleMLVersion.RuleML91,fileToString(KB));
             intialize_engine(rp.iterator());
 		}
 
@@ -240,7 +241,7 @@ public class COjDA {
 			pp.parseDefiniteClauses(fileToString(KB));
 			intialize_engine(pp.iterator());
 		}else if(profile_KB == RULEML91){
-            rp.parseRuleMLString(RuleMLParser.RULEML91,fileToString(KB));
+            rp.parseRuleMLString(RuleMLVersion.RuleML91, fileToString(KB));
             intialize_engine(rp.iterator());
 		}
 

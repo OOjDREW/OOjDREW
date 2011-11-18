@@ -28,9 +28,12 @@ import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 
 import jdrew.oo.bu.ForwardReasoner;
+import jdrew.oo.bu.ForwardReasoner.RuleDescriptionLanguage;
 import jdrew.oo.parsing.POSLParser;
 import jdrew.oo.parsing.RDFSParser;
+import jdrew.oo.parsing.RuleML91Parser;
 import jdrew.oo.parsing.RuleMLParser;
+import jdrew.oo.parsing.RuleMLParser.RuleMLVersion;
 import jdrew.oo.parsing.SubsumesParser;
 import jdrew.oo.util.DefiniteClause;
 import jdrew.oo.util.SymbolTable;
@@ -67,7 +70,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
     
     int posl = 0;
    
-    public static int currentParser = RuleMLParser.RULEML88;
+    public static RuleMLVersion ruleMLversion = RuleMLVersion.RuleML88;
 
     //Logger logger = Logger.getLogger("jdrew.oo.gui.BottomUpGUI");
 
@@ -198,8 +201,9 @@ public class BottomUpGUI extends javax.swing.JFrame {
         kbtab.add(parseKBBtn);
         parseKBBtn.setBounds(591, 530, 180, 23);
                
-        jTabbedPane1.addTab("Knowledge Base", kbtab);
-
+        kbtab.setName("Knowledge Base");
+        jTabbedPane1.addTab(kbtab.getName(), kbtab);
+        
         outtab.setLayout(null);
 
         jScrollPane3.setViewportView(outputtext);
@@ -263,8 +267,6 @@ public class BottomUpGUI extends javax.swing.JFrame {
 		getContentPane().add(jrbOLDNEW);
 		jrbOLDNEW.setBounds(440, 660, 150, 23);
 		
-
-
         showdbgBtn.setText("Show Debug Console");
         showdbgBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -272,6 +274,9 @@ public class BottomUpGUI extends javax.swing.JFrame {
             }
         });
 
+        int kbTabIndex = jTabbedPane1.indexOfTab(kbtab.getName());
+        jTabbedPane1.setSelectedIndex(kbTabIndex);
+        
         getContentPane().add(showdbgBtn);
         showdbgBtn.setBounds(621, 610, 180, 23);
 
@@ -300,7 +305,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
             return;
             }
       
- 		fr.printClauses(0, currentParser);
+ 		fr.printClauses(RuleDescriptionLanguage.POSL, ruleMLversion);
  		
         //check the forward reasoner class now
         
@@ -326,7 +331,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
         	StringBuffer sb = new StringBuffer(4096);
         	
         	if(this.jrbPOSL.isSelected()){
-        		String poslFacts = fr.printClauses(posl, currentParser);
+        		String poslFacts = fr.printClauses(RuleDescriptionLanguage.POSL, ruleMLversion);
         		sb.append(poslFacts);
 
         		if(jrbRULE.isSelected()){
@@ -351,13 +356,13 @@ public class BottomUpGUI extends javax.swing.JFrame {
         		//you can exchange between ruleml 0.88 and 0.91
         		if(this.jrbRML91.isSelected()){
         			
-        			currentParser = RuleMLParser.RULEML91;
-        			ruleMLFacts = fr.printClauses(RuleMLParser.RULEML91, currentParser);
+        			ruleMLversion = RuleMLVersion.RuleML91;
+        			ruleMLFacts = fr.printClauses(RuleDescriptionLanguage.RuleML, ruleMLversion);
         		}
         		if(this.jrbRML.isSelected()){
         			
-        			currentParser = RuleMLParser.RULEML88;
-        			ruleMLFacts = fr.printClauses(RuleMLParser.RULEML88, currentParser);
+        			ruleMLversion = RuleMLVersion.RuleML88;
+        			ruleMLFacts = fr.printClauses(RuleDescriptionLanguage.RuleML, ruleMLversion);
         		}   
         		     			
         		
@@ -372,7 +377,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
             		    Iterator it = rulesv.iterator();
              			   while (it.hasNext()) {
                				     DefiniteClause dc = (DefiniteClause) it.next();
-                  				 sb.append(dc.toRuleMLString(currentParser) + "\n");
+                  				 sb.append(dc.toRuleMLString(ruleMLversion) + "\n");
                		 		}						
             			}		
            		}
@@ -427,13 +432,13 @@ public class BottomUpGUI extends javax.swing.JFrame {
         			Attribute a = new Attribute("mapClosure", "universal");
        				and.addAttribute(a);
         			
-        			currentParser = RuleMLParser.RULEML91;
+        			ruleMLversion = RuleMLVersion.RuleML91;
         		}
         		if(this.jrbRML.isSelected()){
         			and = new Element("And");
         			Attribute a = new Attribute("mapClosure", "universal");
        				and.addAttribute(a);        	
-        			currentParser = RuleMLParser.RULEML88;
+        			ruleMLversion = RuleMLVersion.RuleML88;
         		} 
          
             el.appendChild(and);
@@ -448,7 +453,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
                                  
                     if(dc.atoms[0].symbol == SymbolTable.IINCONSISTENT)
                         continue;
-                        and.appendChild(dc.toRuleML(currentParser));
+                        and.appendChild(dc.toRuleML(ruleMLversion));
                 }
             }
             //Add the option to print rules or not
@@ -462,7 +467,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
                     DefiniteClause dc = (DefiniteClause) it.next();                  
                     if(dc.atoms[0].symbol == SymbolTable.IINCONSISTENT)
                         continue;
-                    and.appendChild(dc.toRuleML(currentParser));
+                    and.appendChild(dc.toRuleML(ruleMLversion));
                 }
               }
 			}
@@ -536,11 +541,11 @@ public class BottomUpGUI extends javax.swing.JFrame {
         } //ruleml 0.88
          if (this.jrbRML.isSelected()) {
          	
-            currentParser = RuleMLParser.RULEML88;
+            ruleMLversion = RuleMLVersion.RuleML88;
             
             RuleMLParser rmp = new RuleMLParser();
             try {
-                rmp.parseRuleMLString(RuleMLParser.RULEML88, kbstr);
+                rmp.parseRuleMLString(ruleMLversion, kbstr);
             } catch (Exception ex) {
                 //this.logger.error(ex.getMessage(), ex);
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
@@ -553,11 +558,11 @@ public class BottomUpGUI extends javax.swing.JFrame {
           //ruleml 0.91
         }else if(this.jrbRML91.isSelected()){
         	
-        	currentParser = RuleMLParser.RULEML91;
+        	ruleMLversion = RuleMLVersion.RuleML91;
         	
         	RuleMLParser rmp = new RuleMLParser();
             try {
-                rmp.parseRuleMLString(RuleMLParser.RULEML91, kbstr);
+                rmp.parseRuleMLString(ruleMLversion, kbstr);
             } catch (Exception ex) {
                 //this.logger.error(ex.getMessage(), ex);
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
