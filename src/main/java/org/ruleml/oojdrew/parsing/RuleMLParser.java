@@ -148,8 +148,6 @@ public class RuleMLParser {
 		switch (version)
 		{
 		case RuleML88:
-			parser = new RuleML88Parser(clauses);
-			break;
 		case RuleML91:
 			parser = new RuleML91Parser(clauses);
 			break;

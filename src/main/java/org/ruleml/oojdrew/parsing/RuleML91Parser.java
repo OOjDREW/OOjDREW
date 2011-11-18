@@ -51,9 +51,11 @@ public class RuleML91Parser implements IRuleMLParser {
     private boolean hasiclose = false;
     
     /**
-     * 
+     * RuleML tag names
      */
     private RuleMLTagNames tagNames = null;
+    
+    private RuleMLVersion ruleMLversion;
 
     Logger logger = Logger.getLogger("jdrew.oo.util.RuleMLParser");
 
@@ -65,7 +67,10 @@ public class RuleML91Parser implements IRuleMLParser {
      */
     public RuleML91Parser(Vector clauses) {
         this.clauses = clauses;
-        this.tagNames = new RuleMLTagNames(RuleMLVersion.RuleML91);
+        
+        // Set default RuleML version
+        this.ruleMLversion = RuleMLVersion.RuleML91;
+        this.tagNames = new RuleMLTagNames(ruleMLversion);
     }
 
     /**
@@ -81,21 +86,41 @@ public class RuleML91Parser implements IRuleMLParser {
             
     public void parseRuleMLDocument(Document doc) throws ParseException {
         this.skolemMap = new Hashtable();
-        Element root = doc.getRootElement();
-        if (!root.getLocalName().equals(tagNames.ASSERT)) {
+        
+        Element root = doc.getRootElement();        
+        Element firstChild = null;
+        
+        String rootName = root.getLocalName();
+		if (rootName.equals(tagNames.RULEML))
+		{
+			root = root.getFirstChildElement(tagNames.ASSERT);
+			if (root == null)
+			{
+	            throw new ParseException(
+	                    "Assert has to be the first child of the RuleML element!");
+			}
+			firstChild = root.getFirstChildElement(tagNames.RULEBASE);
+		} 
+		else if (rootName.equals(tagNames.ASSERT))
+		{
+			firstChild = root.getFirstChildElement(tagNames.RULEBASE);
+			if (firstChild == null)
+			{
+				// If no Rulebase element exists, it has to be RuleML 0.88
+				firstChild = root.getFirstChildElement(tagNames.AND);
+				ruleMLversion = RuleMLVersion.RuleML88;
+			}
+		}
+		
+        if (firstChild == null) 
+        {
             throw new ParseException(
-                    "Root element of RuleML 0.91 Document should be Assert.");
+                    "RuleML or Assert element must contain an Rulebase or an And element!");
         }
 
-        Element and = root.getFirstChildElement(tagNames.RULEBASE);
-        if (and == null) {
-            throw new ParseException(
-                    "Root element must contain Rulebase element.");
-        }
-
-        if (and.getAttribute(tagNames.MAPCLOSURE) != null) {
+        if (firstChild.getAttribute(tagNames.MAPCLOSURE) != null) {
             hasiclose = true;
-            if (!and.getAttributeValue(tagNames.MAPCLOSURE).equals(tagNames.UNIVERSAL)) {
+            if (!firstChild.getAttributeValue(tagNames.MAPCLOSURE).equals(tagNames.UNIVERSAL)) {
                 throw new ParseException(
                         "Only universal inner closures are currently supported.");
             }
@@ -104,7 +129,7 @@ public class RuleML91Parser implements IRuleMLParser {
             logger.info("Document root has not innerclose attribute. Indiviual clauses must have closure attributes.");
         }
 	
-        Elements els = and.getChildElements();
+        Elements els = firstChild.getChildElements();
         for (int i = 0; i < els.size(); i++) {
             Element el = els.get(i);
             if (el.getLocalName().equals(tagNames.ATOM)) {
@@ -481,7 +506,7 @@ public class RuleML91Parser implements IRuleMLParser {
         } else if (el.getLocalName().equals(tagNames.VAR)) {
             t = parseVar(el);
         } else if (el.getLocalName().equals(tagNames.EXPR)) {
-            t = parseCTerm(el);
+            t = parseExpression(el);
         } else {
             throw new ParseException("oid can only contain Ind, Data, Var or Cterm.");
         }
@@ -630,7 +655,7 @@ public class RuleML91Parser implements IRuleMLParser {
             if (el.getLocalName().equals(tagNames.PLEX)) {
                 subterms.add(parsePlex(el));
             } else if (el.getLocalName().equals(tagNames.EXPR)) {
-                subterms.add(parseCTerm(el));
+                subterms.add(parseExpression(el));
             } else if (el.getLocalName().equals(tagNames.IND)) {
                 subterms.add(parseInd(el));
             } else if (el.getLocalName().equals(tagNames.DATA)) {
@@ -660,7 +685,7 @@ public class RuleML91Parser implements IRuleMLParser {
     /**
      * Method to parse a Expr (Expresion)
      *
-     * @param cterm Element The XOM element that represents the Expr
+     * @param expr Element The XOM element that represents the Expr
      * to be parsed.
      *
      * @return Term Returns the data structure that represents the Expr in a way
@@ -669,9 +694,9 @@ public class RuleML91Parser implements IRuleMLParser {
      * @throws ParseException Thrown if there is an error parsing the Expr.
      */
           
-    private Term parseCTerm(Element cterm) throws ParseException {
+    private Term parseExpression(Element expr) throws ParseException {
         
-        Elements els = cterm.getChildElements();
+        Elements els = expr.getChildElements();
         Element op = els.get(0);
         
         boolean foundOp = false;
@@ -680,26 +705,26 @@ public class RuleML91Parser implements IRuleMLParser {
 			foundOp = true;
         }
 		
-		Element ctor = null;
+		Element fun = null;
 		if(foundOp){
 			
 			Elements ctorTag = op.getChildElements();
-			ctor = ctorTag.get(0);
+			fun = ctorTag.get(0);
         }
         
         if(!foundOp){
-        	ctor = els.get(0);
+        	fun = els.get(0);
         }
                 
-        if (!ctor.getLocalName().equals(tagNames.FUN)) {
+        if (!fun.getLocalName().equals(tagNames.FUN)) {
             throw new ParseException(
                     "First child of op in an Expr must be a Fun element.");
         }
 
-        int symbol = SymbolTable.internSymbol(ctor.getValue().trim());
+        int symbol = SymbolTable.internSymbol(fun.getValue().trim());
 
         int typeid = Types.IOBJECT;
-        Attribute type = cterm.getAttribute(tagNames.TYPE);
+        Attribute type = expr.getAttribute(tagNames.TYPE);
         if (type != null) {
             typeid = Types.typeID(type.getValue().trim());
             if (typeid == -1) {
@@ -714,7 +739,7 @@ public class RuleML91Parser implements IRuleMLParser {
             if (el.getLocalName().equals(tagNames.PLEX)) {
                 subterms.add(parsePlex(el));
             } else if (el.getLocalName().equals(tagNames.EXPR)) {
-                subterms.add(parseCTerm(el));
+                subterms.add(parseExpression(el));
             } else if (el.getLocalName().equals(tagNames.IND)) {
                 subterms.add(parseInd(el));
             } else if (el.getLocalName().equals(tagNames.DATA)) {
@@ -800,7 +825,7 @@ public class RuleML91Parser implements IRuleMLParser {
             if (el.getLocalName().equals(tagNames.PLEX)) {
                 subterms.add(parsePlex(el));
             } else if (el.getLocalName().equals(tagNames.EXPR)) {
-                subterms.add(parseCTerm(el));
+                subterms.add(parseExpression(el));
             } else if (el.getLocalName().equals(tagNames.IND)) {
                 subterms.add(parseInd(el));
             } else if (el.getLocalName().equals(tagNames.DATA)) {
@@ -892,7 +917,7 @@ public class RuleML91Parser implements IRuleMLParser {
         if (value.getLocalName().equals(tagNames.PLEX)) {
             t = parsePlex(value);	
         } else if (value.getLocalName().equals(tagNames.EXPR)) {
-            t = parseCTerm(value);
+            t = parseExpression(value);
         } else if (value.getLocalName().equals(tagNames.IND)) {
             t = parseInd(value);
         } else if (value.getLocalName().equals(tagNames.DATA)) {

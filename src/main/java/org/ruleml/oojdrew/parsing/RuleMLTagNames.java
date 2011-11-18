@@ -4,6 +4,8 @@ import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
 
 public class RuleMLTagNames {
 	
+	public final String RULEML = "RuleML";
+	
 	public final String RULEBASE = "Rulebase";
     public final String ASSERT = "Assert";
     public final String AND = "And";
