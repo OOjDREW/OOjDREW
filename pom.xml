@@ -77,6 +77,33 @@
             </configuration>
         </plugin>
         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jarsigner-plugin</artifactId>
+            <version>1.2</version>
+            <executions>
+                <execution>
+                    <id>sign</id>
+                    <goals>
+                        <goal>sign</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>verify</id>
+                    <goals>
+                        <goal>verify</goal>
+                    </goals>
+                </execution>
+            </executions>
+             <configuration>
+                <!-- TODO: Enter the credentials to your keystore to create signed releases -->
+                <skip>true</skip>
+                <keystore>/path/to/the/keystore</keystore>
+                <alias>Alias name</alias>
+                <storepass>Store password</storepass>
+                <keypass>Key password</keypass>
+            </configuration>
+        </plugin>
+        <plugin>
            <groupId>org.apache.maven.plugins</groupId>
            <artifactId>maven-compiler-plugin</artifactId>
            <version>2.3.2</version>
