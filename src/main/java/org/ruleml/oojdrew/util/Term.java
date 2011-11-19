@@ -16,7 +16,7 @@ import nu.xom.Document;
 import nu.xom.Element;
 
 import org.ruleml.oojdrew.Config;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
+import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 
 /**
  * An object that represents a logic term (Ind, Var, Cterm Plex, Atom). 
@@ -486,7 +486,7 @@ public class Term implements Comparable {
      *
      * @return java.lang.String value - the String representation of this term.
      */
-    public String toString(RuleMLVersion version) {
+    public String toString(RuleMLFormat version) {
         if (Config.PRPRINT) {
             return this.toPOSLString(true);
         } else {
@@ -508,7 +508,7 @@ public class Term implements Comparable {
      *
      * @return java.lang.String value - the String representation of this term.
      */
-    public String toString(String[] varNames, RuleMLVersion version) {
+    public String toString(String[] varNames, RuleMLFormat version) {
         if (Config.PRPRINT) {
             return this.toPOSLString(varNames, true);
         } else {
@@ -961,7 +961,7 @@ public class Term implements Comparable {
      */
      
      
-    public String toRuleMLString(RuleMLVersion version) {
+    public String toRuleMLString(RuleMLFormat version) {
     	
         Element rml = this.toRuleML(true, version);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -990,7 +990,7 @@ public class Term implements Comparable {
      * @return String A string containing the OO RuleML XML representation of
      * this term.
      */
-    public String toRuleMLString(String[] varNames, RuleMLVersion version) {
+    public String toRuleMLString(String[] varNames, RuleMLFormat version) {
     	
         Element rml = this.toRuleML(varNames, true, version);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -1020,9 +1020,9 @@ public class Term implements Comparable {
      * this, as a Element value.
      */
 
-    public Element toRuleML(boolean head, RuleMLVersion version) {
+    public Element toRuleML(boolean head, RuleMLFormat version) {
     	   	   		
-   	if(version == RuleMLVersion.RuleML91){
+   	if(version == RuleMLFormat.RuleML91){
    		
    		   			
    		Element el = null;
@@ -1154,7 +1154,7 @@ public class Term implements Comparable {
     	
         //Print the Clauses in RULEML88 Format
     	    	
-    	if(version == RuleMLVersion.RuleML88){
+    	if(version == RuleMLFormat.RuleML88){
     	
     	Element el = null;
         boolean dst = false;
@@ -1293,11 +1293,11 @@ public class Term implements Comparable {
      * Element value.
      */
          
-    public Element toRuleML(String[] varNames, boolean head, RuleMLVersion version) {
+    public Element toRuleML(String[] varNames, boolean head, RuleMLFormat version) {
     	
     	//Printing the Clauses in RuleML 0.91 Format
     			
-		if(version == RuleMLVersion.RuleML91){
+		if(version == RuleMLFormat.RuleML91){
 
         Element el = null;
         boolean dst = false;
@@ -1436,7 +1436,7 @@ public class Term implements Comparable {
     	
     	//RuleML 0.88 Format	
       	
-      	if(version == RuleMLVersion.RuleML88){
+      	if(version == RuleMLFormat.RuleML88){
       	
       	Element el = null;
         boolean dst = false;

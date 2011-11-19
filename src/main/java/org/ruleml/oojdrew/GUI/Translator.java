@@ -55,7 +55,7 @@ import org.ruleml.oojdrew.Config;
 import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.parsing.POSLParser;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
+import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 import org.ruleml.oojdrew.parsing.SubsumesParser;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.Types;
@@ -80,7 +80,7 @@ public class Translator extends JFrame {
       * This keeps track of the current Parser being used
       */
        
-    public static RuleMLVersion ruleMLversion = RuleMLVersion.RuleML88;
+    public static RuleMLFormat ruleMLversion = RuleMLFormat.RuleML88;
     
     private RuleMLParser rmlParser;
     
@@ -333,7 +333,7 @@ public class Translator extends JFrame {
      */
     public void jbToRML_mouseClicked(MouseEvent e) {
             
-        ruleMLversion = RuleMLVersion.RuleML88;
+        ruleMLversion = RuleMLFormat.RuleML88;
             
         String posltext = this.posltext.getText().trim();
         
@@ -425,7 +425,7 @@ public class Translator extends JFrame {
 
     public void jbToRML91_mouseClicked(MouseEvent e) {
             
-    	ruleMLversion =  RuleMLVersion.RuleML91;
+    	ruleMLversion =  RuleMLFormat.RuleML91;
             
         String posltext = this.posltext.getText().trim();
         
@@ -597,13 +597,13 @@ public class Translator extends JFrame {
 		///work around to remove type dependency
 		try
 		{
-			rmlParser.parseRuleMLString(RuleMLVersion.RuleML91, rmltext);
+			rmlParser.parseRuleMLString(RuleMLFormat.RuleML91, rmltext);
 		} catch (Exception ex)
 		{
 
 			try
 			{
-				rmlParser.parseRuleMLString(RuleMLVersion.RuleML88, rmltext);
+				rmlParser.parseRuleMLString(RuleMLFormat.RuleML88, rmltext);
 			} catch (Exception ex2)
 			{
 				JOptionPane.showMessageDialog(this, ex2.getMessage(), "Error",

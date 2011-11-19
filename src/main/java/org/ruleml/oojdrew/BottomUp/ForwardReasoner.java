@@ -48,12 +48,11 @@ import org.ruleml.oojdrew.Builtins.StringUpperCaseBuiltin;
 import org.ruleml.oojdrew.Builtins.SubstringBuiltin;
 import org.ruleml.oojdrew.Builtins.SubtractBuiltin;
 import org.ruleml.oojdrew.Builtins.TanBuiltin;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
+import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.Term;
 
 import ptolemy.graph.DirectedAcyclicGraph;
-import ptolemy.graph.DirectedGraph;
 import ptolemy.graph.Edge;
 import ptolemy.graph.Node;
 
@@ -320,7 +319,7 @@ public class ForwardReasoner {
      * This method will return a string that will contain the new facts and old facts
      * in RuleML or POSL form
      */
-    public String printClauses(RuleDescriptionLanguage type, RuleMLVersion version) {
+    public String printClauses(RuleDescriptionLanguage type, RuleMLFormat version) {
     	    	
     	String out = "";
     	

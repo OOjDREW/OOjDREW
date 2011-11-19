@@ -14,7 +14,7 @@ import nu.xom.Elements;
 
 import org.apache.log4j.Logger;
 import org.ruleml.oojdrew.Configuration;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
+import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.SymbolTable;
 import org.ruleml.oojdrew.util.Term;
@@ -58,7 +58,7 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
      */
     private RuleMLTagNames tagNames = null;
     
-    private RuleMLVersion ruleMLversion;
+    private RuleMLFormat rulemlFormat;
 
     private Logger logger = Logger.getLogger("jdrew.oo.util.RuleMLParser");
 
@@ -71,12 +71,12 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
      * @param clauses Vector The vector to use as a buffer - this is generally
      * passed by the RuleMLParser front-end.
      */
-    public RuleMLDocumentParser(Configuration config, Vector clauses) {
+    public RuleMLDocumentParser(RuleMLFormat format, Configuration config, Vector clauses) {
         this.clauses = clauses;
         
         // Set default RuleML version
-        this.ruleMLversion = RuleMLVersion.RuleML91;
-        this.tagNames = new RuleMLTagNames(ruleMLversion);
+        this.rulemlFormat = format;
+        this.tagNames = new RuleMLTagNames(format);
         
         this.config = config;
         readConfig();
@@ -122,17 +122,17 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
 			if (firstChild == null)
 			{
 				// If no Rulebase element exists, it has to be RuleML 0.88
-				if (ruleMLversion != RuleMLVersion.RuleML88)
+				if (rulemlFormat != RuleMLFormat.RuleML88)
 				{
-					ruleMLversion = RuleMLVersion.RuleML88;
-					tagNames = new RuleMLTagNames(ruleMLversion);
+					rulemlFormat = RuleMLFormat.RuleML88;
+					tagNames = new RuleMLTagNames(rulemlFormat);
 				}
 				
 				firstChild = getFirstChildElement(root, tagNames.AND);
 			}
 		}
 		// Otherwise use Query as root attribute
-		else if (rootName.equals(tagNames.QUERY))
+		else if (rulemlFormat.equals(RuleMLFormat.RuleMLQuery) && rootName.equals(tagNames.QUERY))
 		{
 			hasMapClosure = true;
 			// Use query element as first child

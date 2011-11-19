@@ -52,11 +52,12 @@ public class RuleMLParser {
      * value isdefined as well as RULEML91 = 2. As new backend parsers are 
      * added then extra defines can be added.
      */
-    public static enum RuleMLVersion
+    public static enum RuleMLFormat
     {
     	RuleML88,
     	RuleML91,
-    	RuleML100
+    	RuleML100,
+    	RuleMLQuery
     }
 
     /**
@@ -90,32 +91,32 @@ public class RuleMLParser {
     /**
      * @see jdrew.oo.parsing.RuleMLParser#parseDocument 
      */
-    public void parseFile(RuleMLVersion version, String filename) throws ParseException,
+    public void parseFile(RuleMLFormat format, String filename) throws ParseException,
     ParsingException, ValidityException, IOException 
     {
 		File file = new File(filename);
-		parseFile(version, file);
+		parseFile(format, file);
     }
 
     /**
      * @see jdrew.oo.parsing.RuleMLParser#parseDocument 
      */
-    public void parseFile(RuleMLVersion version, File file) throws ParseException, ParsingException, ValidityException, IOException 
+    public void parseFile(RuleMLFormat format, File file) throws ParseException, ParsingException, ValidityException, IOException 
     {
 		Builder bl = new Builder();
 		Document doc = bl.build(file);
-		parseDocument(version, doc);
+		parseDocument(format, doc);
     }
     
     /**
      * @see jdrew.oo.parsing.RuleMLParser#parseDocument 
      */
-    public void parseRuleMLString(RuleMLVersion version, String contents) throws
+    public void parseRuleMLString(RuleMLFormat format, String contents) throws
             ParseException, ParsingException, ValidityException, IOException {
    		Builder bl = new Builder();
    		StringReader sr = new StringReader(contents);
   	 	Document doc = bl.build(sr);
-  	 	parseDocument(version, doc);
+  	 	parseDocument(format, doc);
     }
     
     /**
@@ -127,7 +128,7 @@ public class RuleMLParser {
      * NOTE: It may be a good idea to add format auto detection based upon the
      * XSD and/or DTD that is referenced by the document.
      *
-     * @param version RuleMLVersion The RuleML version for the backend parser
+     * @param format RuleMLVersion The RuleML version for the backend parser
      *
      * @param kb String The filename (including the full path) to the
      * file to be parsed.
@@ -141,10 +142,10 @@ public class RuleMLParser {
      * @throws ValidityException A ValidityException is thrown if the XML
      * document is not well formed or does not conform to the DTD specified.
      */
-	public void parseDocument(RuleMLVersion version, Document doc)
+	public void parseDocument(RuleMLFormat format, Document doc)
 			throws ParseException, ParsingException, ValidityException
 	{
-		RuleMLDocumentParser parser = new RuleMLDocumentParser(config, clauses);
+		RuleMLDocumentParser parser = new RuleMLDocumentParser(format, config, clauses);
 
 		parser.parseRuleMLDocument(doc);
 	}
@@ -161,7 +162,7 @@ public class RuleMLParser {
    public DefiniteClause parseRuleMLQuery(String contents) throws
         ParseException, ParsingException, ValidityException, IOException {
 
-		parseRuleMLString(RuleMLVersion.RuleML91, contents);
+		parseRuleMLString(RuleMLFormat.RuleMLQuery, contents);
 		
 		return (DefiniteClause) clauses.lastElement();
 	}

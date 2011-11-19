@@ -54,7 +54,7 @@ import org.ruleml.oojdrew.TopDown.BackwardReasoner;
 import org.ruleml.oojdrew.parsing.POSLParser;
 import org.ruleml.oojdrew.parsing.RDFSParser;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
+import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 import org.ruleml.oojdrew.parsing.SubsumesParser;
 import org.ruleml.oojdrew.parsing.TypeQueryParserPOSL;
 import org.ruleml.oojdrew.parsing.TypeQueryParserRuleML;
@@ -72,7 +72,7 @@ import org.ruleml.oojdrew.util.Types;
  */
 public class TopDownGUI extends javax.swing.JFrame {
 
-	public static RuleMLVersion ruleMLverison = RuleMLVersion.RuleML88;
+	public static RuleMLFormat ruleMLverison = RuleMLFormat.RuleML88;
 
 	Iterator it = null;
 	String term1VarName = "";
@@ -1433,7 +1433,7 @@ public class TopDownGUI extends javax.swing.JFrame {
             br.loadClauses(pp.iterator());
         } else if (this.jrbRML.isSelected() || this.jrbRML91.isSelected()) {
         	
-        	ruleMLverison = RuleMLVersion.RuleML91;
+        	ruleMLverison = RuleMLFormat.RuleML91;
         	       	
             try {
                 rmlParser.parseRuleMLString(ruleMLverison, kbstr);

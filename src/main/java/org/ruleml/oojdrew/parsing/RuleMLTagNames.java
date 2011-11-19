@@ -1,6 +1,6 @@
 package org.ruleml.oojdrew.parsing;
 
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
+import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 
 public class RuleMLTagNames {
 	
@@ -40,21 +40,21 @@ public class RuleMLTagNames {
     public final String MAPCLOSURE;
 	public final String OP;
    	
-	public RuleMLTagNames(RuleMLVersion ruleMLversion)
+	public RuleMLTagNames(RuleMLFormat rulemlFormat)
 	{
-		if (ruleMLversion == RuleMLVersion.RuleML91 || ruleMLversion == RuleMLVersion.RuleML100)
+		switch (rulemlFormat)
 		{
-			EXPR = "Expr";
-			FUN = "Fun";
-			MAPCLOSURE  = "mapClosure";
-			OP = "op";
-		}
-		else // RuleML 0.88
-		{
+		case RuleML88:
 			EXPR = "Cterm";
 			FUN = "Ctor";
 			MAPCLOSURE = "innerclose";
 			OP = "opr";
+			break;
+		default: // RuleML 0.91 (+Query) and 1.0
+			EXPR = "Expr";
+			FUN = "Fun";
+			MAPCLOSURE  = "mapClosure";
+			OP = "op";
 		}
 	}
 }

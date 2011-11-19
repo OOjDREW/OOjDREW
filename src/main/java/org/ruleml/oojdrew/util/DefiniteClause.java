@@ -14,7 +14,7 @@ import java.util.Vector;
 import nu.xom.Document;
 import nu.xom.Element;
 
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
+import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 
 /**
  *
@@ -89,7 +89,7 @@ public class DefiniteClause {
         if (org.ruleml.oojdrew.Config.PRPRINT) {
             return toPOSLString();
         } else {
-            return toRuleMLString(RuleMLVersion.RuleML88);
+            return toRuleMLString(RuleMLFormat.RuleML88);
         }
      }      
 
@@ -104,7 +104,7 @@ public class DefiniteClause {
      * @return String The string representation of the clause.
      */
           
-    public String toString(RuleMLVersion version) {
+    public String toString(RuleMLFormat version) {
         if (org.ruleml.oojdrew.Config.PRPRINT) {
             return toPOSLString();
         } else {
@@ -152,7 +152,7 @@ public class DefiniteClause {
      * @return String The RuleML representation stored in a Java String object.
      */
      
-    public String toRuleMLString(RuleMLVersion version) {
+    public String toRuleMLString(RuleMLFormat version) {
         Element rml = this.toRuleML(version);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         nu.xom.Serializer sl = new nu.xom.Serializer(os);
@@ -181,7 +181,7 @@ public class DefiniteClause {
      * tree.
      */
           
-    public Element toRuleML(RuleMLVersion version) {
+    public Element toRuleML(RuleMLFormat version) {
 		
         Element el;
         if (atoms.length == 1) {

@@ -18,7 +18,7 @@ import org.ruleml.oojdrew.parsing.POSLParser;
 import org.ruleml.oojdrew.parsing.ParseException;
 import org.ruleml.oojdrew.parsing.RDFSParser;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
+import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 import org.ruleml.oojdrew.parsing.SubsumesException;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.TaxonomyQueryAPI;
@@ -75,7 +75,7 @@ public class COjDA {
 		}else if(profile_KB == RULEML91){
 			
 			rp = rmlParser;
-            rp.parseRuleMLString(RuleMLVersion.RuleML91, fileToString(KB));
+            rp.parseRuleMLString(RuleMLFormat.RuleML91, fileToString(KB));
             intialize_engine(rp.iterator());
 		}
 		
@@ -107,7 +107,7 @@ public class COjDA {
 			
 		}else if(profile_KB == RULEML91){
 
-            rp.parseRuleMLString(RuleMLVersion.RuleML91,KB);
+            rp.parseRuleMLString(RuleMLFormat.RuleML91,KB);
             intialize_engine(rp.iterator());
 		}
 		
@@ -145,7 +145,7 @@ public class COjDA {
 			
 		}else if(profile_KB == RULEML91){
 
-            rp.parseRuleMLString(RuleMLVersion.RuleML91,KB);
+            rp.parseRuleMLString(RuleMLFormat.RuleML91,KB);
             intialize_engine(rp.iterator());
 		}
 		
@@ -180,7 +180,7 @@ public class COjDA {
 			intialize_engine(pp.iterator());
 			
 		}else if(profile_KB == RULEML91){
-            rp.parseRuleMLString(RuleMLVersion.RuleML91, KB);
+            rp.parseRuleMLString(RuleMLFormat.RuleML91, KB);
             intialize_engine(rp.iterator());
 		}
 
@@ -213,7 +213,7 @@ public class COjDA {
 			pp.parseDefiniteClauses(fileToString(KB));
 			intialize_engine(pp.iterator());
 		}else if(profile_KB == RULEML91){
-            rp.parseRuleMLString(RuleMLVersion.RuleML91,fileToString(KB));
+            rp.parseRuleMLString(RuleMLFormat.RuleML91,fileToString(KB));
             intialize_engine(rp.iterator());
 		}
 
@@ -247,7 +247,7 @@ public class COjDA {
 			pp.parseDefiniteClauses(fileToString(KB));
 			intialize_engine(pp.iterator());
 		}else if(profile_KB == RULEML91){
-            rp.parseRuleMLString(RuleMLVersion.RuleML91, fileToString(KB));
+            rp.parseRuleMLString(RuleMLFormat.RuleML91, fileToString(KB));
             intialize_engine(rp.iterator());
 		}
 

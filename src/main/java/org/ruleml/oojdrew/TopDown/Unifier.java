@@ -24,7 +24,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
+import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 import org.ruleml.oojdrew.util.EngineException;
 import org.ruleml.oojdrew.util.SymbolTable;
 import org.ruleml.oojdrew.util.Term;
@@ -469,7 +469,7 @@ public class Unifier {
                             if(varBindType == RuleML){
                                 this.goal.goalList.varBindings.put(t2str,
                                         t1.toRuleMLString(this.goal.goalList.
-                                        variableNames, RuleMLVersion.RuleML91));
+                                        variableNames, RuleMLFormat.RuleML91));
                             }
                             
                         } else {
@@ -484,7 +484,7 @@ public class Unifier {
                             if(varBindType == RuleML){
                                 this.goal.goalList.varBindings.put(t2str,
                                         t1.toRuleMLString(this.subGoalList.
-                                        variableNames, RuleMLVersion.RuleML91));                           	
+                                        variableNames, RuleMLFormat.RuleML91));                           	
                             }                            
                         }
                     }
@@ -508,7 +508,7 @@ public class Unifier {
                             if(varBindType == RuleML){
                                 this.subGoalList.varBindings.put(t2str,
                                         t1.toRuleMLString(this.goal.goalList.
-                                        variableNames, RuleMLVersion.RuleML91));                           	
+                                        variableNames, RuleMLFormat.RuleML91));                           	
                             }                           
                             
                         } else {
@@ -523,7 +523,7 @@ public class Unifier {
                             if(varBindType == RuleML){
                                 this.subGoalList.varBindings.put(t2str,
                                         t1.toRuleMLString(this.subGoalList.
-                                        variableNames, RuleMLVersion.RuleML91));
+                                        variableNames, RuleMLFormat.RuleML91));
                             }                            
                             
                         }
@@ -563,7 +563,7 @@ public class Unifier {
                             if(varBindType == RuleML){
                                 this.goal.goalList.varBindings.put(t1str,
                                         t2.toRuleMLString(this.goal.goalList.
-                                        variableNames, RuleMLVersion.RuleML91));
+                                        variableNames, RuleMLFormat.RuleML91));
                             } 
                             
                             
@@ -582,7 +582,7 @@ public class Unifier {
                         	}
                         	if(varBindType == RuleML){
                         		
-                        		String ruleML = t2.toRuleMLString(this.subGoalList.variableNames, RuleMLVersion.RuleML91);
+                        		String ruleML = t2.toRuleMLString(this.subGoalList.variableNames, RuleMLFormat.RuleML91);
                         		int firstIndex = ruleML.indexOf("</Ind>");
                         		int secondIndex = ruleML.indexOf("</slot>");
                         		
@@ -615,7 +615,7 @@ public class Unifier {
                         	if(varBindType == RuleML){
                                 this.subGoalList.varBindings.put(t1str,
                                         t2.toRuleMLString(this.goal.goalList.
-                                        variableNames, RuleMLVersion.RuleML91));                        		
+                                        variableNames, RuleMLFormat.RuleML91));                        		
                         	}
                             
                         } else {
@@ -629,7 +629,7 @@ public class Unifier {
                         	if(varBindType == RuleML){
                         		this.subGoalList.varBindings.put(t1str,
                                         t2.toRuleMLString(this.subGoalList.
-                                        variableNames, RuleMLVersion.RuleML91));                       		
+                                        variableNames, RuleMLFormat.RuleML91));                       		
                         	}
                         }
                     }
@@ -680,7 +680,7 @@ public class Unifier {
                             	if(varBindType == RuleML){
                                 	this.goal.goalList.varBindings.put(t1str,
                                             t2.toRuleMLString(this.goal.goalList.
-                                            variableNames, RuleMLVersion.RuleML91));                           		
+                                            variableNames, RuleMLFormat.RuleML91));                           		
                             	}
                                 
                             } else {
@@ -698,7 +698,7 @@ public class Unifier {
                             	}
                             	if(varBindType == RuleML){ 
 
-                            		String ruleML = t2.toRuleMLString(this.subGoalList.variableNames, RuleMLVersion.RuleML91);
+                            		String ruleML = t2.toRuleMLString(this.subGoalList.variableNames, RuleMLFormat.RuleML91);
                             		int firstIndex = ruleML.indexOf("</Ind>");
                             		int secondIndex = ruleML.indexOf("</slot>");
                             		
@@ -730,7 +730,7 @@ public class Unifier {
                             	if(varBindType == RuleML){ 
                             		this.subGoalList.varBindings.put(t1str,
                                         t2.toRuleMLString(this.goal.goalList.
-                                        variableNames, RuleMLVersion.RuleML91));
+                                        variableNames, RuleMLFormat.RuleML91));
                             	}
                             	
                             } else {
@@ -744,7 +744,7 @@ public class Unifier {
                             	if(varBindType == RuleML){ 
                             		this.subGoalList.varBindings.put(t1str,
                                         t2.toRuleMLString(this.subGoalList.
-                                        variableNames, RuleMLVersion.RuleML91));
+                                        variableNames, RuleMLFormat.RuleML91));
                             	}                           	
                             }
                         }
@@ -782,7 +782,7 @@ public class Unifier {
                                 	
                                     this.goal.goalList.varBindings.put(t2str,
                                             t1.toRuleMLString(this.goal.goalList.
-                                            variableNames, RuleMLVersion.RuleML91));
+                                            variableNames, RuleMLFormat.RuleML91));
                                 	}
                             } else {
                             	//System.out.println("14");
@@ -796,7 +796,7 @@ public class Unifier {
                             	if(varBindType == RuleML){ 
                             		this.goal.goalList.varBindings.put(t2str,
                                         t1.toRuleMLString(this.subGoalList.
-                                        variableNames, RuleMLVersion.RuleML91));
+                                        variableNames, RuleMLFormat.RuleML91));
                             	}
                             }
                         }
@@ -819,7 +819,7 @@ public class Unifier {
                             	if(varBindType == RuleML){ 
                             		this.subGoalList.varBindings.put(t2str,
                                         t1.toRuleMLString(this.goal.goalList.
-                                        variableNames, RuleMLVersion.RuleML91));
+                                        variableNames, RuleMLFormat.RuleML91));
                             	}
                             	
                             } else {
@@ -833,7 +833,7 @@ public class Unifier {
                             	if(varBindType == RuleML){ 
                             		this.subGoalList.varBindings.put(t2str,
                                             t1.toRuleMLString(this.subGoalList.
-                                            variableNames, RuleMLVersion.RuleML91));
+                                            variableNames, RuleMLFormat.RuleML91));
                             	}
                             
                             }
@@ -896,7 +896,7 @@ public class Unifier {
                         	if(varBindType == RuleML){ 
                         		this.goal.goalList.varBindings.put(ystr,
                                     x.toRuleMLString(this.goal.goalList.
-                                    variableNames, RuleMLVersion.RuleML91));
+                                    variableNames, RuleMLFormat.RuleML91));
                         	}                        	
                         } else {
                         //	System.out.println("18");
@@ -909,7 +909,7 @@ public class Unifier {
                         	if(varBindType == RuleML){ 
                         		this.goal.goalList.varBindings.put(ystr,
                                     x.toRuleMLString(this.subGoalList.
-                                    variableNames, RuleMLVersion.RuleML91));
+                                    variableNames, RuleMLFormat.RuleML91));
                         	}
                         }
                     }
@@ -933,7 +933,7 @@ public class Unifier {
                         		
                         		this.subGoalList.varBindings.put(ystr,
                                     x.toRuleMLString(this.goal.goalList.
-                                    variableNames, RuleMLVersion.RuleML91));	
+                                    variableNames, RuleMLFormat.RuleML91));	
                         	}                       	
                         } else {
                         	//System.out.println("20");
@@ -947,7 +947,7 @@ public class Unifier {
                                 
                         		this.subGoalList.varBindings.put(ystr,
                                     x.toRuleMLString(this.subGoalList.
-                                    variableNames, RuleMLVersion.RuleML91));
+                                    variableNames, RuleMLFormat.RuleML91));
                         	}
                         }
                     }
