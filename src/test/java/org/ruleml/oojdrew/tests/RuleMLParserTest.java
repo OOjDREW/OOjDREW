@@ -25,7 +25,7 @@ import nu.xom.ValidityException;
 import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.parsing.ParseException;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
+import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 
 import junit.framework.TestCase;
 
@@ -66,7 +66,7 @@ public class RuleMLParserTest extends TestCase {
 		RuleMLParser rmlParser = new RuleMLParser(config);
 		
 		try {
-			rmlParser.parseFile(RuleMLVersion.RuleML91, ruleMLFile);
+			rmlParser.parseFile(RuleMLFormat.RuleML91, ruleMLFile);
 		} catch (Exception e1) {
 			thrown = true;
 		}
