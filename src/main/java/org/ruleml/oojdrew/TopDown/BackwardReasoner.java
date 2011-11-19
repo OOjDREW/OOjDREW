@@ -1110,7 +1110,6 @@ public class BackwardReasoner {
             hasVariableNames = true;
             variableNames = dc.variableNames;
             varBindings = new Hashtable();
-
         }
 
         /**

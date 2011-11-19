@@ -1310,19 +1310,10 @@ public class TopDownGUI extends javax.swing.JFrame {
         		implies.appendChild(top);
                        
 				String d = queryDoc.toXML();
-				
-    			String s1 = d.substring(23);
-    			
-    			System.out.println(s1);
-    			
-    			//System.out.println(s1);      
+				   			
        			String dcstr = null;       
 
-        		//dcstr = qp.parseRuleMLQuery(qstr);
-       			System.out.println(s1);
-       			//s1 ="<Query><Implies mapClosure=\"universal\"><And><Atom><Rel>ben</Rel><Ind>a</Ind></Atom><Atom><Rel>ben</Rel><Ind>b</Ind></Atom></And><Atom><Rel>$top</Rel></Atom></Implies></Query>";
-       			System.out.println(s1);
-       			dc = rmlParser.parseRuleMLQuery(s1);
+       			dc = rmlParser.parseRuleMLQuery(d);
        		} 
         	catch (Exception ex) {
             //this.logger.error(ex.getMessage(), ex);
