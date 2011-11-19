@@ -81,8 +81,6 @@ import ptolemy.graph.Node;
  * @version 0.89
  */
 public class ForwardReasoner {
-
-	public static RuleMLVersion rem = org.ruleml.oojdrew.GUI.BottomUpGUI.ruleMLversion;
 	
 	public static enum RuleDescriptionLanguage
 	{

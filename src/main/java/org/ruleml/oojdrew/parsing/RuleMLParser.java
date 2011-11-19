@@ -144,40 +144,25 @@ public class RuleMLParser {
 	public void parseDocument(RuleMLVersion version, Document doc)
 			throws ParseException, ParsingException, ValidityException
 	{
-		RuleMLDocumentParser parser = null;
-
-		switch (version)
-		{
-		case RuleML88:
-		case RuleML91:
-		case RuleML100:
-			parser = new RuleMLDocumentParser(config, clauses);
-		}
-
-		if (parser == null)
-		{
-			throw new ParseException(
-					"Selected RuleML version is not supported!");
-		}
+		RuleMLDocumentParser parser = new RuleMLDocumentParser(config, clauses);
 
 		parser.parseRuleMLDocument(doc);
 	}
         
+	/**
+	 * Parses a RuleML query
+	 * @param contents
+	 * @return
+	 * @throws ParseException
+	 * @throws ParsingException
+	 * @throws ValidityException
+	 * @throws IOException
+	 */
    public DefiniteClause parseRuleMLQuery(String contents) throws
         ParseException, ParsingException, ValidityException, IOException {
 
 		parseRuleMLString(RuleMLVersion.RuleML91, contents);
 		
-		Iterator it = clauses.iterator();
-
-		DefiniteClause dc = null;
-		while (it.hasNext())
-		{
-			dc = (DefiniteClause) it.next();
-			// System.out.println("Loaded clause: " + dc.toPOSLString());
-		}
-		// System.out.println(dc.toPOSLString());
-
-		return dc;
+		return (DefiniteClause) clauses.lastElement();
 	}
 }

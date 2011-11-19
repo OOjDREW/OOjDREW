@@ -73,7 +73,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
     
     int posl = 0;
    
-    public static RuleMLVersion ruleMLversion = RuleMLVersion.RuleML88;
+    private RuleMLVersion ruleMLversion = RuleMLVersion.RuleML88;
     
     private RuleMLParser rmlParser;
 
@@ -135,7 +135,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabelTypes = new javax.swing.JLabel();
         jrbPOSL = new javax.swing.JRadioButton();
-        jrbRML = new javax.swing.JRadioButton();
+        jrbRML88 = new javax.swing.JRadioButton();
         jrbRML91 = new javax.swing.JRadioButton();
         jrbRULE = new javax.swing.JCheckBox();
         jrbOLDNEW = new javax.swing.JCheckBox();
@@ -241,14 +241,14 @@ public class BottomUpGUI extends javax.swing.JFrame {
         getContentPane().add(jrbPOSL);
         jrbPOSL.setBounds(160, 610, 110, 23);
 
-        formatBG.add(jrbRML);
-        jrbRML.setText("RuleML 0.88+");
-        getContentPane().add(jrbRML);
-        jrbRML.setBounds(270, 610, 150, 23);
+        formatBG.add(jrbRML88);
+        jrbRML88.setText("RuleML 0.88");
+        getContentPane().add(jrbRML88);
+        jrbRML88.setBounds(270, 610, 150, 23);
         //Moving 
         formatBG.add(jrbRML91);
         jrbRML91.setSelected(true);
-        jrbRML91.setText("RuleML 0.91");
+        jrbRML91.setText("RuleML 0.91+");
         getContentPane().add(jrbRML91);
         jrbRML91.setBounds(270, 635, 150, 23);
         
@@ -365,7 +365,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
         			ruleMLversion = RuleMLVersion.RuleML91;
         			ruleMLFacts = fr.printClauses(RuleDescriptionLanguage.RuleML, ruleMLversion);
         		}
-        		if(this.jrbRML.isSelected()){
+        		if(this.jrbRML88.isSelected()){
         			
         			ruleMLversion = RuleMLVersion.RuleML88;
         			ruleMLFacts = fr.printClauses(RuleDescriptionLanguage.RuleML, ruleMLversion);
@@ -440,7 +440,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
         			
         			ruleMLversion = RuleMLVersion.RuleML91;
         		}
-        		if(this.jrbRML.isSelected()){
+        		if(this.jrbRML88.isSelected()){
         			and = new Element("And");
         			Attribute a = new Attribute("mapClosure", "universal");
        				and.addAttribute(a);        	
@@ -546,10 +546,10 @@ public class BottomUpGUI extends javax.swing.JFrame {
             }
 
             fr.loadClauses(pp.iterator());
-        } //ruleml 0.88
-         if (this.jrbRML.isSelected() || this.jrbRML91.isSelected()) {
+        } // RuleML
+         if (this.jrbRML88.isSelected() || this.jrbRML91.isSelected()) {
         	 
-            ruleMLversion = RuleMLVersion.RuleML91;
+            ruleMLversion = jrbRML88.isSelected() ? RuleMLVersion.RuleML88 : RuleMLVersion.RuleML91;
 
             try {
                 rmlParser.parseRuleMLString(RuleMLVersion.RuleML91, kbstr);
@@ -900,7 +900,7 @@ public class BottomUpGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JRadioButton jrbPOSL;
-    private javax.swing.JRadioButton jrbRML;
+    private javax.swing.JRadioButton jrbRML88;
     private javax.swing.JRadioButton jrbRML91;
     private javax.swing.JCheckBox jrbRULE;
     private javax.swing.JCheckBox jrbCHECK;
