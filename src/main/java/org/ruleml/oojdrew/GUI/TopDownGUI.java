@@ -81,8 +81,6 @@ import org.ruleml.oojdrew.util.Types;
  */
 public class TopDownGUI extends javax.swing.JFrame {
 
-	public static RuleMLFormat ruleMLverison = RuleMLFormat.RuleML88;
-
 	Iterator it = null;
 	String term1VarName = "";
 	String term2VarName = "";
@@ -152,7 +150,6 @@ public class TopDownGUI extends javax.swing.JFrame {
         parseKBBtn = new javax.swing.JButton();
         jrbPOSL = new javax.swing.JRadioButton();
         jrbRML = new javax.swing.JRadioButton();
-        jrbRML91 = new javax.swing.JRadioButton();
         
         rdf = new javax.swing.JRadioButton();
         posl = new javax.swing.JRadioButton();
@@ -309,18 +306,11 @@ public class TopDownGUI extends javax.swing.JFrame {
         jrbPOSL.setBounds(110, 530, 80, 23);
 
         buttonGroup1.add(jrbRML);
-        jrbRML.setText("RuleML 0.88+");
+        jrbRML.setText("RuleML");
         jrbRML.setToolTipText(
-                "Select RuleML 0.88 (with rest tags) as the knowledge base input format");
+                "Select RuleML as the knowledge base input format");
         kbtab.add(jrbRML);
         jrbRML.setBounds(190, 530, 140, 23);
-        
-        buttonGroup1.add(jrbRML91);
-        jrbRML91.setText("RuleML 0.91");
-        jrbRML91.setToolTipText(
-                "Select RuleML 0.91 as the knowledge base input format");
-        kbtab.add(jrbRML91);
-        jrbRML91.setBounds(330, 530, 200, 23);        
         
         jLabel2.setText("Input Format:");
         kbtab.add(jLabel2);
@@ -1431,12 +1421,10 @@ public class TopDownGUI extends javax.swing.JFrame {
             }
 
             br.loadClauses(pp.iterator());
-        } else if (this.jrbRML.isSelected() || this.jrbRML91.isSelected()) {
-        	
-        	ruleMLverison = RuleMLFormat.RuleML91;
+        } else if (this.jrbRML.isSelected()) {
         	       	
             try {
-                rmlParser.parseRuleMLString(ruleMLverison, kbstr);
+                rmlParser.parseRuleMLString(RuleMLFormat.RuleML91, kbstr);
             } catch (Exception ex) {
                 //this.logger.error(ex.getMessage(), ex);
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
@@ -1713,8 +1701,7 @@ public class TopDownGUI extends javax.swing.JFrame {
     
     private javax.swing.JRadioButton jrbPOSL;
     private javax.swing.JRadioButton jrbRML;
-    private javax.swing.JRadioButton jrbRML91;
-    
+
     private javax.swing.JRadioButton rdf;
     private javax.swing.JRadioButton posl;
     
