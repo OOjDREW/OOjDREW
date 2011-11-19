@@ -100,6 +100,7 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
         Element firstChild = null;
         
         String rootName = root.getLocalName();
+        // If RuleML is root element
 		if (rootName.equals(tagNames.RULEML))
 		{
 			root = getFirstChildElement(root, tagNames.ASSERT);
@@ -114,22 +115,26 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
 				firstChild = root;
 			}
 		}
+		// If Assert is root element
 		else if (rootName.equals(tagNames.ASSERT))
 		{
 		    firstChild = getFirstChildElement(root, tagNames.RULEBASE);
 			if (firstChild == null)
 			{
 				// If no Rulebase element exists, it has to be RuleML 0.88
-				ruleMLversion = RuleMLVersion.RuleML88;
-				tagNames = new RuleMLTagNames(ruleMLversion);
+				if (ruleMLversion != RuleMLVersion.RuleML88)
+				{
+					ruleMLversion = RuleMLVersion.RuleML88;
+					tagNames = new RuleMLTagNames(ruleMLversion);
+				}
 				
 				firstChild = getFirstChildElement(root, tagNames.AND);
 			}
 		}
+		// Otherwise use Query as root attribute
 		else if (rootName.equals(tagNames.QUERY))
 		{
-			// Queries do not have close 
-			hasMapClosure = false;
+			hasMapClosure = true;
 			// Use query element as first child
 			firstChild = root;
 		}
