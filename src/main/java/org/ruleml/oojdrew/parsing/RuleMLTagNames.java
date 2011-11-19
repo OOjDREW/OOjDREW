@@ -5,9 +5,11 @@ import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
 public class RuleMLTagNames {
 	
 	public final String RULEML = "RuleML";
-	
+		
 	public final String RULEBASE = "Rulebase";
     public final String ASSERT = "Assert";
+    public final String QUERY = "Query";
+    
     public final String AND = "And";
     public final String ATOM = "Atom";
     public final String UNIVERSAL = "universal";
@@ -27,21 +29,17 @@ public class RuleMLTagNames {
     public final String NEG = "Neg";
     
 	public final String DATA = "Data";
-    
-	public final String OP;
 	
-	public final String QUERY = "Query";
-	
+    public final String PREMISE = "body";
+    public final String CONCLUSION = "head";
+    public final String PREMISE100 = "if";
+    public final String CONCLUSION100 = "then";
+
 	public final String EXPR; 
 	public final String FUN; 
     public final String MAPCLOSURE;
-    
-    public final String PREMISE100 = "if";
-    public final String CONCLUSION100 = "then";
-    
-    public final String PREMISE = "body";
-    public final String CONCLUSION = "head";
-	
+	public final String OP;
+   	
 	public RuleMLTagNames(RuleMLVersion ruleMLversion)
 	{
 		if (ruleMLversion == RuleMLVersion.RuleML91 || ruleMLversion == RuleMLVersion.RuleML100)

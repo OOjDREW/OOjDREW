@@ -13,7 +13,6 @@ import nu.xom.Element;
 import nu.xom.Elements;
 
 import org.apache.log4j.Logger;
-import org.ruleml.oojdrew.Config;
 import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLVersion;
 import org.ruleml.oojdrew.util.DefiniteClause;
@@ -61,7 +60,7 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
     
     private RuleMLVersion ruleMLversion;
 
-    Logger logger = Logger.getLogger("jdrew.oo.util.RuleMLParser");
+    private Logger logger = Logger.getLogger("jdrew.oo.util.RuleMLParser");
 
     private Configuration config;
     private boolean compatibilityMode;
@@ -82,8 +81,6 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
         this.config = config;
         readConfig();
     }
-    
-    
 
     /**
      * This method is used to parse a RuleML 0.91 document that is stored in
@@ -116,10 +113,10 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
 			{
 				firstChild = root;
 			}
-		} 
+		}
 		else if (rootName.equals(tagNames.ASSERT))
 		{
-			firstChild = getFirstChildElement(root, tagNames.RULEBASE);
+		    firstChild = getFirstChildElement(root, tagNames.RULEBASE);
 			if (firstChild == null)
 			{
 				// If no Rulebase element exists, it has to be RuleML 0.88
@@ -137,8 +134,7 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
 			firstChild = root;
 		}
 		
-        if (firstChild == null) 
-        {
+        if (firstChild == null) {
         	// Note: first child only can get null if root is no query element
             throw new ParseException(
                     "RuleML or Assert element must contain an Rulebase or an And element!");
@@ -673,8 +669,8 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
             }
         }
 
-        Integer symI = new Integer(sym);
-        Integer typeI = new Integer(typeid);
+        Integer symI = Integer.valueOf(sym);
+        Integer typeI = Integer.valueOf(typeid);
 
         logger.debug("Parsing variable: symbol = " + symI + " type = " + typeI);
 
@@ -865,7 +861,7 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
                 String varname = "$ANON" + anonid++;
                 int symid = this.internVariable(varname);
                 Vector types = new Vector();
-                types.add(new Integer(Types.IOBJECT));
+                types.add(Integer.valueOf(Types.IOBJECT));
                 this.varClasses.put(new Integer(symid), types);
                 Term t2 = new Term(symid, SymbolTable.IOID, Types.IOBJECT);
                 subterms.add(t2);
@@ -1137,7 +1133,7 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
             if (ct.subTerms[i].isCTerm()) {
                 fixVarTypes(ct.subTerms[i], types);
             } else if (ct.subTerms[i].getSymbol() < 0) {
-                Integer sym = new Integer(ct.subTerms[i].getSymbol());
+                Integer sym = Integer.valueOf(ct.subTerms[i].getSymbol());
                 //logger.debug("Fixing symbol = " + sym);
                 Integer type = (Integer)types.get(sym);
                 //logger.debug("Type = " + type);
@@ -1170,7 +1166,7 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
             }
 
             int type = Types.greatestLowerBound(types);
-            ht.put(key, new Integer(type));
+            ht.put(key, Integer.valueOf(type));
         }
         return ht;
     }
