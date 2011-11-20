@@ -70,6 +70,18 @@ public class RuleMLDocumentParser {
     private RuleMLFormat rulemlFormat;
 
     private Logger logger = Logger.getLogger("jdrew.oo.util.RuleMLParser");
+    
+    /**
+     * A vector to hold the class information for the variables in the current
+     * clause. This is used for normalizing the types given to a variable if
+     * more than one type is given to a variable.
+     *
+     * For example: in the following clause p(?x: type1, ?x:type2). the types
+     * are not the same on all occurances of the variable ?x - therefore the
+     * types will be normalized and receive a type that is the intersection of
+     * type1 and type2.
+     */
+    private Hashtable<Integer, Vector<Integer>> varClasses;
 
     /**
      * Constructs the back-end parser.
@@ -151,11 +163,13 @@ public class RuleMLDocumentParser {
         for (int i = 0; i < els.size(); i++) {
             Element el = els.get(i);
             if (el.getLocalName().equals(tagNames.ATOM)) {
+            	resetVariables();
                 clauses.add(parseFact(el));
             } else if (el.getLocalName().equals(tagNames.NEG)){
                 clauses.addAll(parseNegFact(el));
             }
             else if (el.getLocalName().equals(tagNames.IMPLIES)) {
+            	resetVariables();
                 clauses.addAll(parseImplies(el));
             }
         }
@@ -164,7 +178,7 @@ public class RuleMLDocumentParser {
     /**
      * This method is used to parse an Assertion in the RuleML Document.
      *
-     * @param ass Element The XOM Element objec that represents the assertion.
+     * @param ass Element The XOM Element object that represents the assertion.
      *
      * @return Term A term object that represents the assertion in a way that
      * can be used by the reasoning engine.
@@ -183,7 +197,7 @@ public class RuleMLDocumentParser {
         Element el = els.get(0);
 		
         if (el.getLocalName().equals(tagNames.ATOM)) {
-            DefiniteClause dc = parseFact(el, false);
+            DefiniteClause dc = parseFact(el);
             Vector<Term> v = new Vector<Term>();
             for (int i = 0; i < dc.atoms.length; i++) {
                 v.add(dc.atoms[i]);
@@ -193,7 +207,7 @@ public class RuleMLDocumentParser {
             t.setAtom(true);
             return t;
         } else if (el.getLocalName().equals(tagNames.IMPLIES)) {
-            Vector<DefiniteClause> v2 = parseImplies(el, false);
+            Vector<DefiniteClause> v2 = parseImplies(el);
             DefiniteClause dc = (DefiniteClause)v2.get(0);
             Vector<Term> v = new Vector<Term>();
             for (int i = 0; i < dc.atoms.length; i++) {
@@ -221,8 +235,7 @@ public class RuleMLDocumentParser {
      * negFact.
      */
     private Vector<DefiniteClause> parseNegFact(Element neg) throws ParseException {
-        this.variableNames = new Vector<String>();
-        this.varClasses = new Hashtable<Integer, Vector<Integer>>();
+        resetVariables();
 
         Elements atoms = neg.getChildElements("Atom");
         if(atoms.size() != 1){
@@ -268,25 +281,6 @@ public class RuleMLDocumentParser {
     }
 
     /**
-     * This method is used to parse a fact element. The use of this method is
-     * deprecated; new code should use
-     * parseFact(Element atom, boolean newVarnames); this version is provided
-     * for backwards compatability only.
-     *
-     * @param atom Element The XOM Element object that represents the fact to be
-     * parsed.
-     *
-     * @return DefiniteClause A DefiniteClause data structure that represents
-     * the fact in a way that can be used by the reasoning engine.
-     *
-     * @throws ParseException Thrown if there is a serious error parsing the
-     * fact.
-     */
-    private DefiniteClause parseFact(Element atom) throws ParseException {
-        return parseFact(atom, true);
-    }
-
-    /**
      * This method is used to parse a fact element, creating a new variable
      * name list if indicated. Typically a new variable list is wanted; but in
      * certain cases (such as parsing an inner clause in an assert) the same
@@ -304,13 +298,7 @@ public class RuleMLDocumentParser {
      * @throws ParseException Thrown if there is a serious error parsing the
      * fact.
      */
-    private DefiniteClause parseFact(Element atom, boolean newVarnames) throws
-            ParseException {
-        if (newVarnames) {
-            this.variableNames = new Vector<String>();
-            this.varClasses = new Hashtable<Integer, Vector<Integer>>();
-        }
-
+    private DefiniteClause parseFact(Element atom) throws ParseException {
         Term atm = parseAtom(atom, true, false);
 
         Hashtable<Integer, Integer> types = this.buildTypeTable();
@@ -321,25 +309,6 @@ public class RuleMLDocumentParser {
 
         DefiniteClause dc = new DefiniteClause(atoms, variableNames);
         return dc;
-    }
-
-    /**
-     * This method is used to parse a implies (implication) element. The use of
-     * this method is deprecated; new code should use
-     * parseImplies(Element atom, boolean newVarnames); this version is provided
-     * for backwards compatability only.
-     *
-     * @param implies Element The XOM Element objec that represents the
-     * implication to be parsed.
-     *
-     * @return DefiniteClause A DefiniteClause data structure that represents
-     * the implication in a way that can be used by the reasoning engine.
-     *
-     * @throws ParseException Thrown if there is a serious error parsing the
-     * implication.
-     */
-    private Vector<DefiniteClause> parseImplies(Element implies) throws ParseException {
-        return parseImplies(implies, true);
     }
 
     /**
@@ -360,12 +329,8 @@ public class RuleMLDocumentParser {
      * @throws ParseException Thrown if there is a serious error parsing the
      * implication.
      */
-    private Vector<DefiniteClause> parseImplies(Element implies, boolean newVarnames) throws
-            ParseException {
-        if (newVarnames) {
-            this.variableNames = new Vector<String>();
-            this.varClasses = new Hashtable<Integer, Vector<Integer>>();
-        }
+    private Vector<DefiniteClause> parseImplies(Element implies) throws
+    	ParseException {
 
         Vector<DefiniteClause> newclauses = new Vector<DefiniteClause>();
 
@@ -503,6 +468,7 @@ public class RuleMLDocumentParser {
         Element element = oid.getChildElements().get(0);
         Term term = parseDefaultElement(element);
         term.role = SymbolTable.IOID;
+
         return term;
     }
 
@@ -518,22 +484,7 @@ public class RuleMLDocumentParser {
      */
      
     private Term parseInd(Element ind) throws ParseException {
-        String symbol = ind.getValue().trim();
-        int sym = SymbolTable.internSymbol(symbol);
-        Attribute type = ind.getAttribute(tagNames.TYPE);
-        
-        
-        
-        int typeid = Types.IOBJECT;
-        if (type != null) {
-            typeid = Types.typeID(type.getValue().trim());
-            if (typeid == -1) {
-                throw new ParseException("Type " + type.getValue().trim() +
-                                         " is not defined.");
-            }
-        }
-
-        return new Term(sym, SymbolTable.INOROLE, typeid);
+		return parseSimpleElement(ind);
     }
    
     /**
@@ -554,28 +505,10 @@ public class RuleMLDocumentParser {
      //Term Data has no role so it will probally not change
      
     private Term parseData(Element data) throws ParseException {
-        String symbol = data.getValue().trim();
-        int sym = SymbolTable.internSymbol(symbol);
-        
-      //Attribute type = data.getAttribute(XSITYPE,"http://www.w3.org/2001/XMLSchema-instance");
-        Attribute type = data.getAttribute(tagNames.TYPE);
-      
-		//if(type != null)       
-     	 //System.out.println("PRINTING: " + type.getValue()); 
-
-        int typeid = Types.IOBJECT;
-        if (type != null) {
-            typeid = Types.typeID(type.getValue().trim());
-            if (typeid == -1) {
-                throw new ParseException("Type " + type.getValue().trim() +
-                                         " is not defined.");
-            }
-        }
-
-        Term t1 = new Term(sym, SymbolTable.INOROLE, typeid);
-    	t1.setData(true);
-    
-    	return t1;
+    	Term term = parseSimpleElement(data);
+    	term.setData(true);
+    	
+    	return term;
     }
     
     /**
@@ -591,36 +524,27 @@ public class RuleMLDocumentParser {
      */
      
     private Term parseVar(Element var) throws ParseException {
-        String symbol = var.getValue().trim();
-        if (symbol.equals("")) {
-            symbol = "$ANON" + anonid++;
-        }
-
-        int sym = this.internVariable(symbol);
-        Attribute type = var.getAttribute(tagNames.TYPE);
-        int typeid = Types.IOBJECT;
-        if (type != null) {
-            typeid = Types.typeID(type.getValue().trim());
-            if (typeid == -1) {
-                throw new ParseException("Type " + type.getValue().trim() +
-                                         " is not defined.");
-            }
+        String symbolName = var.getValue().trim();
+        
+        if (symbolName.isEmpty()) {
+            symbolName = "$ANON" + anonid++;
         }
 
         Integer symI = sym;
         Integer typeI = typeid;
 
-        logger.debug("Parsing variable: symbol = " + symI + " type = " + typeI);
+        logger.debug("Parsing variable: symbol = " + sym + " type = " + typeid);
 
         Vector<Integer> v;
-        if(this.varClasses.containsKey(symI)){
-            v = varClasses.get(symI);
-        }else{
+        
+        if(this.varClasses.containsKey(sym)){
+            v = varClasses.get(sym);
+        } else {
             v = new Vector<Integer>();
-            varClasses.put(symI, v);
+            varClasses.put(sym, v);
         }
 
-        v.add(typeI);
+        v.add(typeid);
 
         logger.debug("Added Type Information");
 
@@ -638,19 +562,11 @@ public class RuleMLDocumentParser {
      *
      * @throws ParseException Thrown if there is an error parsing the plex.
      */
-        
     private Term parsePlex(Element plex) throws ParseException {
-        Elements els = plex.getChildElements();
-        Vector<Term> subterms = new Vector<Term>();
-               
-        for (int i = 0; i < els.size(); i++) {
-            Element element = els.get(i);
-            Term term = parseDefaultElement(element);
-            subterms.add(term);
-        }
+        Vector<Term> subterms = parseDefaultElements(plex);
 
         Term t = new Term(SymbolTable.IPLEX, SymbolTable.INOROLE, Types.IOBJECT,
-                          subterms);
+                          subterms);        
         return t;
     }
     
@@ -666,9 +582,8 @@ public class RuleMLDocumentParser {
      * @throws ParseException Thrown if there is an error parsing the Expr.
      */
     private Term parseExpression(Element expr) throws ParseException {
-        
-        Elements els = expr.getChildElements();
-        Element op = els.get(0);
+    	Elements children = expr.getChildElements();
+        Element op = children.get(0);
         
         boolean foundOp = false;
         
@@ -683,7 +598,7 @@ public class RuleMLDocumentParser {
         }
         
         if(!foundOp){
-        	fun = els.get(0);
+        	fun = children.get(0);
         }
                 
         if (!fun.getLocalName().equals(tagNames.FUN)) {
@@ -692,24 +607,9 @@ public class RuleMLDocumentParser {
         }
 
         int symbol = SymbolTable.internSymbol(fun.getValue().trim());
+        int typeid = parseTypeAttribute(expr);
 
-        int typeid = Types.IOBJECT;
-        Attribute type = expr.getAttribute(tagNames.TYPE);
-        if (type != null) {
-            typeid = Types.typeID(type.getValue().trim());
-            if (typeid == -1) {
-                throw new ParseException("Type " + type.getValue().trim() +
-                                         " is not defined.");
-            }
-        }
-
-        Vector<Term> subterms = new Vector<Term>();
-        for (int i = 1; i < els.size(); i++) {
-            Element element = els.get(i);
-            Term term = parseDefaultElement(element);
-            subterms.add(term);
-        }
-
+        Vector<Term> subterms = parseDefaultElements(expr);
         Term t = new Term(symbol, SymbolTable.INOROLE, typeid, subterms);
         return t;
     }
@@ -797,7 +697,6 @@ public class RuleMLDocumentParser {
                 subterms.add(t2);
             }
         }
-
 		
         Term t = new Term(symbol, SymbolTable.INOROLE, Types.IOBJECT, subterms);
         t.setAtom(true);
@@ -858,26 +757,9 @@ public class RuleMLDocumentParser {
      *
      * @throws ParseException Thrown if there is an error parsing the resl.
      */
-          
     private Term parseResl(Element resl) throws ParseException {
-        Elements els = resl.getChildElements();
-        if (els.size() > 1) {
-            throw new ParseException(
-                    "resl element should only contain child element.");
-        }
-
-        Element el = els.get(0);
-        Term t;
-        if (el.getLocalName().equals(tagNames.VAR)) {
-            t = parseVar(el);
-        } else if (el.getLocalName().equals(tagNames.PLEX)) {
-            t = parsePlex(el);
-        } else {
-            throw new ParseException(
-                    "resl element should only contain Var or Plex as a child element.");
-        }
-
-        t.setRole(SymbolTable.IREST);
+    	Term t = parsePositionalSlot(resl);
+    	t.setRole(SymbolTable.IREST);        
         return t;
     }
 
@@ -892,25 +774,8 @@ public class RuleMLDocumentParser {
      *
      * @throws ParseException Thrown if there is an error parsing the repo.
      */ 
-     
     private Term parseRepo(Element repo) throws ParseException {
-        Elements els = repo.getChildElements();
-        if (els.size() > 1) {
-            throw new ParseException(
-                    "repo element should only contain child element.");
-        }
-
-        Element el = els.get(0);
-        Term t;
-        if (el.getLocalName().equals(tagNames.VAR)) {
-            t = parseVar(el);
-        } else if (el.getLocalName().equals(tagNames.PLEX)) {
-            t = parsePlex(el);
-        } else {
-            throw new ParseException(
-                    "repo element should only contain Var or Plex as a child element.");
-        }
-
+    	Term t = parsePositionalSlot(repo);
         t.setRole(SymbolTable.IPREST);
         return t;
     }
@@ -972,11 +837,10 @@ public class RuleMLDocumentParser {
      *
      * @throws ParseException Thrown if there is an error parsing the sko.
      */ 
-     
     private Term parseSkolem(Element sko) throws ParseException{
         String skoname = sko.getValue().trim();
 
-        if(skoname.equals("")){
+        if(skoname.isEmpty()){
             return new Term(SymbolTable.internSymbol("$gensym" + SymbolTable.genid++),
                             SymbolTable.INOROLE, Types.ITHING);
         }else{
@@ -1004,7 +868,6 @@ public class RuleMLDocumentParser {
      *
      * @return int The integer identifier for this variable
      */
-        
     private int internVariable(String varName) {
         int idx;
 
@@ -1018,18 +881,6 @@ public class RuleMLDocumentParser {
     }
 
     /**
-     * A vector to hold the class information for the variables in the current
-     * clause. This is used for normalizing the types given to a variable if
-     * more than one type is given to a variable.
-     *
-     * For example: in the following clause p(?x: type1, ?x:type2). the types
-     * are not the same on all occurances of the variable ?x - therefore the
-     * types will be normalized and receive a type that is the intersection of
-     * type1 and type2.
-     */
-    private Hashtable<Integer, Vector<Integer>> varClasses;
-
-    /**
      * A method that will go through a term and fix all variable types to be
      * consistant.
      *
@@ -1038,7 +889,6 @@ public class RuleMLDocumentParser {
      * @param types Hashtable A hash table containing the normalized types for
      * each variable in the clause.
      */
- 
     private void fixVarTypes(Term ct, Hashtable<Integer, Integer> types) {
        // logger.debug("Fixing term: " + ct.toPOSLString(true));
         for (int i = 0; i < ct.subTerms.length; i++) {
@@ -1064,7 +914,6 @@ public class RuleMLDocumentParser {
      * have a normalized form (type that is an intersection of all given types);
      * since Nothing inherits from all types this should never occur.
      */
-
     private Hashtable<Integer, Integer> buildTypeTable() throws ParseException {
         Hashtable<Integer, Integer> ht = new Hashtable<Integer, Integer>();
         Enumeration<Integer> e = varClasses.keys();
@@ -1124,6 +973,20 @@ public class RuleMLDocumentParser {
         return result;
     }
     
+    private Vector<Term> parseDefaultElements(Element element) throws ParseException
+    {
+    	Elements children = element.getChildElements();
+    	Vector<Term> subterms = new Vector<Term>();
+   	
+        for (int i = 0; i < children.size(); i++) {
+            Element child = children.get(i);
+            Term term = parseDefaultElement(child);
+            subterms.add(term);
+        }
+        
+        return subterms;
+    }
+    
     /**
      * Get the first element with the given name
      * @param elements Element to search for the child
@@ -1162,4 +1025,42 @@ public class RuleMLDocumentParser {
     	}
     	return -1;
     }
+    
+    private int parseTypeAttribute(Element ind) throws ParseException {
+		Attribute type = ind.getAttribute(tagNames.TYPE);
+        
+        int typeid = Types.IOBJECT;
+        
+        if (type != null) {
+            typeid = Types.typeID(type.getValue().trim());
+            if (typeid == -1) {
+                throw new ParseException("Type " + type.getValue().trim() +
+                                         " is not defined.");
+            }
+        }
+        
+		return typeid;
+	}
+    
+    private Term parseSimpleElement(Element element) throws ParseException
+    {
+    	String symbol = element.getValue().trim();
+        int sym = SymbolTable.internSymbol(symbol);
+        int typeid = parseTypeAttribute(element);
+
+        return new Term(sym, SymbolTable.INOROLE, typeid);
+    }
+    
+    private Term parsePositionalSlot(Element element) throws ParseException
+    {
+    	Elements children = element.getChildElements();
+    	Element firstChild = children.get(0);
+    	Term t = parseDefaultElement(firstChild);
+    	return t;
+    }
+    
+	private void resetVariables() {
+		this.variableNames = new Vector<String>();
+		this.varClasses = new Hashtable<Integer, Vector<Integer>>();
+	}
 }
