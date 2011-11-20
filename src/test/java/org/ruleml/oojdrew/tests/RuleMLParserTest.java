@@ -26,6 +26,27 @@ import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 public class RuleMLParserTest extends TestCase {
 	private Configuration config;
 	
+	public static void main(String[] args)
+	{
+		try
+		{
+			RuleMLParserTest test = new RuleMLParserTest("RuleML 0.91 Compatibility Parsing (discount)");
+			test.testRuleML91CompatibilityParsing();
+			
+			test = new RuleMLParserTest("RuleML 0.91 Parsing (discount)");
+			test.testRuleML91Parsing();
+			
+			test = new RuleMLParserTest("RuleML 1.0 Parsing (discount)");
+			test.testRuleML100Parsing();
+			
+			System.out.println("All tests passed.");
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+	}
+	
 	public RuleMLParserTest(String testName)
 	{
 		super(testName);
@@ -59,6 +80,7 @@ public class RuleMLParserTest extends TestCase {
 		try {
 			rmlParser.parseFile(RuleMLFormat.RuleML91, ruleMLFile);
 		} catch (Exception e1) {
+			e1.printStackTrace();
 			thrown = true;
 		}
 		

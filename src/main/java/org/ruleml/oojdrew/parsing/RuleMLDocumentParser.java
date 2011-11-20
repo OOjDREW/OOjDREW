@@ -345,7 +345,7 @@ public class RuleMLDocumentParser {
         	childCount--;
         	
         	firstChild = children.get(1);
-        	firstChild = children.get(2);
+        	secondChild = children.get(2);
         }
         
         if (childCount != 2) {
