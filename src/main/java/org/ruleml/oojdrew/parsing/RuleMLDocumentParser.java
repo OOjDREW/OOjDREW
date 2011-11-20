@@ -607,8 +607,8 @@ public class RuleMLDocumentParser {
             }
         }
 
-        Integer symI = Integer.valueOf(sym);
-        Integer typeI = Integer.valueOf(typeid);
+        Integer symI = sym;
+        Integer typeI = typeid;
 
         logger.debug("Parsing variable: symbol = " + symI + " type = " + typeI);
 
@@ -791,8 +791,8 @@ public class RuleMLDocumentParser {
                 String varname = "$ANON" + anonid++;
                 int symid = this.internVariable(varname);
                 Vector<Integer> types = new Vector<Integer>();
-                types.add(Integer.valueOf(Types.IOBJECT));
-                this.varClasses.put(new Integer(symid), types);
+                types.add(Types.IOBJECT);
+                this.varClasses.put(symid, types);
                 Term t2 = new Term(symid, SymbolTable.IOID, Types.IOBJECT);
                 subterms.add(t2);
             }
@@ -1045,7 +1045,7 @@ public class RuleMLDocumentParser {
             if (ct.subTerms[i].isCTerm()) {
                 fixVarTypes(ct.subTerms[i], types);
             } else if (ct.subTerms[i].getSymbol() < 0) {
-                Integer sym = Integer.valueOf(ct.subTerms[i].getSymbol());
+                Integer sym = ct.subTerms[i].getSymbol();
                 //logger.debug("Fixing symbol = " + sym);
                 Integer type = (Integer)types.get(sym);
                 //logger.debug("Type = " + type);
@@ -1078,7 +1078,7 @@ public class RuleMLDocumentParser {
             }
 
             int type = Types.greatestLowerBound(types);
-            ht.put(key, Integer.valueOf(type));
+            ht.put(key, type);
         }
         return ht;
     }

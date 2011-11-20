@@ -17,17 +17,11 @@
 
 package org.ruleml.oojdrew.tests;
 
-import java.io.IOException;
-
-import nu.xom.ParsingException;
-import nu.xom.ValidityException;
+import junit.framework.TestCase;
 
 import org.ruleml.oojdrew.Configuration;
-import org.ruleml.oojdrew.parsing.ParseException;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
-
-import junit.framework.TestCase;
 
 public class RuleMLParserTest extends TestCase {
 	private Configuration config;

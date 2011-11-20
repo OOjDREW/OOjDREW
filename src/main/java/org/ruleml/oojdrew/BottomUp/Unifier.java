@@ -480,7 +480,7 @@ public class Unifier {
                         this.variableNames.add(clauses[n.getSide()].
                                                variableNames[ -(n.getSymbol() +
                                 1)]);
-                        this.variableUsed.put(var, new Integer(idx));
+                        this.variableUsed.put(var, idx);
                     }
                     n.setSymbol( -(idx + 1)); // set new variable id
                 }

@@ -330,8 +330,8 @@ public class BottomUpGUI extends javax.swing.JFrame {
 
         Hashtable oldFacts = fr.getOldFacts();
 
-        if(oldFacts.containsKey(new Integer(SymbolTable.IINCONSISTENT))){
-            Vector v = (Vector)oldFacts.get(new Integer(SymbolTable.IINCONSISTENT));
+        if(oldFacts.containsKey(SymbolTable.IINCONSISTENT)){
+            Vector v = (Vector)oldFacts.get(SymbolTable.IINCONSISTENT);
             if(v.size() > 0){
                 //logger.warn("Knowledge base is inconsistent.");
                 JOptionPane.showMessageDialog(this, "Knowledge base is inconsistent", "Consistency Check", JOptionPane.WARNING_MESSAGE);

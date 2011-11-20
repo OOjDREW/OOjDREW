@@ -72,7 +72,7 @@ public class POSLParser extends antlr.LLkParser implements POSLParserTokenTypes 
             }
 
             int type = Types.greatestLowerBound(types);
-            ht.put(key, new Integer(type));
+            ht.put(key, type);
         }
 
         return ht;
@@ -83,7 +83,7 @@ public class POSLParser extends antlr.LLkParser implements POSLParserTokenTypes 
             if (ct.subTerms[i].isCTerm()) {
                 fixVarTypes(ct.subTerms[i], types);
             } else if (ct.subTerms[i].getSymbol() < 0) {
-                Integer sym = new Integer(ct.subTerms[i].getSymbol());
+                Integer sym = ct.subTerms[i].getSymbol();
                 Integer type = (Integer) types.get(sym);
                 ct.subTerms[i].type = type.intValue();
             }
@@ -256,14 +256,14 @@ public class POSLParser extends antlr.LLkParser implements POSLParserTokenTypes 
                         } else {
                             String varname = "$ANON" + aid++;
                             int symid = internVar(varname);
-                            Integer sym = new Integer(symid);
+                            Integer sym = symid;
 
                             Term t2 = new Term(symid, SymbolTable.IOID,
                                                Types.IOBJECT);
                             params.add(t2);
 
                             Vector v = new Vector();
-                            v.add(new Integer(Types.IOBJECT));
+                            v.add(Types.IOBJECT);
                             varClasses.put(sym, v);
                         }
 
@@ -961,8 +961,8 @@ public class POSLParser extends antlr.LLkParser implements POSLParserTokenTypes 
             }
             if (inputState.guessing == 0) {
 
-                Integer symI = new Integer(v.symbol);
-                Integer typeI = new Integer(v.type);
+                Integer symI = v.symbol;
+                Integer typeI = v.type;
 
                 Vector v2;
 

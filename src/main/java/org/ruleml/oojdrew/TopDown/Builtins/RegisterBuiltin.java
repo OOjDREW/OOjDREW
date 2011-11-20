@@ -108,7 +108,7 @@ public class RegisterBuiltin extends TDBuiltin {
             if(b instanceof org.ruleml.oojdrew.Builtins.Builtin){ // handle generic Builtin subclass
                 org.ruleml.oojdrew.Builtins.Builtin bb = (org.ruleml.oojdrew.Builtins.Builtin) b;
                 Hashtable bins = br.getBuiltins();
-                Integer sym = new Integer(bb.getSymbol());
+                Integer sym = bb.getSymbol();
                 if(bins.containsKey(sym)){
                     Object o = bins.get(sym);
                     if(!bb.getClass().equals(o.getClass()))
@@ -120,7 +120,7 @@ public class RegisterBuiltin extends TDBuiltin {
             else if(b instanceof org.ruleml.oojdrew.TopDown.Builtins.TDBuiltin){ //handle TDBuiltin subclass
                 org.ruleml.oojdrew.TopDown.Builtins.TDBuiltin bb = (org.ruleml.oojdrew.TopDown.Builtins.TDBuiltin) b;
                 Hashtable bins = br.getBuiltins();
-                Integer sym = new Integer(bb.getSymbol());
+                Integer sym = bb.getSymbol();
                 if(bins.containsKey(sym)){
                     Object o = bins.get(sym);
                     if(!bb.getClass().equals(o.getClass()))

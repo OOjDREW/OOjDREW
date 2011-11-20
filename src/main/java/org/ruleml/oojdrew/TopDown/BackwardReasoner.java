@@ -132,7 +132,7 @@ public class BackwardReasoner {
     public BackwardReasoner() {
         this.clauses = new Hashtable();
         this.oids = new Hashtable();
-        oids.put(new Integer(-1), new Vector());
+        oids.put(-1, new Vector());
         choicePoints = new Stack();
         nExtensions = 0;
         nInferences = 0;
@@ -205,7 +205,7 @@ public class BackwardReasoner {
      * @param handler TDBuiltin
      */
     public void registerBuiltin(TDBuiltin handler) {
-        Integer sym = new Integer(handler.getSymbol());
+        Integer sym = handler.getSymbol();
         this.builtins.put(sym, handler);
     }
 
@@ -219,13 +219,13 @@ public class BackwardReasoner {
         while (it.hasNext()) {
             DefiniteClause dc = (DefiniteClause) it.next();
             //logger.debug("Loaded clause: " + dc.toPOSLString());
-            Integer sym = new Integer(dc.atoms[0].getSymbol());
+            Integer sym = dc.atoms[0].getSymbol();
             if(!dc.atoms[0].subTerms[0].isCTerm()){
                 int ioid = dc.atoms[0].subTerms[0].getSymbol();
                 if(ioid < 0) ioid = -1;
                 //logger.debug("Loading oid: " + ioid);
 
-                Integer oid = new Integer(ioid);
+                Integer oid = ioid;
 
                 if (oids.containsKey(oid)) {
                     //if(ioid != -1)
@@ -1506,7 +1506,7 @@ public class BackwardReasoner {
          */
         private Iterator getUnifiableIterator(GoalList gl, int term) {
             Term t = gl.getAtom(term);
-            Integer sym = new Integer(t.getSymbol());
+            Integer sym = t.getSymbol();
             if (builtins.containsKey(sym)) {
                // logger.debug("Using builtin for " +
                 //             SymbolTable.symbol(sym.intValue()));
@@ -1521,11 +1521,11 @@ public class BackwardReasoner {
 
             if(!t.subTerms[0].isCTerm() && t.subTerms[0].getSymbol() >= 0){
                 //logger.debug("Retrieving by oid");
-                Integer oid = new Integer(t.subTerms[0].getSymbol());
+                Integer oid = t.subTerms[0].getSymbol();
                 if(oids.containsKey(oid)){
                     //logger.debug("Found oid: " + oid);
                     Vector v = (Vector)oids.get(oid);
-                    Vector v2 = (Vector)oids.get(new Integer(-1));
+                    Vector v2 = (Vector)oids.get(-1);
                     Vector v3 = new Vector();
                     v3.addAll(v);
                     v3.addAll(v2);
@@ -1533,7 +1533,7 @@ public class BackwardReasoner {
                 }
                 else{
                    // logger.debug("Did not find oid: " + oid);
-                    Vector v = (Vector)oids.get(new Integer(-1));
+                    Vector v = (Vector)oids.get(-1);
                     return v.iterator();
                 }
             }

@@ -320,7 +320,7 @@ public class ForwardReasoner {
      * jdrew.oo.bu.builtins.BUBuiltin class.
      */
     public void registerBuiltin(BUBuiltin b) {
-        Integer sym = new Integer(b.getSymbol());
+        Integer sym = b.getSymbol();
         builtins.put(sym, b);
     }
 
@@ -496,7 +496,7 @@ public class ForwardReasoner {
 
             }
                         
-            Integer sym = new Integer(dc.atoms[0].getSymbol());
+            Integer sym = dc.atoms[0].getSymbol();
 
             if (oldFacts.containsKey(sym)) { // add new fact to oldFact "list"
                 Vector v = (Vector) oldFacts.get(sym);
@@ -555,7 +555,7 @@ public class ForwardReasoner {
      */
     private boolean isSubsumed(DefiniteClause fact) {
         Subsumption s = new Subsumption(fact);
-        Integer sym = new Integer(fact.atoms[0].getSymbol());
+        Integer sym = fact.atoms[0].getSymbol();
         if (oldFacts.containsKey(sym)) {
             Vector v = (Vector) oldFacts.get(sym);
             Iterator it = v.iterator();
@@ -599,7 +599,7 @@ public class ForwardReasoner {
      */
     private Iterator getUnifiableIterator(DefiniteClause dc2, int term) {
         Term t = dc2.atoms[term];        
-        Integer sym = new Integer(t.getSymbol());
+        Integer sym = t.getSymbol();
         if (builtins.containsKey(sym)) {
             BUBuiltin b = (BUBuiltin) builtins.get(sym);
             Vector v = b.buildResult(dc2, term);
@@ -645,7 +645,7 @@ public class ForwardReasoner {
 
             Vector newResults = new Vector();
 
-            Integer sym = new Integer(dc.atoms[1].getSymbol());
+            Integer sym = dc.atoms[1].getSymbol();
             Iterator ofsit = getUnifiableIterator(dc, 1);
            
             while (ofsit.hasNext()) {
@@ -795,8 +795,8 @@ public class ForwardReasoner {
 					//creating the edge with the source, sink and if it
 					//is negative clause or not
 					Edge e1 = null;
-					Object b = new Integer(-1);
-					Object c = new Integer(1);
+					Object b = -1;
+					Object c = 1;
 					if(hasNegEdge){
 					e1 = new Edge(source,sink,b);
 					}

@@ -144,7 +144,7 @@ public class Types {
      */
     static {
         types.add(OBJECT);
-        dag.addNodeWeight(new Integer(0));
+        dag.addNodeWeight(0);
         
         
         INUMERIC = createType(NUMERIC, new String[] {OBJECT});
@@ -162,7 +162,7 @@ public class Types {
         dag = new DirectedAcyclicGraph();
         types = new Vector();
         types.add(OBJECT);
-        dag.addNodeWeight(new Integer(0));
+        dag.addNodeWeight(0);
         INUMERIC = createType(NUMERIC, new String[] {OBJECT});
         IINTEGER = createType(INTEGER, new String[] {NUMERIC});
         IFLOAT = createType(FLOAT, new String[] {NUMERIC});
@@ -194,7 +194,7 @@ public class Types {
         int id = types.size();
         types.add(name);
 
-        Integer iID = new Integer(id);
+        Integer iID = id;
         dag.addNodeWeight(iID);
 
         return id;
@@ -233,17 +233,17 @@ public class Types {
                     throw new EngineException("Type " + parents[i] +
                             " not defined, cannot create sub-type.");
                 }
-                parentids[i] = new Integer(id);
+                parentids[i] = id;
             }
         } else {
             parentids = new Integer[1];
-            parentids[0] = new Integer(IOBJECT);
+            parentids[0] = IOBJECT;
         }
 
         int id = types.size();
         types.add(name);
 
-        Integer iID = new Integer(id);
+        Integer iID = id;
         dag.addNodeWeight(iID);
 
         for (int i = 0; i < parentids.length; i++) {
@@ -338,14 +338,14 @@ public class Types {
                     throw new EngineException("Type " + parents[i] +
                             " not defined, cannot create sub-type.");
                 }
-                parentids[i] = new Integer(id);
+                parentids[i] = id;
             }
         } else {
             parentids = new Integer[1];
-            parentids[0] = new Integer(IOBJECT);
+            parentids[0] = IOBJECT;
         }
 
-        Integer iID = new Integer(types.indexOf(name));
+        Integer iID = types.indexOf(name);
         //dag.addNodeWeight(iID);
 
         for (int i = 0; i < parentids.length; i++) {
@@ -533,8 +533,8 @@ public class Types {
         if (class1 == -1 || class2 == -1) {
             return -1;
         }
-        Integer glb = ((Integer) dag.greatestLowerBound(new Integer(class1),
-                new Integer(class2)));
+        Integer glb = ((Integer) dag.greatestLowerBound(class1,
+        		class2));
         if (glb == null) {
             return -1;
         } else {
@@ -583,7 +583,7 @@ public class Types {
             if (classes[i] == -1) {
                 return -1;
             }
-            classesobj[i] = new Integer(classes[i]);
+            classesobj[i] = classes[i];
         }
         Integer glb = (Integer) dag.greatestLowerBound(classesobj);
 
@@ -611,7 +611,7 @@ public class Types {
             if (type == -1) {
                 return NOTHING;
             }
-            classesobj[i] = new Integer(type);
+            classesobj[i] = type;
         }
         Integer glb = (Integer) dag.greatestLowerBound(classesobj);
         
@@ -635,8 +635,8 @@ public class Types {
 		int classid1 = typeID(superClass);
 		int classid2 = typeID(subClass);
 		
-		Object b = new Integer(classid1);
-		Object c = new Integer(classid2);
+		Object b = classid1;
+		Object c = classid2;
 		
 		boolean hasEdge =  dag.edgeExists(c,b);
 					 
@@ -659,8 +659,8 @@ public class Types {
         if (class1 == -1 || class2 == -1) {
             return -1;
         }
-        Integer lub = ((Integer) dag.leastUpperBound(new Integer(class1),
-                new Integer(class2)));
+        Integer lub = ((Integer) dag.leastUpperBound(class1,
+        		class2));
         if (lub == null) {
             return -1;
         } else {
@@ -709,7 +709,7 @@ public class Types {
             if (classes[i] == -1) {
                 return -1;
             }
-            classesobj[i] = new Integer(classes[i]);
+            classesobj[i] = classes[i];
         }
         Integer lub = (Integer) dag.leastUpperBound(classesobj);
 
@@ -737,7 +737,7 @@ public class Types {
             if (type == -1) {
                 return NOTHING;
             }
-            classesobj[i] = new Integer(type);
+            classesobj[i] = type;
         }
         Integer lub = (Integer) dag.leastUpperBound(classesobj);
 

@@ -1079,7 +1079,7 @@ public class Unifier {
                     } else {
 
                         idx = variableCount;
-                        Integer idx2 = new Integer(idx);
+                        Integer idx2 = idx;
                         varNameFound.put(t, idx2);
                         varNames[idx] = goalLists[dCt.getSide()].variableNames[ -
                                         dCt.getSymbol() - 1];
@@ -1118,7 +1118,7 @@ public class Unifier {
                             idx = ((Integer) varNameFound.get(t)).intValue();
                         } else {
                             idx = variableCount;
-                            Integer idx2 = new Integer(idx);
+                            Integer idx2 = idx;
                             varNameFound.put(t, idx2);
                             varNames[idx] = goalLists[ct2terms[i].getSide()].
                                             variableNames[ -(ct2terms[i].
