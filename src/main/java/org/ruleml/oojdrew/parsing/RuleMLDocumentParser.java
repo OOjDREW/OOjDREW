@@ -60,7 +60,7 @@ public class RuleMLDocumentParser {
     /**
      * This is used for generating unique anonymous variable ids
      */
-    private static int anonid = 1;
+    private int anonid = 1;
     
     /**
      * RuleML tag names
