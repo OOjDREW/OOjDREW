@@ -89,7 +89,7 @@ public class Config implements Configuration {
     
     public boolean getValidateRuleMLEnabled()
     {
-    	return preferences.getBoolean("ValidateRuleML", true);
+    	return preferences.getBoolean("ValidateRuleML", false);
     }
     
     public void setValidateRuleMLEnabled(boolean enabled)
