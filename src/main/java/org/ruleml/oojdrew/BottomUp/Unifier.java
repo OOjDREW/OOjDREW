@@ -209,7 +209,7 @@ public class Unifier {
         Term t1 = deref(term1);
         Term t2 = deref(term2);  
           
-        if (t1.isCTerm() && t2.isCTerm()) {
+        if (t1.isExpr() && t2.isExpr()) {
             if (t1.getSymbol() == t2.getSymbol() &&
                 Types.isSuperClass(t2.getType(), t1.getType())) {
                 Vector t1restterms = new Vector();
@@ -375,7 +375,7 @@ public class Unifier {
             else {
                 return false; // Symbols were different or types were not compatible (! (type(t2) >= type(t1)))
             }
-        } else if (t1.isCTerm() && !t2.isCTerm()) {
+        } else if (t1.isExpr() && !t2.isExpr()) {
             if (t2.getSymbol() < 0 &&
                 Types.isSuperClass(t2.getType(), t1.getType())) {
                 // t2 is a variable, t1 is a complex term (Cterm, Plex, Atom)
@@ -387,7 +387,7 @@ public class Unifier {
                 // t2 is an individual constant (Ind) and t2 is a complex term (Cterm, Plex, Atom)
                 return false;
             }
-        } else if (!t1.isCTerm() && t2.isCTerm()) {
+        } else if (!t1.isExpr() && t2.isExpr()) {
             if (t1.getSymbol() < 0 &&
                 Types.isSuperClass(t1.getType(), t2.getType())) {
                 // t1 is a variable, t2 is a complex term (Cterm, Plex, Atom)
@@ -399,7 +399,7 @@ public class Unifier {
                 // t1 is an individual constant (Ind) and t2 is a complex term (Cterm, Plex, Atom)
                 return false;
             }
-        } else if (!t1.isCTerm() && !t2.isCTerm()) {
+        } else if (!t1.isExpr() && !t2.isExpr()) {
             if (t1.getSymbol() >= 0 && t2.getSymbol() >= 0) {
                 // Both t1 and t2 are individual constants (Ind)
                 //edit here //exact area where to make ind and data not bind together
@@ -465,7 +465,7 @@ public class Unifier {
      */
     private Term apply(Term t) {
         int role = t.getRole();
-        if (!t.isCTerm()) {
+        if (!t.isExpr()) {
             Term dt = deref(t); // dereference Term
             Term n = dt.deepCopy(); // make working copy
             n.setRole(role);
@@ -495,7 +495,7 @@ public class Unifier {
                 Term sub = deref(subs[i]); // get deferenced subterm
                 if ((sub.getRole() == SymbolTable.IREST ||
                      sub.getRole() == SymbolTable.IPREST)
-                    && sub.isCTerm() && sub.getSymbol() == SymbolTable.IPLEX) {
+                    && sub.isExpr() && sub.getSymbol() == SymbolTable.IPLEX) {
                     // If this is a rest term, and is bound to a PLEX of terms
                     // merge in rest term list into main body
                     Term[] restterms = sub.subTerms;

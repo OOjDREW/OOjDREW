@@ -80,7 +80,7 @@ public class POSLParser extends antlr.LLkParser implements POSLParserTokenTypes 
 
     private void fixVarTypes(Term ct, Hashtable types) {
         for (int i = 0; i < ct.subTerms.length; i++) {
-            if (ct.subTerms[i].isCTerm()) {
+            if (ct.subTerms[i].isExpr()) {
                 fixVarTypes(ct.subTerms[i], types);
             } else if (ct.subTerms[i].getSymbol() < 0) {
                 Integer sym = ct.subTerms[i].getSymbol();

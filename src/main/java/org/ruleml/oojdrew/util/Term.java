@@ -416,7 +416,7 @@ public class Term implements Comparable {
      * @return boolean value - true if this term is a complex term (atom, cterm,
      * tup) false otherwise.
      */
-    public boolean isCTerm() {
+    public boolean isExpr() {
         return (subTerms != null);
     }
 
@@ -599,7 +599,7 @@ public class Term implements Comparable {
                 }
             }
             s += ". )";
-        } else if (this.isCTerm()) {
+        } else if (this.isExpr()) {
             String sb;
             String eb;
             if (this.isAtom()) {
@@ -760,7 +760,7 @@ public class Term implements Comparable {
                 }
             }
             s += ". )";
-        } else if (this.isCTerm()) {
+        } else if (this.isExpr()) {
             String sb;
             String eb;
             if (this.isAtom()) {
@@ -890,7 +890,7 @@ public class Term implements Comparable {
                 }
             }
             s += ". )";
-        } else if (this.isCTerm()) {
+        } else if (this.isExpr()) {
             String sb;
             String eb;
             if (this.isAtom()) {
@@ -1037,7 +1037,7 @@ public class Term implements Comparable {
    		Element el = null;
        	boolean dst = false;
 
-        if (this.isCTerm()) {
+        if (this.isExpr()) {
             if (this.isAtom() && this.symbol == SymbolTable.INAF) {
                 el = new Element("Naf");
             } else if (this.isAtom() && this.symbol == SymbolTable.IASSERT) {
@@ -1168,7 +1168,7 @@ public class Term implements Comparable {
     	Element el = null;
         boolean dst = false;
 
-        if (this.isCTerm()) {
+        if (this.isExpr()) {
             if (this.isAtom() && this.symbol == SymbolTable.INAF) {
                 el = new Element("Naf");
             } else if (this.isAtom() && this.symbol == SymbolTable.IASSERT) {
@@ -1310,7 +1310,7 @@ public class Term implements Comparable {
 
         Element el = null;
         boolean dst = false;
-        if (this.isCTerm()) {
+        if (this.isExpr()) {
             if (this.isAtom() && this.symbol == SymbolTable.INAF) {
                 el = new Element("Naf");
             } else if (this.isAtom() && this.symbol == SymbolTable.IASSERT) {
@@ -1449,7 +1449,7 @@ public class Term implements Comparable {
       	
       	Element el = null;
         boolean dst = false;
-        if (this.isCTerm()) {
+        if (this.isExpr()) {
             if (this.isAtom() && this.symbol == SymbolTable.INAF) {
                 el = new Element("Naf");
             } else if (this.isAtom() && this.symbol == SymbolTable.IASSERT) {

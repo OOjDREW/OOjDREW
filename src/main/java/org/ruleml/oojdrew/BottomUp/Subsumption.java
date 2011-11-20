@@ -122,7 +122,7 @@ public class Subsumption {
             }
         }
 
-        if (t.isCTerm()) {
+        if (t.isExpr()) {
             for (int i = 0; i < t.subTerms.length; i++) {
                 ground(t.subTerms[i]);
             }
@@ -196,7 +196,7 @@ public class Subsumption {
         Term t1 = deref(term1);
         Term t2 = deref(term2);
 
-        if (t1.isCTerm() && t2.isCTerm()) {
+        if (t1.isExpr() && t2.isExpr()) {
             if (t1.getSymbol() == t2.getSymbol() &&
                 Types.isSuperClass(t2.getType(), t1.getType())) {
                 Vector t1restterms = new Vector();
@@ -371,7 +371,7 @@ public class Subsumption {
             else {
                 return false; // Symbols were different or types were not compatible (! (type(t2) >= type(t1)))
             }
-        } else if (t1.isCTerm() && !t2.isCTerm()) {
+        } else if (t1.isExpr() && !t2.isExpr()) {
             if (t2.getSymbol() < 0 &&
                 Types.isSuperClass(t2.getType(), t1.getType())) {
                 // t2 is a variable, t1 is a complex term (Cterm, Plex, Atom)
@@ -383,7 +383,7 @@ public class Subsumption {
                 // t2 is an individual constant (Ind) and t2 is a complex term (Cterm, Plex, Atom)
                 return false;
             }
-        } else if (!t1.isCTerm() && t2.isCTerm()) {
+        } else if (!t1.isExpr() && t2.isExpr()) {
             if (t1.getSymbol() < 0 &&
                 Types.isSuperClass(t1.getType(), t2.getType())) {
                 // t1 is a variable, t2 is a complex term (Cterm, Plex, Atom)
@@ -395,7 +395,7 @@ public class Subsumption {
                 // t1 is an individual constant (Ind) and t2 is a complex term (Cterm, Plex, Atom)
                 return false;
             }
-        } else if (!t1.isCTerm() && !t2.isCTerm()) {
+        } else if (!t1.isExpr() && !t2.isExpr()) {
             if (t1.getSymbol() >= 0 && t2.getSymbol() >= 0) {
                 // Both t1 and t2 are individual constants (Ind)
                 if (t1.getSymbol() == t2.getSymbol() &&

@@ -20,7 +20,6 @@ package org.ruleml.oojdrew.parsing;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 
 public class RuleMLTagNames {
-	
 	public final String RULEML = "RuleML";
 		
 	public final String RULEBASE = "Rulebase";
@@ -44,6 +43,16 @@ public class RuleMLTagNames {
     public final String OID = "oid";
     public final String SKOLEM = "Skolem";
     public final String NEG = "Neg";
+    
+    public final String ACT = "act";
+    public final String ARG = "arg";    
+    public final String FORMULA = "formula";
+    public final String DECLARE = "declare";
+    public final String STRONG = "strong";
+    public final String WEAK = "weak";
+    public final String RIGHT = "right";
+    public final String LEFT = "left";
+    public final String TORSO = "torso";
     
 	public final String DATA = "Data";
 	

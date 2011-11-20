@@ -97,7 +97,7 @@ public class RegisterBuiltin extends TDBuiltin {
 
         Term p1 = t.subTerms[1].deepCopy();
 
-        if(p1.getSymbol() < 0 || p1.isCTerm())
+        if(p1.getSymbol() < 0 || p1.isExpr())
             return null;
 
         String cname = p1.getSymbolString();

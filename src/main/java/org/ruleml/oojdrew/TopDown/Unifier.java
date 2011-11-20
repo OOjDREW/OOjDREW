@@ -277,7 +277,7 @@ public class Unifier {
         //logger.debug(t1.toPOSLString(false));
         //logger.debug(t2.toPOSLString(false));
 
-        if (t1.isCTerm() && t2.isCTerm()) {
+        if (t1.isExpr() && t2.isExpr()) {
             if (t1.getSymbol() == t2.getSymbol() &&
                 Types.isSuperClass(t2.getType(), t1.getType())) {
                 Vector t1restterms = new Vector();
@@ -450,7 +450,7 @@ public class Unifier {
             else {
                 return false; // Symbols were different or types were not compatible (! (type(t2) >= type(t1)))
             }
-        } else if (t1.isCTerm() && !t2.isCTerm()) {
+        } else if (t1.isExpr() && !t2.isExpr()) {
             if (t2.getSymbol() < 0 &&
                 Types.isSuperClass(t2.getType(), t1.getType())) {
                 // t2 is a variable, t1 is a complex term (Cterm, Plex, Atom)
@@ -544,7 +544,7 @@ public class Unifier {
                 // t2 is an individual constant (Ind) and t2 is a complex term (Cterm, Plex, Atom)
                 return false;
             }
-        } else if (!t1.isCTerm() && t2.isCTerm()) {
+        } else if (!t1.isExpr() && t2.isExpr()) {
             if (t1.getSymbol() < 0 &&
                 Types.isSuperClass(t1.getType(), t2.getType())) {
                 // t1 is a variable, t2 is a complex term (Cterm, Plex, Atom)
@@ -648,7 +648,7 @@ public class Unifier {
                 // t1 is an individual constant (Ind) and t2 is a complex term (Cterm, Plex, Atom)
                 return false;
             }
-        } else if (!t1.isCTerm() && !t2.isCTerm()) {
+        } else if (!t1.isExpr() && !t2.isExpr()) {
             if (t1.getSymbol() >= 0 && t2.getSymbol() >= 0) {
                 // Both t1 and t2 are individual constants (Ind)
                 if (t1.getSymbol() == t2.getSymbol() &&
@@ -1063,7 +1063,7 @@ public class Unifier {
     private Term apply(Term ct) {
         int role = ct.getRole();
         int classID = ct.getType();
-        if (!ct.isCTerm()) {
+        if (!ct.isExpr()) {
             Term dCt = deref(ct);
             Term n = (Term) dCt.deepCopy();
             n.setRole(role);
@@ -1095,7 +1095,7 @@ public class Unifier {
                 //   n2.setType(classID);
                 return n2;
             }
-        } else if (ct.isCTerm()) {
+        } else if (ct.isExpr()) {
             Term ct2 = ct;
             Term[] ct2terms = ct2.getSubTerms();
             Vector terms2 = new Vector();
@@ -1104,7 +1104,7 @@ public class Unifier {
                 Term test2 = deref(ct2terms[i]);
                 if ((ct2terms[i].getRole() == SymbolTable.IPREST ||
                      ct2terms[i].getRole() == SymbolTable.IREST) &&
-                    test2.isCTerm() && test2.getSymbol() == SymbolTable.IPLEX) {
+                    test2.isExpr() && test2.getSymbol() == SymbolTable.IPLEX) {
                     Term[] restSubTerms = test2.getSubTerms();
                     for (int j = 0; j < restSubTerms.length; j++) {
                         terms2.add(apply(restSubTerms[j]));

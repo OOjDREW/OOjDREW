@@ -220,7 +220,7 @@ public class BackwardReasoner {
             DefiniteClause dc = (DefiniteClause) it.next();
             //logger.debug("Loaded clause: " + dc.toPOSLString());
             Integer sym = dc.atoms[0].getSymbol();
-            if(!dc.atoms[0].subTerms[0].isCTerm()){
+            if(!dc.atoms[0].subTerms[0].isExpr()){
                 int ioid = dc.atoms[0].subTerms[0].getSymbol();
                 if(ioid < 0) ioid = -1;
                 //logger.debug("Loading oid: " + ioid);
@@ -1519,7 +1519,7 @@ public class BackwardReasoner {
                 return v.iterator();
             }
 
-            if(!t.subTerms[0].isCTerm() && t.subTerms[0].getSymbol() >= 0){
+            if(!t.subTerms[0].isExpr() && t.subTerms[0].getSymbol() >= 0){
                 //logger.debug("Retrieving by oid");
                 Integer oid = t.subTerms[0].getSymbol();
                 if(oids.containsKey(oid)){

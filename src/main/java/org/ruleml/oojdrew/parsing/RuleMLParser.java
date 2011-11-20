@@ -28,7 +28,6 @@ import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
-import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.util.DefiniteClause;
 
 /**
@@ -52,7 +51,7 @@ public class RuleMLParser {
     /**
      * A buffer that stores clauses that have already been parsed.
      */
-    private Vector clauses;
+    private Vector<DefiniteClause> clauses;
 
     /**
      * This is used to indicate what back-end parser to use. Currently only
@@ -72,7 +71,7 @@ public class RuleMLParser {
      * Constructs a new parser object.
      */
     public RuleMLParser() {
-        clauses = new Vector();
+        clauses = new Vector<DefiniteClause>();
     }
 
     /**
@@ -81,7 +80,7 @@ public class RuleMLParser {
      *
      * @return Iterator An iterator over all clauses in the buffer.
      */
-    public Iterator iterator() {
+    public Iterator<DefiniteClause> iterator() {
         return clauses.iterator();
     }
 
@@ -90,9 +89,8 @@ public class RuleMLParser {
      * allows the easy reuse of a parser object.
      */
     public void clear() {
-        clauses = null;
+        clauses = new Vector<DefiniteClause>();
         System.gc();
-        clauses = new Vector();
     }
 
     /**

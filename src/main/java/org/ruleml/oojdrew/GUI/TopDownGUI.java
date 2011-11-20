@@ -57,8 +57,6 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-import org.ruleml.oojdrew.Config;
-import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.TopDown.BackwardReasoner;
 import org.ruleml.oojdrew.parsing.POSLParser;
 import org.ruleml.oojdrew.parsing.RDFSParser;
