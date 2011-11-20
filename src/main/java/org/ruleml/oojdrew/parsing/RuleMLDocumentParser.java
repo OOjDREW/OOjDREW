@@ -51,11 +51,11 @@ import org.ruleml.oojdrew.util.Types;
 
 public class RuleMLDocumentParser {
 
-    private Hashtable skolemMap;
+    private Hashtable<String, String> skolemMap;
 
-    private Vector clauses;
+    private Vector<DefiniteClause> clauses;
                   
-    private Vector variableNames;
+    private Vector<String> variableNames;
     
     /**
      * This is used for generating unique anonymous variable ids
@@ -82,7 +82,7 @@ public class RuleMLDocumentParser {
      * @param clauses Vector The vector to use as a buffer - this is generally
      * passed by the RuleMLParser front-end.
      */
-    public RuleMLDocumentParser(RuleMLFormat format, Vector clauses) {
+    public RuleMLDocumentParser(RuleMLFormat format, Vector<DefiniteClause> clauses) {
         this.clauses = clauses;
         
         // Set default RuleML version
@@ -102,7 +102,7 @@ public class RuleMLDocumentParser {
      */
             
     public void parseRuleMLDocument(Document doc) throws ParseException {
-        this.skolemMap = new Hashtable();
+        this.skolemMap = new Hashtable<String, String>();
                
         Element root = doc.getRootElement();        
         Element firstChild = null;
@@ -200,7 +200,7 @@ public class RuleMLDocumentParser {
 		
         if (el.getLocalName().equals(tagNames.ATOM)) {
             DefiniteClause dc = parseFact(el, false);
-            Vector v = new Vector();
+            Vector<Term> v = new Vector<Term>();
             for (int i = 0; i < dc.atoms.length; i++) {
                 v.add(dc.atoms[i]);
             }
@@ -209,9 +209,9 @@ public class RuleMLDocumentParser {
             t.setAtom(true);
             return t;
         } else if (el.getLocalName().equals(tagNames.IMPLIES)) {
-            Vector v2 = parseImplies(el, false);
+            Vector<DefiniteClause> v2 = parseImplies(el, false);
             DefiniteClause dc = (DefiniteClause)v2.get(0);
-            Vector v = new Vector();
+            Vector<Term> v = new Vector<Term>();
             for (int i = 0; i < dc.atoms.length; i++) {
                 v.add(dc.atoms[i]);
             }
@@ -236,9 +236,9 @@ public class RuleMLDocumentParser {
      * @throws ParseException Thrown if there is a serious error parsing the
      * negFact.
      */
-    private Vector parseNegFact(Element neg) throws ParseException {
-        this.variableNames = new Vector();
-        this.varClasses = new Hashtable();
+    private Vector<DefiniteClause> parseNegFact(Element neg) throws ParseException {
+        this.variableNames = new Vector<String>();
+        this.varClasses = new Hashtable<Integer, Vector<Integer>>();
 
         Elements atoms = neg.getChildElements("Atom");
         if(atoms.size() != 1){
@@ -264,15 +264,15 @@ public class RuleMLDocumentParser {
 		
         Term atm = parseAtom(atom, true, true);
 
-        Hashtable types = this.buildTypeTable();
+        Hashtable<Integer, Integer> types = this.buildTypeTable();
         this.fixVarTypes(atm, types);
 
-        Vector atms = new Vector();
+        Vector<Term> atms = new Vector<Term>();
         atms.add(atm);
 
         DefiniteClause dc = new DefiniteClause(atms, variableNames);
 
-        Vector v = new Vector();
+        Vector<DefiniteClause> v = new Vector<DefiniteClause>();
         v.add(dc);
 
         // Add code to generate consistency check
@@ -337,8 +337,8 @@ public class RuleMLDocumentParser {
     private DefiniteClause parseFact(Element atom, boolean newVarnames) throws
             ParseException {
         if (newVarnames) {
-            this.variableNames = new Vector();
-            this.varClasses = new Hashtable();
+            this.variableNames = new Vector<String>();
+            this.varClasses = new Hashtable<Integer, Vector<Integer>>();
         }
 		
         if (!hasMapClosure) {
@@ -358,10 +358,10 @@ public class RuleMLDocumentParser {
 
         Term atm = parseAtom(atom, true, false);
 
-        Hashtable types = this.buildTypeTable();
+        Hashtable<Integer, Integer> types = this.buildTypeTable();
         this.fixVarTypes(atm, types);
 
-        Vector atoms = new Vector();
+        Vector<Term> atoms = new Vector<Term>();
         atoms.add(atm);
 
         DefiniteClause dc = new DefiniteClause(atoms, variableNames);
@@ -383,7 +383,7 @@ public class RuleMLDocumentParser {
      * @throws ParseException Thrown if there is a serious error parsing the
      * implication.
      */
-    private Vector parseImplies(Element implies) throws ParseException {
+    private Vector<DefiniteClause> parseImplies(Element implies) throws ParseException {
         return parseImplies(implies, true);
     }
 
@@ -405,14 +405,14 @@ public class RuleMLDocumentParser {
      * @throws ParseException Thrown if there is a serious error parsing the
      * implication.
      */
-    private Vector parseImplies(Element implies, boolean newVarnames) throws
+    private Vector<DefiniteClause> parseImplies(Element implies, boolean newVarnames) throws
             ParseException {
         if (newVarnames) {
-            this.variableNames = new Vector();
-            this.varClasses = new Hashtable();
+            this.variableNames = new Vector<String>();
+            this.varClasses = new Hashtable<Integer, Vector<Integer>>();
         }
 
-        Vector newclauses = new Vector();
+        Vector<DefiniteClause> newclauses = new Vector<DefiniteClause>();
 
         if (!hasMapClosure) {
             //No inner close - should have
@@ -468,7 +468,7 @@ public class RuleMLDocumentParser {
 	        conclusion = secondChild;
 		}
 
-		Vector subterms = new Vector();
+        Vector<Term> subterms = new Vector<Term>();
         if (conclusion.getLocalName().equals(tagNames.ATOM)) {
             subterms.add(parseAtom(conclusion, true, false));
         } else if (conclusion.getLocalName().equals(tagNames.NEG)){
@@ -530,9 +530,9 @@ public class RuleMLDocumentParser {
         }
 
         logger.debug("Building Types");
-        Hashtable types = this.buildTypeTable();
+        Hashtable<Integer, Integer> types = this.buildTypeTable();
         logger.debug("Built Types");
-        Iterator it = subterms.iterator();
+        Iterator<Term> it = subterms.iterator();
         int i = 0;
         while(it.hasNext()){
             Term t = (Term)it.next();
@@ -682,11 +682,11 @@ public class RuleMLDocumentParser {
 
         logger.debug("Parsing variable: symbol = " + symI + " type = " + typeI);
 
-        Vector v;
+        Vector<Integer> v;
         if(this.varClasses.containsKey(symI)){
-            v = (Vector)varClasses.get(symI);
+            v = varClasses.get(symI);
         }else{
-            v = new Vector();
+            v = new Vector<Integer>();
             varClasses.put(symI, v);
         }
 
@@ -711,7 +711,7 @@ public class RuleMLDocumentParser {
         
     private Term parsePlex(Element plex) throws ParseException {
         Elements els = plex.getChildElements();
-        Vector subterms = new Vector();
+        Vector<Term> subterms = new Vector<Term>();
                
         for (int i = 0; i < els.size(); i++) {
             Element el = els.get(i);
@@ -777,7 +777,7 @@ public class RuleMLDocumentParser {
             }
         }
 
-        Vector subterms = new Vector();
+        Vector<Term> subterms = new Vector<Term>();
         for (int i = 1; i < els.size(); i++) {
             Element el = els.get(i);
             
@@ -839,7 +839,7 @@ public class RuleMLDocumentParser {
 
         int symbol = SymbolTable.internSymbol(relname);
 
-        Vector subterms = new Vector();
+        Vector<Term> subterms = new Vector<Term>();
         int startIndex = getFirstChildElementIndex(children, 0) + 1;
         for (int i = startIndex; i < children.size(); i++) {
             Element el = children.get(i);
@@ -868,7 +868,7 @@ public class RuleMLDocumentParser {
             } else {
                 String varname = "$ANON" + anonid++;
                 int symid = this.internVariable(varname);
-                Vector types = new Vector();
+                Vector<Integer> types = new Vector<Integer>();
                 types.add(Integer.valueOf(Types.IOBJECT));
                 this.varClasses.put(new Integer(symid), types);
                 Term t2 = new Term(symid, SymbolTable.IOID, Types.IOBJECT);
@@ -1031,7 +1031,7 @@ public class RuleMLDocumentParser {
         }
 
         Element el = els.get(0);
-        Vector subterms = new Vector();
+        Vector<Term> subterms = new Vector<Term>();
         if (el.getLocalName().equals(tagNames.ATOM)) {
             subterms.add(parseAtom(el, false, false));
         } else if (el.getLocalName().equals(tagNames.AND)) {
@@ -1077,7 +1077,7 @@ public class RuleMLDocumentParser {
                             SymbolTable.INOROLE, Types.ITHING);
         }else{
             if(this.skolemMap.containsKey(skoname)){
-                String sym = (String)skolemMap.get(skoname);
+                String sym = skolemMap.get(skoname);
                 return new Term(SymbolTable.internSymbol(sym),
                                   SymbolTable.INOROLE, Types.ITHING);
             }else{
@@ -1123,7 +1123,7 @@ public class RuleMLDocumentParser {
      * types will be normalized and receive a type that is the intersection of
      * type1 and type2.
      */
-    private Hashtable varClasses;
+    private Hashtable<Integer, Vector<Integer>> varClasses;
 
     /**
      * A method that will go through a term and fix all variable types to be
@@ -1135,7 +1135,7 @@ public class RuleMLDocumentParser {
      * each variable in the clause.
      */
  
-    private void fixVarTypes(Term ct, Hashtable types) {
+    private void fixVarTypes(Term ct, Hashtable<Integer, Integer> types) {
        // logger.debug("Fixing term: " + ct.toPOSLString(true));
         for (int i = 0; i < ct.subTerms.length; i++) {
             if (ct.subTerms[i].isCTerm()) {
@@ -1161,13 +1161,13 @@ public class RuleMLDocumentParser {
      * since Nothing inherits from all types this should never occur.
      */
 
-    private Hashtable buildTypeTable() throws ParseException {
-        Hashtable ht = new Hashtable();
-        Enumeration e = varClasses.keys();
+    private Hashtable<Integer, Integer> buildTypeTable() throws ParseException {
+        Hashtable<Integer, Integer> ht = new Hashtable<Integer, Integer>();
+        Enumeration<Integer> e = varClasses.keys();
 
         while (e.hasMoreElements()) {
-            Object key = e.nextElement();
-            Vector value = (Vector) varClasses.get(key);
+            int key = e.nextElement();
+            Vector<Integer> value = varClasses.get(key);
             int[] types = new int[value.size()];
             for (int i = 0; i < types.length; i++) {
                 types[i] = ((Integer) value.get(i)).intValue();
@@ -1189,7 +1189,7 @@ public class RuleMLDocumentParser {
      * @return True if elements has been found and parsed, otherwise false
      * @throws ParseException
      */
-    private boolean parseDefaultElement(Element el, Vector subterms) throws ParseException
+    private boolean parseDefaultElement(Element el, Vector<Term> subterms) throws ParseException
     {
         if (el.getLocalName().equals(tagNames.PLEX)) {
             subterms.add(parsePlex(el));
