@@ -178,7 +178,7 @@ public class RuleMLParser {
 	public void parseDocument(RuleMLFormat format, Document doc)
 			throws ParseException, ParsingException, ValidityException
 	{
-		RuleMLDocumentParser parser = new RuleMLDocumentParser(format, config, clauses);
+		RuleMLDocumentParser parser = new RuleMLDocumentParser(format, clauses);
 
 		parser.parseRuleMLDocument(doc);
 	}
