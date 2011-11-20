@@ -61,11 +61,6 @@ public class RuleMLDocumentParser {
      * This is used for generating unique anonymous variable ids
      */
     private static int anonid = 1;
-
-    /**
-     * This is used to indicate if the document has an inner close attribute.
-     */
-    private boolean hasMapClosure = false;
     
     /**
      * RuleML tag names
@@ -142,7 +137,6 @@ public class RuleMLDocumentParser {
 		// Otherwise use Query as root attribute
 		else if (rulemlFormat.equals(RuleMLFormat.RuleMLQuery) && rootName.equals(tagNames.QUERY))
 		{
-			hasMapClosure = true;
 			// Use query element as first child
 			firstChild = root;
 		}
@@ -151,16 +145,6 @@ public class RuleMLDocumentParser {
         	// Note: first child only can get null if root is no query element
             throw new ParseException(
                     "RuleML or Assert element must contain an Rulebase or an And element!");
-        }
-
-        if (firstChild.getAttribute(tagNames.MAPCLOSURE) != null) {
-            hasMapClosure = true;
-            if (!firstChild.getAttributeValue(tagNames.MAPCLOSURE).equals(tagNames.UNIVERSAL)) {
-                throw new ParseException(
-                        "Only universal inner closures are currently supported.");
-            }
-        } else if (!rulemlFormat.equals(RuleMLFormat.RuleMLQuery)) {
-            logger.info("Document root has no mapClosure attribute. Indiviual clauses must have closure attributes.");
         }
 	
         Elements els = firstChild.getChildElements();
@@ -247,21 +231,7 @@ public class RuleMLDocumentParser {
         }
 		
         Element atom = atoms.get(0);
-
-        if (!hasMapClosure)
-        {
-            String closure = atom.getAttributeValue(tagNames.CLOSURE);
-            if (closure == null) {
-                logger.error("No closure on clause.");
-                throw new ParseException("No closure on clause.");
-            }
-
-            if (!closure.equals(tagNames.UNIVERSAL)) {
-                logger.error("Only universal closures are currently supported.");
-                throw new ParseException("Only universal inner closures are currently supported.");
-            }
-        }
-		
+	
         Term atm = parseAtom(atom, true, true);
 
         Hashtable<Integer, Integer> types = this.buildTypeTable();
@@ -340,21 +310,6 @@ public class RuleMLDocumentParser {
             this.variableNames = new Vector<String>();
             this.varClasses = new Hashtable<Integer, Vector<Integer>>();
         }
-		
-        if (!hasMapClosure) {
-            //No inner close - should have
-            String closure = atom.getAttributeValue(tagNames.CLOSURE);
-            if (closure == null) {
-                logger.error("No closure on clause.");
-                throw new ParseException("No closure on clause.");
-            }
-
-            if (!closure.equals(tagNames.UNIVERSAL)) {
-                logger.error("Only universal closures are currently supported.");
-                throw new ParseException(
-                        "Only universal inner closures are currently supported.");
-            }
-        }
 
         Term atm = parseAtom(atom, true, false);
 
@@ -414,20 +369,6 @@ public class RuleMLDocumentParser {
 
         Vector<DefiniteClause> newclauses = new Vector<DefiniteClause>();
 
-        if (!hasMapClosure) {
-            //No inner close - should have
-            String closure = implies.getAttributeValue(tagNames.CLOSURE);
-            if (closure == null) {
-                logger.error("No closure on clause.");
-                throw new ParseException("No closure on clause.");
-            }
-
-            if (!closure.equals(tagNames.UNIVERSAL)) {
-                logger.error("Only universal closures are currently supported.");
-                throw new ParseException(
-                        "Only universal inner closures are currently supported.");
-            }
-        }
 		// Implies must have two children (excluding OID elements)
         Elements children = implies.getChildElements();
         int childCount = children.size();
