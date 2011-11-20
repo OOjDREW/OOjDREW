@@ -32,18 +32,16 @@ public class SettingsDialog {
 	
 	public void applySettings()
 	{
-		config.setRuleMLCompatibilityModeEnabled(ui.getChckbxRuleMLCompatibilityModeSelected());
+
 	}
 	
 	public void syncUI()
 	{
-		ui.setChckbxRuleMLCompatibilityModeSelected(config.getRuleMLCompatibilityModeEnabled());
+
 	}
 	
 	public void show()
 	{
 		ui.setVisible(true);
 	}
-
-	//public void 
 }

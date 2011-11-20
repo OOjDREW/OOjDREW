@@ -1508,8 +1508,7 @@ public class TopDownGUI extends javax.swing.JFrame {
                 Logger root = Logger.getRootLogger();
                 root.setLevel(Level.DEBUG);
                 
-                Configuration config = new Config();
-                RuleMLParser rmlParser = new RuleMLParser(config);
+                RuleMLParser rmlParser = new RuleMLParser();
                 
                 TopDownGUI frame = new TopDownGUI(rmlParser);
                 TextPaneAppender tpa = new TextPaneAppender(new PatternLayout(

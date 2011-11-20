@@ -53,7 +53,6 @@ public class RuleMLParser {
      * A buffer that stores clauses that have already been parsed.
      */
     private Vector clauses;
-    private Configuration config;
 
     /**
      * This is used to indicate what back-end parser to use. Currently only
@@ -72,9 +71,8 @@ public class RuleMLParser {
     /**
      * Constructs a new parser object.
      */
-    public RuleMLParser(Configuration config) {
+    public RuleMLParser() {
         clauses = new Vector();
-        this.config = config;
     }
 
     /**
@@ -154,7 +152,7 @@ public class RuleMLParser {
 	public void parseDocument(RuleMLFormat format, Document doc)
 			throws ParseException, ParsingException, ValidityException
 	{
-		RuleMLDocumentParser parser = new RuleMLDocumentParser(format, config, clauses);
+		RuleMLDocumentParser parser = new RuleMLDocumentParser(format, clauses);
 
 		parser.parseRuleMLDocument(doc);
 	}

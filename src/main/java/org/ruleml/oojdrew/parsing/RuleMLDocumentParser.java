@@ -21,8 +21,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 
 import nu.xom.Attribute;
 import nu.xom.Document;
@@ -30,7 +28,6 @@ import nu.xom.Element;
 import nu.xom.Elements;
 
 import org.apache.log4j.Logger;
-import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.SymbolTable;
@@ -52,7 +49,7 @@ import org.ruleml.oojdrew.util.Types;
  * @version 0.93
  */
 
-public class RuleMLDocumentParser implements PreferenceChangeListener {
+public class RuleMLDocumentParser {
 
     private Hashtable skolemMap;
 
@@ -79,24 +76,18 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
 
     private Logger logger = Logger.getLogger("jdrew.oo.util.RuleMLParser");
 
-    private Configuration config;
-    private boolean compatibilityMode;
-
     /**
      * Constructs the back-end parser.
      *
      * @param clauses Vector The vector to use as a buffer - this is generally
      * passed by the RuleMLParser front-end.
      */
-    public RuleMLDocumentParser(RuleMLFormat format, Configuration config, Vector clauses) {
+    public RuleMLDocumentParser(RuleMLFormat format, Vector clauses) {
         this.clauses = clauses;
         
         // Set default RuleML version
         this.rulemlFormat = format;
         this.tagNames = new RuleMLTagNames(format);
-        
-        this.config = config;
-        readConfig();
     }
 
     /**
@@ -168,7 +159,7 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
                 throw new ParseException(
                         "Only universal inner closures are currently supported.");
             }
-        } else {
+        } else if (!rulemlFormat.equals(RuleMLFormat.RuleMLQuery)) {
             logger.info("Document root has no mapClosure attribute. Indiviual clauses must have closure attributes.");
         }
 	
@@ -466,18 +457,11 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
 			premise = secondChild.getChildElements().get(0);
 			conclusion = firstChild.getChildElements().get(0);
 		}
-		// No premise or conclusion tag available
-		else if (compatibilityMode)
-		{
-			// Use backwards compatibility 
-	        premise = firstChild;
-	        conclusion = secondChild;
-		}
+		// No premise or conclusion tag available, use stripe-skipped version
 		else
 		{
-			// Use default order
-	        premise = secondChild;
-	        conclusion = firstChild;
+	        premise = firstChild;
+	        conclusion = secondChild;
 		}
 
         Vector atoms = new Vector();
@@ -1274,32 +1258,25 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
      * @param elements Elements to count
      * @return Amount of elements which do not have OID as element name
      */
-    private int getElementCount(Elements elements)
+    private int getElementCount(Elements elements) throws ParseException
     {
-    	int count = 0;
+    	int count = elements.size();
+    	int oidCount = 0;
+
     	for (int i = 0; i < elements.size(); i++)
     	{
     		Element child = elements.get(i);
-    		if (!child.getLocalName().equals(tagNames.OID))
+    		if (child.getLocalName().equals(tagNames.OID))
     		{
-    			count++;
+    			count--;
+    			oidCount++;
+    		}
+    		if (oidCount > 1)
+    		{
+    			String elementName = child.getLocalName();
+    			throw new ParseException(elementName + ": Only one OID child is allowed!");
     		}
     	}
     	return count;
     }
-    
-    /**
-     * Updates the current settings given by the configuration UI
-     */
-	public void preferenceChange(PreferenceChangeEvent arg0) {
-		readConfig();
-	}
-	
-	/**
-	 * Sets new configuration parameters given by the current configuration
-	 */
-	public void readConfig()
-	{
-		this.compatibilityMode = config.getRuleMLCompatibilityModeEnabled();
-	}
 }
