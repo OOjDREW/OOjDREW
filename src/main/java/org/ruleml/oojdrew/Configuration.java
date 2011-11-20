@@ -16,8 +16,12 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 package org.ruleml.oojdrew;
+import java.util.prefs.PreferenceChangeListener;
 
 public interface Configuration {
     public boolean getValidateRuleMLEnabled();
     public void setValidateRuleMLEnabled(boolean enabled);
+    public int getTextFontSize();
+    public void setTextFontSize(int newSize);
+    void addPreferenceChangeListener(PreferenceChangeListener listener);
 }

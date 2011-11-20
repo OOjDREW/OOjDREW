@@ -33,11 +33,16 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SpinnerModel;
 
 public class SettingsDialogUI extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JCheckBox chckbxValidateRuleML;
+	private JSpinner spinnerFontSize;
 
 	/**
 	 * Launch the application.
@@ -62,7 +67,7 @@ public class SettingsDialogUI extends JDialog {
 				settingsDialog.syncUI();
 			}
 		});
-		setBounds(100, 100, 313, 137);
+		setBounds(100, 100, 273, 147);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -84,26 +89,40 @@ public class SettingsDialogUI extends JDialog {
 				setVisible(false);
 			}
 		});
+		
+		JLabel lblNewLabel = new JLabel("Text panel font size");
+		
+		spinnerFontSize = new JSpinner();
+		spinnerFontSize.setModel(new SpinnerNumberModel(12, 8, 72, 1));
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addComponent(chckbxValidateRuleML, GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
+						.addGroup(Alignment.TRAILING, gl_contentPanel.createSequentialGroup()
+							.addComponent(chckbxValidateRuleML, GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
 							.addGap(6))
 						.addGroup(Alignment.TRAILING, gl_contentPanel.createSequentialGroup()
 							.addComponent(btnOk)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnCancel))))
+							.addComponent(btnCancel))
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addComponent(lblNewLabel)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(spinnerFontSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addContainerGap(305, Short.MAX_VALUE))))
 		);
 		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(chckbxValidateRuleML)
-					.addPreferredGap(ComponentPlacement.RELATED, 199, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblNewLabel)
+						.addComponent(spinnerFontSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED, 163, Short.MAX_VALUE)
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnCancel)
 						.addComponent(btnOk)))
@@ -111,10 +130,26 @@ public class SettingsDialogUI extends JDialog {
 		gl_contentPanel.linkSize(SwingConstants.HORIZONTAL, new Component[] {btnCancel, btnOk});
 		contentPanel.setLayout(gl_contentPanel);
 	}
+	
 	public boolean getChckbxValidateRuleMLSelected() {
 		return chckbxValidateRuleML.isSelected();
 	}
+	
 	public void setChckbxValidateRuleMLSelected(boolean selected) {
 		chckbxValidateRuleML.setSelected(selected);
+	}
+	
+	public int getSpinnerFontSizeValue()
+	{
+		return (Integer) getSpinnerFontSizeModel().getValue();
+	}
+	
+	public void setSpinnerFontSizeValue(int newSize)
+	{
+		getSpinnerFontSizeModel().setValue(newSize);
+	}
+	
+	private SpinnerModel getSpinnerFontSizeModel() {
+		return spinnerFontSize.getModel();
 	}
 }

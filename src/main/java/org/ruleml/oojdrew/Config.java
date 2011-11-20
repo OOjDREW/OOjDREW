@@ -17,6 +17,7 @@
 
 package org.ruleml.oojdrew;
 
+import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
 /**
@@ -96,4 +97,17 @@ public class Config implements Configuration {
     {
     	preferences.putBoolean("ValidateRuleML", enabled);
     }
+
+	public int getTextFontSize() {
+		return preferences.getInt("TextFontSize" , 12);
+	}
+
+	public void setTextFontSize(int newSize) {
+		preferences.putInt("TextFontSize", newSize);
+	}
+
+	public void addPreferenceChangeListener(
+			PreferenceChangeListener listener) {
+		preferences.addPreferenceChangeListener(listener);
+	}
 }

@@ -33,17 +33,17 @@ public class SettingsDialog {
 	public void applySettings()
 	{
 		config.setValidateRuleMLEnabled(ui.getChckbxValidateRuleMLSelected());
+		config.setTextFontSize(ui.getSpinnerFontSizeValue());
 	}
 	
 	public void syncUI()
 	{
 		ui.setChckbxValidateRuleMLSelected(config.getValidateRuleMLEnabled());
+		ui.setSpinnerFontSizeValue(config.getTextFontSize());
 	}
 	
 	public void show()
 	{
 		ui.setVisible(true);
-	}
-
-	//public void 
+	} 
 }

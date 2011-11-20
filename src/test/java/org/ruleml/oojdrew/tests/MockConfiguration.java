@@ -30,4 +30,12 @@ public class MockConfiguration implements Configuration {
 		ruleMLCompatibilityModeEnabled = enabled;
 	}
 
+	public int getTextFontSize() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setTextFontSize(int newSize) {
+		throw new UnsupportedOperationException();
+	}
+
 }
