@@ -30,6 +30,9 @@ import nu.xom.ValidityException;
 
 import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.util.DefiniteClause;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * A class for parsing RuleML. This is broken into two section. The
@@ -121,10 +124,32 @@ public class RuleMLParser {
      */
     public void parseRuleMLString(RuleMLFormat format, String contents) throws
             ParseException, ParsingException, ValidityException, IOException {
-   		Builder bl = new Builder();
-   		StringReader sr = new StringReader(contents);
-  	 	Document doc = bl.build(sr);
-  	 	parseDocument(format, doc);
+    	
+    	if (config.getValidateRuleMLEnabled()) {
+        	XMLReader xmlReader;
+        	try {
+        		xmlReader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser"); 
+        		xmlReader.setFeature("http://apache.org/xml/features/validation/schema", true);
+    		} catch (SAXException e) {
+    			throw new ParseException("Unable to create XML validator");
+    		}
+        	
+       		Builder bl = new Builder(xmlReader, true);
+       		StringReader sr = new StringReader(contents);
+       		Document doc;
+       		try {
+       			doc = bl.build(sr);	
+       	  	 	parseDocument(format, doc);
+			} catch (Exception e) {
+				throw new ParseException(
+						"Document does not validate against the specified XML schema definition(s)!");
+			}
+    	} else {
+	   		Builder bl = new Builder();
+	   		StringReader sr = new StringReader(contents);
+	  	 	Document doc = bl.build(sr);
+	  	 	parseDocument(format, doc);
+    	}
     }
     
     /**
