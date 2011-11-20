@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 import nu.xom.Builder;
 import nu.xom.Document;
@@ -50,13 +52,14 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * @author Marcel A. Ball
  * @version 0.89
  */
-public class RuleMLParser {
+public class RuleMLParser implements PreferenceChangeListener {
 
     /**
      * A buffer that stores clauses that have already been parsed.
      */
     private Vector<DefiniteClause> clauses;
     private Configuration config;
+    private boolean validateRuleML;
 
     /**
      * This is used to indicate what back-end parser to use. Currently only
@@ -78,6 +81,8 @@ public class RuleMLParser {
     public RuleMLParser(Configuration config) {
         clauses = new Vector<DefiniteClause>();
         this.config = config;
+        config.addPreferenceChangeListener(this);
+        preferenceChange(null);
     }
 
     /**
@@ -125,7 +130,7 @@ public class RuleMLParser {
     public void parseRuleMLString(RuleMLFormat format, String contents) throws
             ParseException, ParsingException, ValidityException, IOException {
     	
-    	if (config.getValidateRuleMLEnabled()) {
+    	if (validateRuleML) {
         	XMLReader xmlReader;
         	try {
         		xmlReader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser"); 
@@ -198,5 +203,9 @@ public class RuleMLParser {
 		parseRuleMLString(RuleMLFormat.RuleMLQuery, contents);
 		
 		return (DefiniteClause) clauses.lastElement();
+	}
+
+	public void preferenceChange(PreferenceChangeEvent evt) {
+		validateRuleML = config.getValidateRuleMLEnabled();
 	}
 }

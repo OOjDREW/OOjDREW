@@ -41,7 +41,6 @@ public class MockConfiguration implements Configuration {
 	}
 
 	public void addPreferenceChangeListener(PreferenceChangeListener listener) {
-		throw new UnsupportedOperationException();
 	}
 
 }
