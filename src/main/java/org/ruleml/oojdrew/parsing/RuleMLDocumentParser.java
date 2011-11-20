@@ -430,21 +430,25 @@ public class RuleMLDocumentParser {
         }
 		// Implies must have two children (excluding OID elements)
         Elements children = implies.getChildElements();
-        if (getElementCount(children) != 2) {
+        int childCount = children.size();
+        
+        Element firstChild = children.get(0);
+        Element secondChild = children.get(1);
+        if (firstChild.getLocalName().equals(tagNames.OID))
+        {
+        	childCount--;
+        	
+        	firstChild = children.get(1);
+        	firstChild = children.get(2);
+        }
+        
+        if (childCount != 2) {
             throw new ParseException(
                     "Implies element must contain a premise and a conclusion element.");
         }
         
-        int currentIndex = getFirstChildElementIndex(children, 0);
-        Element firstChild = children.get(currentIndex);
         String firstChildName = firstChild.getLocalName();
-        
-        currentIndex = getFirstChildElementIndex(children, currentIndex + 1);
-        Element secondChild = children.get(currentIndex);
-        
-        Element premise;
-        Element conclusion;
-        
+        Element premise, conclusion;
         // Check if implies starts with premise element
 		if (firstChildName.equals(tagNames.PREMISE100) || firstChildName.equals(tagNames.PREMISE))
 		{
@@ -464,17 +468,16 @@ public class RuleMLDocumentParser {
 	        conclusion = secondChild;
 		}
 
-        Vector atoms = new Vector();
-        
+		Vector subterms = new Vector();
         if (conclusion.getLocalName().equals(tagNames.ATOM)) {
-            atoms.add(parseAtom(conclusion, true, false));
+            subterms.add(parseAtom(conclusion, true, false));
         } else if (conclusion.getLocalName().equals(tagNames.NEG)){
             Elements headatms = conclusion.getChildElements(tagNames.ATOM);
             if(headatms.size() != 1)
                 throw new ParseException("Neg should have one ATOM element");
 
             Term atom = parseAtom(headatms.get(0), true, true);
-            atoms.add(atom);
+            subterms.add(atom);
 
             String atomstr = atom.toPOSLString(true);
 
@@ -488,7 +491,7 @@ public class RuleMLDocumentParser {
                 DefiniteClause dc2 = pp.parseDefiniteClause(clause);
                 if (dc2 != null)
                     newclauses.add(dc2);
-            } catch(Exception e){
+            } catch(Exception e) {
                 throw new ParseException("Error creating inconsistency check rule.");
             }
         } else {
@@ -497,26 +500,25 @@ public class RuleMLDocumentParser {
         }
 
         if (premise.getLocalName().equals(tagNames.ATOM)) {
-            atoms.add(parseAtom(premise, false, false));
+            subterms.add(parseAtom(premise, false, false));
         } else if (premise.getLocalName().equals(tagNames.NAF)) {
-            atoms.add(parseNaf(premise));
+            subterms.add(parseNaf(premise));
         } else if (premise.getLocalName().equals(tagNames.ASSERT)) {
-            atoms.add(parseAssert(premise));
+            subterms.add(parseAssert(premise));
         } else if (premise.getLocalName().equals(tagNames.NEG)) {
-            atoms.add(parseAtom(premise, false, true));
-        }
-        else if (premise.getLocalName().equals(tagNames.AND)) {
+            subterms.add(parseAtom(premise, false, true));
+        } else if (premise.getLocalName().equals(tagNames.AND)) {
             children = premise.getChildElements();
             for (int i = 0; i < children.size(); i++) {
                 Element el = children.get(i);
                 if (el.getLocalName().equals(tagNames.ATOM)) {
-                    atoms.add(parseAtom(el, false, false));
+                    subterms.add(parseAtom(el, false, false));
                 } else if (el.getLocalName().equals(tagNames.NAF)) {
-                    atoms.add(parseNaf(el));
+                    subterms.add(parseNaf(el));
                 } else if (el.getLocalName().equals(tagNames.ASSERT)) {
-                    atoms.add(parseAssert(el));
+                    subterms.add(parseAssert(el));
                 } else if (el.getLocalName().equals(tagNames.NEG)){
-                    atoms.add(parseAtom(el, false, true));
+                    subterms.add(parseAtom(el, false, true));
                 } else {
                     throw new ParseException(
                             "Implies And element should only contain Atom and Naf elements.");
@@ -530,7 +532,7 @@ public class RuleMLDocumentParser {
         logger.debug("Building Types");
         Hashtable types = this.buildTypeTable();
         logger.debug("Built Types");
-        Iterator it = atoms.iterator();
+        Iterator it = subterms.iterator();
         int i = 0;
         while(it.hasNext()){
             Term t = (Term)it.next();
@@ -538,7 +540,7 @@ public class RuleMLDocumentParser {
             logger.debug("Fixed atom : " + i++);
         }
 
-        DefiniteClause dc = new DefiniteClause(atoms, variableNames);
+        DefiniteClause dc = new DefiniteClause(subterms, variableNames);
         newclauses.add(0, dc);
         return newclauses;
     }
