@@ -100,7 +100,7 @@ public class COjDA {
 	
 	public COjDA(int profile_KB, File KB) throws RecognitionException, TokenStreamException, ValidityException, IOException, ParseException, ParsingException
 	{
-		this(new RuleMLParser(), profile_KB, KB);
+		this(new RuleMLParser(new Config()), profile_KB, KB);
 	}
 	
 	/**

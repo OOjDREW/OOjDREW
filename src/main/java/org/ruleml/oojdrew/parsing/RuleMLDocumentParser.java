@@ -21,6 +21,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 import nu.xom.Attribute;
 import nu.xom.Document;
@@ -28,6 +30,7 @@ import nu.xom.Element;
 import nu.xom.Elements;
 
 import org.apache.log4j.Logger;
+import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.SymbolTable;
@@ -49,7 +52,7 @@ import org.ruleml.oojdrew.util.Types;
  * @version 0.93
  */
 
-public class RuleMLDocumentParser {
+public class RuleMLDocumentParser implements PreferenceChangeListener {
 
     private Hashtable<String, String> skolemMap;
 
@@ -71,6 +74,9 @@ public class RuleMLDocumentParser {
 
     private Logger logger = Logger.getLogger("jdrew.oo.util.RuleMLParser");
     
+    private Configuration config;
+    private boolean compatibilityMode;
+
     /**
      * A vector to hold the class information for the variables in the current
      * clause. This is used for normalizing the types given to a variable if
@@ -89,12 +95,15 @@ public class RuleMLDocumentParser {
      * @param clauses Vector The vector to use as a buffer - this is generally
      * passed by the RuleMLParser front-end.
      */
-    public RuleMLDocumentParser(RuleMLFormat format, Vector<DefiniteClause> clauses) {
+    public RuleMLDocumentParser(RuleMLFormat format, Configuration config, Vector<DefiniteClause> clauses) {
         this.clauses = clauses;
         
         // Set default RuleML version
         this.rulemlFormat = format;
         this.tagNames = new RuleMLTagNames(format);
+        
+        this.config = config;
+        readConfig();
     }
 
     /**
@@ -355,11 +364,18 @@ public class RuleMLDocumentParser {
 			premise = secondChild.getChildElements().get(0);
 			conclusion = firstChild.getChildElements().get(0);
 		}
-		// No premise or conclusion tag available, use stripe-skipped version
-		else
+		// No premise or conclusion tag available
+		else if (compatibilityMode)
 		{
+			// Use backwards compatibility 
 	        premise = firstChild;
 	        conclusion = secondChild;
+		}
+		else
+		{
+			// Use default order
+	        premise = secondChild;
+	        conclusion = firstChild;
 		}
 		
 		premise = skipRoleTag(premise);
@@ -1124,5 +1140,20 @@ public class RuleMLDocumentParser {
 	private void resetVariables() {
 		this.variableNames = new Vector<String>();
 		this.varClasses = new Hashtable<Integer, Vector<Integer>>();
+	}
+    
+    /**
+     * Updates the current settings given by the configuration UI
+     */
+	public void preferenceChange(PreferenceChangeEvent arg0) {
+		readConfig();
+	}
+	
+	/**
+	 * Sets new configuration parameters given by the current configuration
+	 */
+	public void readConfig()
+	{
+		this.compatibilityMode = config.getRuleMLCompatibilityModeEnabled();
 	}
 }

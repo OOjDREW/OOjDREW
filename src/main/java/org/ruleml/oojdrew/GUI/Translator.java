@@ -178,7 +178,9 @@ public class Translator extends JFrame {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        RuleMLParser rmlParser = new RuleMLParser();
+        Configuration config = new Config();
+        RuleMLParser rmlParser = new RuleMLParser(config);
+    	
     	
         Translator translator = new Translator(rmlParser);
         BasicConfigurator.configure();

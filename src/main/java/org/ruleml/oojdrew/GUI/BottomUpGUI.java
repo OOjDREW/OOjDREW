@@ -703,7 +703,8 @@ public class BottomUpGUI extends javax.swing.JFrame {
                 Logger root = Logger.getRootLogger();
                 root.setLevel(Level.DEBUG);
                 
-                RuleMLParser rmlParser = new RuleMLParser();
+                Configuration config = new Config();
+                RuleMLParser rmlParser = new RuleMLParser(config);
 
                 BottomUpGUI frame = new BottomUpGUI(rmlParser);
                 frame.setSize(800,750);
