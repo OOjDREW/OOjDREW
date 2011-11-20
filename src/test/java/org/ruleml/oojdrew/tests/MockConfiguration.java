@@ -17,6 +17,8 @@
 
 package org.ruleml.oojdrew.tests;
 
+import java.util.prefs.PreferenceChangeListener;
+
 import org.ruleml.oojdrew.Configuration;
 
 public class MockConfiguration implements Configuration {
@@ -35,6 +37,10 @@ public class MockConfiguration implements Configuration {
 	}
 
 	public void setTextFontSize(int newSize) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void addPreferenceChangeListener(PreferenceChangeListener listener) {
 		throw new UnsupportedOperationException();
 	}
 
