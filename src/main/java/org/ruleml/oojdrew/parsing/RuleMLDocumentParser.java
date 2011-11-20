@@ -439,16 +439,18 @@ public class RuleMLDocumentParser {
             throw new ParseException(
                     "Second element of Implies should always be an Atom or Neg element.");
         }
-
-        if (premise.getLocalName().equals(tagNames.ATOM)) {
+        
+        String premiseName = premise.getLocalName();
+        
+        if (premiseName.equals(tagNames.ATOM)) {
             subterms.add(parseAtom(premise, false, false));
-        } else if (premise.getLocalName().equals(tagNames.NAF)) {
+        } else if (premiseName.equals(tagNames.NAF)) {
             subterms.add(parseNaf(premise));
-        } else if (premise.getLocalName().equals(tagNames.ASSERT)) {
+        } else if (premiseName.equals(tagNames.ASSERT)) {
             subterms.add(parseAssert(premise));
-        } else if (premise.getLocalName().equals(tagNames.NEG)) {
+        } else if (premiseName.equals(tagNames.NEG)) {
             subterms.add(parseAtom(premise, false, true));
-        } else if (premise.getLocalName().equals(tagNames.AND)) {
+        } else if (premiseName.equals(tagNames.AND)) {
             children = premise.getChildElements();
             for (int i = 0; i < children.size(); i++) {
                 Element el = children.get(i);
@@ -498,23 +500,10 @@ public class RuleMLDocumentParser {
      */
        
     private Term parseOid(Element oid) throws ParseException {
-        Element el = oid.getChildElements().get(0);
-        Term t;
-        if (el.getLocalName().equals(tagNames.IND)) {
-            t = parseInd(el);
-        } else if(el.getLocalName().equals(tagNames.DATA)) {
-            t = parseData(el);
-        } else if(el.getLocalName().equals(tagNames.SKOLEM)) {
-            t = parseVar(el);
-        } else if (el.getLocalName().equals(tagNames.VAR)) {
-            t = parseVar(el);
-        } else if (el.getLocalName().equals(tagNames.EXPR)) {
-            t = parseExpression(el);
-        } else {
-            throw new ParseException("oid can only contain Ind, Data, Var or Cterm.");
-        }
-        t.role = SymbolTable.IOID;
-        return t;
+        Element element = oid.getChildElements().get(0);
+        Term term = parseDefaultElement(element);
+        term.role = SymbolTable.IOID;
+        return term;
     }
 
     /**
@@ -655,13 +644,9 @@ public class RuleMLDocumentParser {
         Vector<Term> subterms = new Vector<Term>();
                
         for (int i = 0; i < els.size(); i++) {
-            Element el = els.get(i);
-            
-            if (!parseDefaultElement(el, subterms))
-            {
-                throw new ParseException(
-                        "Plex should only contain Plex, Cterm, Ind, Data, Var and slot, repo, resl.");
-            }
+            Element element = els.get(i);
+            Term term = parseDefaultElement(element);
+            subterms.add(term);
         }
 
         Term t = new Term(SymbolTable.IPLEX, SymbolTable.INOROLE, Types.IOBJECT,
@@ -720,13 +705,9 @@ public class RuleMLDocumentParser {
 
         Vector<Term> subterms = new Vector<Term>();
         for (int i = 1; i < els.size(); i++) {
-            Element el = els.get(i);
-            
-            if (!parseDefaultElement(el, subterms))
-            {
-            	throw new ParseException(
-                        "Expr should only contain Plex, Expr, Ind, Data, Var and slot, repo, resl.");
-            }
+            Element element = els.get(i);
+            Term term = parseDefaultElement(element);
+            subterms.add(term);
         }
 
         Term t = new Term(symbol, SymbolTable.INOROLE, typeid, subterms);
@@ -783,19 +764,19 @@ public class RuleMLDocumentParser {
         Vector<Term> subterms = new Vector<Term>();
         int startIndex = getFirstChildElementIndex(children, 0) + 1;
         for (int i = startIndex; i < children.size(); i++) {
-            Element el = children.get(i);
-            
-            if (el.getLocalName().equals(tagNames.OID)) {
+            Element element = children.get(i);
+            Term term = null;
+            if (element.getLocalName().equals(tagNames.OID)) {
                 if (foundoid) {
                     throw new ParseException(
                             "Atom should only contain one oid element.");
                 }
-                subterms.add(parseOid(el));
+                term = parseOid(element);
                 foundoid = true;
-            } else if (!parseDefaultElement(el, subterms)) {
-                throw new ParseException(
-                        "Atom should only contain Plex, Expr, Ind, Data, Var, slot, repo, resl and oid.");
+            } else {
+            	term = parseDefaultElement(element);
             }
+            subterms.add(term);
         }
         
 		//if foundoid is false
@@ -854,34 +835,16 @@ public class RuleMLDocumentParser {
 		//doesnt already exist
         int role = SymbolTable.internRole(name.getValue().trim());
        
-        Element value = els.get(1);
+        Element element = els.get(1);
+        Term term = parseDefaultElement(element);
         
-        Term t;
-		//Figuring out the type of term it should be
-        if (value.getLocalName().equals(tagNames.PLEX)) {
-            t = parsePlex(value);	
-        } else if (value.getLocalName().equals(tagNames.EXPR)) {
-            t = parseExpression(value);
-        } else if (value.getLocalName().equals(tagNames.IND)) {
-            t = parseInd(value);
-        } else if (value.getLocalName().equals(tagNames.DATA)) {
-            t = parseData(value);
-        } else if (value.getLocalName().equals(tagNames.SKOLEM)){
-            t = parseSkolem(value);
-        } else if (value.getLocalName().equals(tagNames.VAR)) {
-            t = parseVar(value);
-        } else {
-            throw new ParseException(
-                    "Slot value should be either Plex, Expr, Ind, Data or Var.");
-        }
-		
-        t.setRole(role);
+        term.setRole(role);
         
         if(dataSlot){
-        	t.setDataSlot(true);
+        	term.setDataSlot(true);
         }
         
-        return t;
+        return term;
     }
    
     /**
@@ -1130,31 +1093,35 @@ public class RuleMLDocumentParser {
      * @return True if elements has been found and parsed, otherwise false
      * @throws ParseException
      */
-    private boolean parseDefaultElement(Element el, Vector<Term> subterms) throws ParseException
+    private Term parseDefaultElement(Element el) throws ParseException
     {
-        if (el.getLocalName().equals(tagNames.PLEX)) {
-            subterms.add(parsePlex(el));
-        } else if (el.getLocalName().equals(tagNames.EXPR)) {
-            subterms.add(parseExpression(el));
-        } else if (el.getLocalName().equals(tagNames.IND)) {
-            subterms.add(parseInd(el));
-        } else if (el.getLocalName().equals(tagNames.DATA)) {
-            subterms.add(parseData(el));
-        } else if (el.getLocalName().equals(tagNames.SKOLEM)) {
-            subterms.add(parseSkolem(el));
-        } else if (el.getLocalName().equals(tagNames.VAR)) {
-            subterms.add(parseVar(el));
-        } else if (el.getLocalName().equals(tagNames.SLOT)) {
-            subterms.add(parseSlot(el));
-        } else if (el.getLocalName().equals(tagNames.RESL)) {
-            subterms.add(parseResl(el));
-        } else if (el.getLocalName().equals(tagNames.REPO)) {
-            subterms.add(parseRepo(el));
-        } else {
-        	return false;
+    	String elementName = el.getLocalName();
+    	Term result = null;
+    	
+        if (elementName.equals(tagNames.PLEX)) {
+        	result = parsePlex(el);
+        } else if (elementName.equals(tagNames.EXPR)) {
+        	result = parseExpression(el);
+        } else if (elementName.equals(tagNames.IND)) {
+        	result = parseInd(el);
+        } else if (elementName.equals(tagNames.DATA)) {
+        	result = parseData(el);
+        } else if (elementName.equals(tagNames.SKOLEM)) {
+        	result = parseSkolem(el);
+        } else if (elementName.equals(tagNames.VAR)) {
+        	result = parseVar(el);
+        } else if (elementName.equals(tagNames.SLOT)) {
+        	result =  parseSlot(el);
+        } else if (elementName.equals(tagNames.RESL)) {
+        	result = parseResl(el);
+        } else if (elementName.equals(tagNames.REPO)) {
+        	result = parseRepo(el);
+		} else {
+			throw new ParseException(String.format(
+					"Element (%s) not supported!", elementName));
         }
         
-        return true;
+        return result;
     }
     
     /**
@@ -1194,32 +1161,5 @@ public class RuleMLDocumentParser {
     		}
     	}
     	return -1;
-    }
-    
-    /**
-     * Gets the count of elements which do not have OID as element name
-     * @param elements Elements to count
-     * @return Amount of elements which do not have OID as element name
-     */
-    private int getElementCount(Elements elements) throws ParseException
-    {
-    	int count = elements.size();
-    	int oidCount = 0;
-
-    	for (int i = 0; i < elements.size(); i++)
-    	{
-    		Element child = elements.get(i);
-    		if (child.getLocalName().equals(tagNames.OID))
-    		{
-    			count--;
-    			oidCount++;
-    		}
-    		if (oidCount > 1)
-    		{
-    			String elementName = child.getLocalName();
-    			throw new ParseException(elementName + ": Only one OID child is allowed!");
-    		}
-    	}
-    	return count;
     }
 }
