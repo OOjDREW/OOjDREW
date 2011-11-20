@@ -530,8 +530,8 @@ public class RuleMLDocumentParser {
             symbolName = "$ANON" + anonid++;
         }
 
-        Integer symI = sym;
-        Integer typeI = typeid;
+        int sym = this.internVariable(symbolName);
+        int typeid = parseTypeAttribute(var);
 
         logger.debug("Parsing variable: symbol = " + sym + " type = " + typeid);
 
