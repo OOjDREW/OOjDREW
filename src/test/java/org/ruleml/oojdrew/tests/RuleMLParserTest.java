@@ -63,7 +63,7 @@ public class RuleMLParserTest extends TestCase {
 	{
 		boolean thrown = false;
 
-		RuleMLParser rmlParser = new RuleMLParser(config);
+		RuleMLParser rmlParser = new RuleMLParser();
 		
 		try {
 			rmlParser.parseFile(RuleMLFormat.RuleML91, ruleMLFile);
