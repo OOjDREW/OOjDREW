@@ -32,12 +32,12 @@ public class SettingsDialog {
 	
 	public void applySettings()
 	{
-		config.setRuleMLCompatibilityModeEnabled(ui.getChckbxRuleMLCompatibilityModeSelected());
+		config.setValidateRuleMLEnabled(ui.getChckbxValidateRuleMLSelected());
 	}
 	
 	public void syncUI()
 	{
-		ui.setChckbxRuleMLCompatibilityModeSelected(config.getRuleMLCompatibilityModeEnabled());
+		ui.setChckbxValidateRuleMLSelected(config.getValidateRuleMLEnabled());
 	}
 	
 	public void show()

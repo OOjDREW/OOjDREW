@@ -87,13 +87,13 @@ public class Config implements Configuration {
     	this.preferences = Preferences.userNodeForPackage(getClass());
     }
     
-    public boolean getRuleMLCompatibilityModeEnabled()
+    public boolean getValidateRuleMLEnabled()
     {
-    	return preferences.getBoolean("RuleMLCompatibilityMode", true);
+    	return preferences.getBoolean("ValidateRuleML", true);
     }
     
-    public void setRuleMLCompatibilityModeEnabled(boolean enabled)
+    public void setValidateRuleMLEnabled(boolean enabled)
     {
-    	preferences.putBoolean("RuleMLCompatibilityMode", enabled);
+    	preferences.putBoolean("ValidateRuleML", enabled);
     }
 }

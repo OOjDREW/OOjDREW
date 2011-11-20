@@ -37,7 +37,7 @@ import javax.swing.border.EmptyBorder;
 public class SettingsDialogUI extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private JCheckBox chckbxRuleMLCompatibilityMode;
+	private JCheckBox chckbxValidateRuleML;
 
 	/**
 	 * Launch the application.
@@ -67,8 +67,8 @@ public class SettingsDialogUI extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		
-		chckbxRuleMLCompatibilityMode = new JCheckBox("Use compatibility mode for RuleML");
-		chckbxRuleMLCompatibilityMode.setToolTipText("If checked, the RuleML parser assumes that the \"Implies\" clause in a stripe-skipped RuleML document contains the premise before the conclusion.");
+		chckbxValidateRuleML = new JCheckBox("Validate RuleML documents");
+		chckbxValidateRuleML.setToolTipText("If checked, the RuleML parser will validate every document against it's XSD (if the document specifies one)");
 		
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new ActionListener() {
@@ -91,7 +91,7 @@ public class SettingsDialogUI extends JDialog {
 					.addContainerGap()
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addComponent(chckbxRuleMLCompatibilityMode, GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
+							.addComponent(chckbxValidateRuleML, GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
 							.addGap(6))
 						.addGroup(Alignment.TRAILING, gl_contentPanel.createSequentialGroup()
 							.addComponent(btnOk)
@@ -102,7 +102,7 @@ public class SettingsDialogUI extends JDialog {
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(chckbxRuleMLCompatibilityMode)
+					.addComponent(chckbxValidateRuleML)
 					.addPreferredGap(ComponentPlacement.RELATED, 199, Short.MAX_VALUE)
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnCancel)
@@ -111,10 +111,10 @@ public class SettingsDialogUI extends JDialog {
 		gl_contentPanel.linkSize(SwingConstants.HORIZONTAL, new Component[] {btnCancel, btnOk});
 		contentPanel.setLayout(gl_contentPanel);
 	}
-	public boolean getChckbxRuleMLCompatibilityModeSelected() {
-		return chckbxRuleMLCompatibilityMode.isSelected();
+	public boolean getChckbxValidateRuleMLSelected() {
+		return chckbxValidateRuleML.isSelected();
 	}
-	public void setChckbxRuleMLCompatibilityModeSelected(boolean selected) {
-		chckbxRuleMLCompatibilityMode.setSelected(selected);
+	public void setChckbxValidateRuleMLSelected(boolean selected) {
+		chckbxValidateRuleML.setSelected(selected);
 	}
 }

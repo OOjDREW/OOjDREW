@@ -22,11 +22,11 @@ import org.ruleml.oojdrew.Configuration;
 public class MockConfiguration implements Configuration {
 	private boolean ruleMLCompatibilityModeEnabled;
 	
-	public boolean getRuleMLCompatibilityModeEnabled() {
+	public boolean getValidateRuleMLEnabled() {
 		return ruleMLCompatibilityModeEnabled;
 	}
 
-	public void setRuleMLCompatibilityModeEnabled(boolean enabled) {
+	public void setValidateRuleMLEnabled(boolean enabled) {
 		ruleMLCompatibilityModeEnabled = enabled;
 	}
 

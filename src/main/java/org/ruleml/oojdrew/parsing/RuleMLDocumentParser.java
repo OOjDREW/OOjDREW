@@ -75,7 +75,6 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
     private Logger logger = Logger.getLogger("jdrew.oo.util.RuleMLParser");
     
     private Configuration config;
-    private boolean compatibilityMode;
 
     /**
      * A vector to hold the class information for the variables in the current
@@ -365,17 +364,11 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
 			conclusion = firstChild.getChildElements().get(0);
 		}
 		// No premise or conclusion tag available
-		else if (compatibilityMode)
-		{
-			// Use backwards compatibility 
-	        premise = firstChild;
-	        conclusion = secondChild;
-		}
 		else
 		{
 			// Use default order
-	        premise = secondChild;
-	        conclusion = firstChild;
+	        premise = firstChild;
+	        conclusion = secondChild;
 		}
 		
 		premise = skipRoleTag(premise);
@@ -1154,6 +1147,5 @@ public class RuleMLDocumentParser implements PreferenceChangeListener {
 	 */
 	public void readConfig()
 	{
-		this.compatibilityMode = config.getRuleMLCompatibilityModeEnabled();
 	}
 }
