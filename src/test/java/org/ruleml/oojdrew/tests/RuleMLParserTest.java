@@ -51,24 +51,27 @@ public class RuleMLParserTest extends TestCase {
 	{
 		super(testName);
 		this.config = new MockConfiguration();
+		config.setValidateRuleMLEnabled(false);
 	}
 
 	public void testRuleML91CompatibilityParsing()
 	{
-		config.setValidateRuleMLEnabled(true);
 		genericRuleMLParsingTest("src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/discount_091_compat.ruleml.xml", false);
 	}
 	
 	public void testRuleML91Parsing()
 	{
-		config.setValidateRuleMLEnabled(false);
 		genericRuleMLParsingTest("src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/discount-0.91.ruleml.xml", false);
 	}
 	
 	public void testRuleML100Parsing()
 	{
-		config.setValidateRuleMLEnabled(false);
 		genericRuleMLParsingTest("src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/discount-1.0.ruleml.xml", false);
+	}
+	
+	public void testRuleML100WithoutRoot()
+	{
+		genericRuleMLParsingTest("src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/studycourse.ruleml.xml", false);
 	}
 	
 	public void genericRuleMLParsingTest(String ruleMLFile, boolean shouldThrow)

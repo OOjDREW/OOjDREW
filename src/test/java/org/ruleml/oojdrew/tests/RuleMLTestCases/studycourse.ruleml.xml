@@ -1,0 +1,85 @@
+<Assert>
+  <Rulebase mapClosure="universal">
+    <!-- start XML comment ...
+
+     This example rulebase contains four rules.
+     The first and second rules are implications; the third and fourth ones are facts.
+
+     In English:
+
+     The first rule implies that a person studies a course
+     if that person takes a course in a faculty and the person likes the course
+
+      .. end XML comment -->
+
+    <Implies>
+      <then>
+        <Atom>
+          <Rel>study</Rel>
+          <Var>person</Var>
+          <Var>course</Var>
+        </Atom>
+      </then>
+      <if>
+        <!-- explicit 'And' -->
+        <And>
+          <Atom>
+            <Rel>take</Rel>
+            <Var>person</Var>
+            <Var>faculty</Var>
+            <Var>course</Var>
+          </Atom>
+          <Atom>
+            <Rel>like</Rel>
+            <Var>person</Var>
+            <Var>course</Var>
+          </Atom>
+        </And>
+      </if>
+    </Implies>
+
+    <!-- The second rule implies that a person takes a course in a faculty
+    if the faculty has that course for the person. -->
+    <Implies>
+      <then>
+        <Atom>
+          <Rel>take</Rel>
+          <Var>person</Var>
+          <Var>faculty</Var>
+          <Var>course</Var>
+        </Atom>
+      </then>
+      <if>
+        <Atom>
+          <Rel>has</Rel>
+          <Var>faculty</Var>
+          <Var>person</Var>
+          <Var>course</Var>
+        </Atom>
+      </if>
+    </Implies>
+
+    <!-- The third rule is a fact that asserts that
+CS has CS6795 for John. -->
+    <Atom>
+      <Rel>has</Rel>
+      <Ind>CS</Ind>
+      <Ind>John</Ind>
+      <Ind>CS6795</Ind>
+    </Atom>
+
+
+    <!-- The fourth rule is a fact that asserts that
+John likes CS6795.
+ 
+. -->
+
+    <Atom>
+      <Rel>like</Rel>
+      <Ind>John</Ind>
+      <Ind>CS6795</Ind>
+    </Atom>
+
+
+  </Rulebase>
+</Assert>
