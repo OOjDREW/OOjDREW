@@ -1,31 +1,32 @@
 package org.ruleml.oojdrew.GUI;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JCheckBoxMenuItem;
 import java.awt.BorderLayout;
-import javax.swing.JTabbedPane;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JButton;
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JLabel;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
-import javax.swing.JSplitPane;
-import javax.swing.JTextField;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JTree;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import java.awt.Toolkit;
+import javax.swing.JTextArea;
+import javax.swing.JTree;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 
 public class TopDownUI {
 
@@ -34,6 +35,12 @@ public class TopDownUI {
 	private final ButtonGroup knowledgeBaseButtonGroup = new ButtonGroup();
 	private JTable variableBindingsTable;
 	private final ButtonGroup queryButtonGroup = new ButtonGroup();
+	private UISettingsController settingsController;
+	private JTextArea typeDefinitionTextArea;
+	private JTextArea knowledgeBaseTextArea;
+	private JTextArea queryTextArea;
+	private JCheckBoxMenuItem chckbxmntmValidateRuleml;
+	private JCheckBoxMenuItem chckbxmntmShowDebugConsole;
 
 	/**
 	 * Launch the application.
@@ -56,6 +63,7 @@ public class TopDownUI {
 	 */
 	public TopDownUI() {
 		initialize();
+        updateUI();
 	}
 
 	/**
@@ -82,18 +90,38 @@ public class TopDownUI {
 		mnFile.addSeparator();
 		
 		JMenuItem mntmExit = new JMenuItem("Exit");
+		mntmExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
 		mnFile.add(mntmExit);
 		
 		JMenu mnOptions = new JMenu("Options");
 		menuBar.add(mnOptions);
 		
-		JCheckBoxMenuItem chckbxmntmValidateRuleml = new JCheckBoxMenuItem("Validate RuleML");
+		chckbxmntmValidateRuleml = new JCheckBoxMenuItem("Validate RuleML");
+		chckbxmntmValidateRuleml.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				settingsController.applySettingsFromUI();
+			}
+		});
 		mnOptions.add(chckbxmntmValidateRuleml);
 		
-		JCheckBoxMenuItem chckbxmntmShowDebugConsole = new JCheckBoxMenuItem("Show debug console");
+		chckbxmntmShowDebugConsole = new JCheckBoxMenuItem("Show debug console");
+		chckbxmntmShowDebugConsole.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				settingsController.applySettingsFromUI();
+			}
+		});
 		mnOptions.add(chckbxmntmShowDebugConsole);
 		
 		JMenuItem mntmAdjustFontSize = new JMenuItem("Adjust font size...");
+		mntmAdjustFontSize.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				settingsController.showFontSizeDialog();
+			}
+		});
 		mnOptions.add(mntmAdjustFontSize);
 		frmOoJdrew.getContentPane().setLayout(new BorderLayout(0, 0));
 		
@@ -147,7 +175,7 @@ public class TopDownUI {
 					.addContainerGap())
 		);
 		
-		JTextArea typeDefinitionTextArea = new JTextArea();
+		typeDefinitionTextArea = new JTextArea();
 		typeDefinitionScrollPane.setViewportView(typeDefinitionTextArea);
 		typeDefinitonTab.setLayout(gl_typeDefinitonTab);
 		
@@ -197,7 +225,7 @@ public class TopDownUI {
 					.addContainerGap())
 		);
 		
-		JTextArea knowledgeBaseTextArea = new JTextArea();
+		knowledgeBaseTextArea = new JTextArea();
 		knowledgeBaseScrollPane.setViewportView(knowledgeBaseTextArea);
 		knowledgeBaseTab.setLayout(gl_knowledgeBaseTab);
 		
@@ -268,7 +296,7 @@ public class TopDownUI {
 					.addContainerGap())
 		);
 		
-		JTextArea queryTextArea = new JTextArea();
+		queryTextArea = new JTextArea();
 		queryScrollPane.setViewportView(queryTextArea);
 		queryTopPanel.setLayout(gl_queryTopPanel);
 		
@@ -311,5 +339,48 @@ public class TopDownUI {
 	
 	public void setFrameVisible(boolean visible) {
 		frmOoJdrew.setVisible(visible);
+	}
+	
+	public void setSettingsController(UISettingsController newController)
+	{
+		settingsController = newController;
+		settingsController.syncUIWithSettings();
+	}
+
+	public void updateUI() {
+		SwingUtilities.updateComponentTreeUI(getFrmOoJdrew());
+		getFrmOoJdrew().pack();
+	}
+	
+	protected JTextArea getTypeDefinitionTextArea() {
+		return typeDefinitionTextArea;
+	}
+	
+	protected JTextArea getKnowledgeBaseTextArea() {
+		return knowledgeBaseTextArea;
+	}
+	
+	protected JTextArea getQueryTextArea() {
+		return queryTextArea;
+	}
+	
+	public JFrame getFrmOoJdrew() {
+		return frmOoJdrew;
+	}
+	
+	public boolean getChckbxmntmValidateRulemlSelected() {
+		return chckbxmntmValidateRuleml.isSelected();
+	}
+	
+	public void setChckbxmntmValidateRulemlSelected(boolean selected) {
+		chckbxmntmValidateRuleml.setSelected(selected);
+	}
+	
+	public boolean getChckbxmntmShowDebugConsoleSelected() {
+		return chckbxmntmShowDebugConsole.isSelected();
+	}
+	
+	public void setChckbxmntmShowDebugConsoleSelected(boolean selected_1) {
+		chckbxmntmShowDebugConsole.setSelected(selected_1);
 	}
 }

@@ -1751,7 +1751,7 @@ public class TopDownGUI extends javax.swing.JFrame implements PreferenceChangeLi
     // End of variables declaration
 
 	public void preferenceChange(PreferenceChangeEvent evt) {
-		float newFontSize = config.getTextFontSize();
+		float newFontSize = config.getTextAreaFontSize();
 		Font newFont = kbtext.getFont().deriveFont(newFontSize); 
 		
 		kbtext.setFont(newFont);

@@ -21,7 +21,15 @@ import java.util.prefs.PreferenceChangeListener;
 public interface Configuration {
     public boolean getValidateRuleMLEnabled();
     public void setValidateRuleMLEnabled(boolean enabled);
-    public int getTextFontSize();
-    public void setTextFontSize(int newSize);
+    
+    public boolean getDebugConsoleVisible();
+    public void setDebugConsoleVisible(boolean visible);
+    
+    public int getTextAreaFontSize();
+    public void setTextAreaFontSize(int newSize);
+    
+    public int getUIFontSize();
+    public void setUIFontSize(int newSize);
+    
     void addPreferenceChangeListener(PreferenceChangeListener listener);
 }

@@ -98,16 +98,32 @@ public class Config implements Configuration {
     	preferences.putBoolean("ValidateRuleML", enabled);
     }
 
-	public int getTextFontSize() {
-		return preferences.getInt("TextFontSize" , 12);
+	public int getTextAreaFontSize() {
+		return preferences.getInt("TextAreaFontSize" , 12);
 	}
 
-	public void setTextFontSize(int newSize) {
-		preferences.putInt("TextFontSize", newSize);
+	public void setTextAreaFontSize(int newSize) {
+		preferences.putInt("TextAreaFontSize", newSize);
 	}
 
 	public void addPreferenceChangeListener(
 			PreferenceChangeListener listener) {
 		preferences.addPreferenceChangeListener(listener);
+	}
+
+	public int getUIFontSize() {
+		return preferences.getInt("UIFontSize" , 12);
+	}
+
+	public void setUIFontSize(int newSize) {
+		preferences.putInt("UIFontSize", newSize);
+	}
+
+	public boolean getDebugConsoleVisible() {
+		return preferences.getBoolean("DebugConsoleVisible", false);
+	}
+
+	public void setDebugConsoleVisible(boolean visible) {
+		preferences.putBoolean("DebugConsoleVisible", visible);
 	}
 }
