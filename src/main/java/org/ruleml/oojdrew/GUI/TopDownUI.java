@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
@@ -28,6 +29,8 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import org.ruleml.oojdrew.TopDown.TopDownApp;
+
 public class TopDownUI {
 
 	private JFrame frmOoJdrew;
@@ -35,12 +38,15 @@ public class TopDownUI {
 	private final ButtonGroup knowledgeBaseButtonGroup = new ButtonGroup();
 	private JTable variableBindingsTable;
 	private final ButtonGroup queryButtonGroup = new ButtonGroup();
-	private UISettingsController settingsController;
+	private TopDownApp controller;
 	private JTextArea typeDefinitionTextArea;
 	private JTextArea knowledgeBaseTextArea;
 	private JTextArea queryTextArea;
 	private JCheckBoxMenuItem chckbxmntmValidateRuleml;
 	private JCheckBoxMenuItem chckbxmntmShowDebugConsole;
+	private JPanel typeDefinitonTab;
+	private JPanel knowledgeBaseTab;
+	private JSplitPane queryTab;
 
 	/**
 	 * Launch the application.
@@ -82,9 +88,18 @@ public class TopDownUI {
 		menuBar.add(mnFile);
 		
 		JMenuItem mntmOpenFile = new JMenuItem("Open file...");
+		mntmOpenFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.openFile();
+			}
+		});
 		mnFile.add(mntmOpenFile);
 		
 		JMenuItem mntmOpenUri = new JMenuItem("Open URI...");
+		mntmOpenUri.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		mnFile.add(mntmOpenUri);
 		
 		mnFile.addSeparator();
@@ -103,7 +118,7 @@ public class TopDownUI {
 		chckbxmntmValidateRuleml = new JCheckBoxMenuItem("Validate RuleML");
 		chckbxmntmValidateRuleml.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				settingsController.applySettingsFromUI();
+				controller.applySettingsFromUI();
 			}
 		});
 		mnOptions.add(chckbxmntmValidateRuleml);
@@ -111,7 +126,7 @@ public class TopDownUI {
 		chckbxmntmShowDebugConsole = new JCheckBoxMenuItem("Show debug console");
 		chckbxmntmShowDebugConsole.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				settingsController.applySettingsFromUI();
+				controller.applySettingsFromUI();
 			}
 		});
 		mnOptions.add(chckbxmntmShowDebugConsole);
@@ -119,7 +134,7 @@ public class TopDownUI {
 		JMenuItem mntmAdjustFontSize = new JMenuItem("Adjust font size...");
 		mntmAdjustFontSize.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				settingsController.showFontSizeDialog();
+				controller.showFontSizeDialog();
 			}
 		});
 		mnOptions.add(mntmAdjustFontSize);
@@ -129,7 +144,7 @@ public class TopDownUI {
 		tabbedPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		frmOoJdrew.getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		
-		JPanel typeDefinitonTab = new JPanel();
+		typeDefinitonTab = new JPanel();
 		tabbedPane.addTab("Type definition", null, typeDefinitonTab, null);
 		
 		JButton btnLoadTypeInformation = new JButton("Load type information");
@@ -179,8 +194,9 @@ public class TopDownUI {
 		typeDefinitionScrollPane.setViewportView(typeDefinitionTextArea);
 		typeDefinitonTab.setLayout(gl_typeDefinitonTab);
 		
-		JPanel knowledgeBaseTab = new JPanel();
+		knowledgeBaseTab = new JPanel();
 		tabbedPane.addTab("Knowledge base", null, knowledgeBaseTab, null);
+		tabbedPane.setEnabledAt(1, true);
 		
 		JButton btnParseKnowledgeBase = new JButton("Parse knowledge base");
 		
@@ -229,7 +245,7 @@ public class TopDownUI {
 		knowledgeBaseScrollPane.setViewportView(knowledgeBaseTextArea);
 		knowledgeBaseTab.setLayout(gl_knowledgeBaseTab);
 		
-		JSplitPane queryTab = new JSplitPane();
+		queryTab = new JSplitPane();
 		queryTab.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		tabbedPane.addTab("Query", null, queryTab, null);
 		
@@ -341,10 +357,10 @@ public class TopDownUI {
 		frmOoJdrew.setVisible(visible);
 	}
 	
-	public void setSettingsController(UISettingsController newController)
+	public void setController(TopDownApp newController)
 	{
-		settingsController = newController;
-		settingsController.syncUIWithSettings();
+		controller = newController;
+		controller.syncUIWithSettings();
 	}
 
 	public void updateUI() {
@@ -352,15 +368,16 @@ public class TopDownUI {
 		getFrmOoJdrew().pack();
 	}
 	
-	protected JTextArea getTypeDefinitionTextArea() {
+	// TODO: delete these three methods
+	private JTextArea getTypeDefinitionTextArea() {
 		return typeDefinitionTextArea;
 	}
 	
-	protected JTextArea getKnowledgeBaseTextArea() {
+	private JTextArea getKnowledgeBaseTextArea() {
 		return knowledgeBaseTextArea;
 	}
 	
-	protected JTextArea getQueryTextArea() {
+	private JTextArea getQueryTextArea() {
 		return queryTextArea;
 	}
 	
@@ -382,5 +399,111 @@ public class TopDownUI {
 	
 	public void setChckbxmntmShowDebugConsoleSelected(boolean selected_1) {
 		chckbxmntmShowDebugConsole.setSelected(selected_1);
+	}
+	
+	private EditingTab currentEditingTab()
+	{
+		if(getTypeDefinitonTab().isEnabled())
+		{
+			return EditingTab.EditingTabTypeDefinition;
+		}
+		
+		if(getKnowledgeBaseTab().isEnabled())
+		{
+			return EditingTab.EditingTabKnowledgeBase;
+		}
+		
+		if(getQueryTab().isEnabled())
+		{
+			return EditingTab.EditingTabQuery;
+		}
+		
+		throw new RuntimeException("Unknown tab selected.");
+	}
+	
+	private JPanel getTypeDefinitonTab() {
+		return typeDefinitonTab;
+	}
+	
+	private JPanel getKnowledgeBaseTab() {
+		return knowledgeBaseTab;
+	}
+	
+	private JSplitPane getQueryTab() {
+		return queryTab;
+	}
+	
+	private void clearCurrentEditingTab()
+	{
+		switch(currentEditingTab())
+		{
+		case EditingTabTypeDefinition:
+			setTypeDefinitionTextAreaText("");
+			break;
+			
+		case EditingTabKnowledgeBase:
+			setKnowledgeBaseTextAreaText("");
+			break;
+			
+		case EditingTabQuery:
+			setQueryTextAreaText("");
+			break;
+		}
+	}
+	
+	public void appendToCurrentEditingTab(String content)
+	{
+		StringBuilder stringBuilder = new StringBuilder();
+		
+		switch(currentEditingTab())
+		{
+		case EditingTabTypeDefinition:
+			stringBuilder.append(getTypeDefinitionTextAreaText());
+			stringBuilder.append(content);
+			setTypeDefinitionTextAreaText(stringBuilder.toString());
+			break;
+			
+		case EditingTabKnowledgeBase:
+			stringBuilder.append(getKnowledgeBaseTextAreaText());
+			stringBuilder.append(content);
+			setKnowledgeBaseTextAreaText(stringBuilder.toString());
+			break;
+			
+		case EditingTabQuery:
+			stringBuilder.append(getQueryTextAreaText());
+			stringBuilder.append(content);
+			setQueryTextAreaText(stringBuilder.toString());
+			break;
+		}		
+	}
+	
+	public void setTextForCurrentEditingTab(String content)
+	{
+		clearCurrentEditingTab();
+		appendToCurrentEditingTab(content);
+	}
+	
+	public String getTypeDefinitionTextAreaText() {
+		return typeDefinitionTextArea.getText();
+	}
+	
+	private void setTypeDefinitionTextAreaText(String text) {
+		typeDefinitionTextArea.setText(text);
+	}
+	
+	public String getKnowledgeBaseTextAreaText() {
+		return knowledgeBaseTextArea.getText();
+	}
+	
+	private void setKnowledgeBaseTextAreaText(String text_1) {
+		knowledgeBaseTextArea.setText(text_1);
+	}
+	
+	public String getQueryTextAreaText() {
+		return queryTextArea.getText();
+	}
+	
+	private void setQueryTextAreaText(String text_2) {
+		queryTextArea.setText(text_2);
 	}
 }

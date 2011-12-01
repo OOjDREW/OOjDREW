@@ -1,16 +1,30 @@
 package org.ruleml.oojdrew.TopDown;
 
 import java.awt.EventQueue;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 import org.ruleml.oojdrew.Config;
 import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.GUI.DebugConsole;
 import org.ruleml.oojdrew.GUI.FontSizeDialogUI;
 import org.ruleml.oojdrew.GUI.FontSizeManager;
+import org.ruleml.oojdrew.GUI.TextPaneAppender;
 import org.ruleml.oojdrew.GUI.TopDownUI;
 import org.ruleml.oojdrew.GUI.UISettingsController;
 
@@ -20,6 +34,7 @@ public class TopDownApp implements UISettingsController, PreferenceChangeListene
 	private FontSizeDialogUI fontSizeDialogUI;
 	private DebugConsole debugConsole;
 	private FontSizeManager fontSizeManager;
+	private Logger logger;
 	
 	public static void main(String[] args) {
 		// The look and feel must be set before any UI objects are constructed
@@ -52,8 +67,20 @@ public class TopDownApp implements UISettingsController, PreferenceChangeListene
 		FontSizeManager fontSizeManager = new FontSizeManager(config);
 		TopDownUI topDownUI = new TopDownUI();
 		FontSizeDialogUI fontSizeDialogUI = new FontSizeDialogUI();
+		
+		// Create DebugConsole and logger
 		DebugConsole debugConsole = new DebugConsole();	
-		TopDownApp topDownApp = new TopDownApp(config, fontSizeManager,
+		
+        BasicConfigurator.configure();
+        Logger root = Logger.getRootLogger();
+        root.setLevel(Level.DEBUG);
+        TextPaneAppender tpa = new TextPaneAppender(new PatternLayout(
+                "%-5p %d [%t]:  %m%n"), "Debug");
+        tpa.setTextPane(debugConsole.getTextPane());
+        root.addAppender(tpa);
+        
+        // Create TopDownApp
+        TopDownApp topDownApp = new TopDownApp(config, fontSizeManager,
 				topDownUI, fontSizeDialogUI, debugConsole);
 		
 		return topDownApp;
@@ -68,8 +95,9 @@ public class TopDownApp implements UISettingsController, PreferenceChangeListene
 		this.ui = ui;
 		this.fontSizeDialogUI = fontSizeDialogUI;
 		this.debugConsole = debugConsole;
+		this.logger = Logger.getLogger(this.getClass());
 
-		ui.setSettingsController(this);
+		ui.setController(this);
 		fontSizeDialogUI.setSettingsController(this);
 		config.addPreferenceChangeListener(this);
 		preferenceChange(null);
@@ -96,5 +124,52 @@ public class TopDownApp implements UISettingsController, PreferenceChangeListene
 	public void preferenceChange(PreferenceChangeEvent evt) {
 		ui.updateUI();
 		fontSizeDialogUI.updateUI();
+		debugConsole.setVisible(config.getDebugConsoleVisible());
+	}
+	
+	public void openFile() {
+        boolean append = 0 == JOptionPane.showConfirmDialog(null,
+        		"Append file?", "Append to current text",
+        		JOptionPane.YES_NO_OPTION);
+        
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showOpenDialog(ui.getFrmOoJdrew());
+        
+        if(result != JFileChooser.APPROVE_OPTION)
+        {
+        	return;
+        }
+
+        String fileContents;
+        
+        try {
+        	File file = fileChooser.getSelectedFile();
+			FileReader fileReader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			
+			StringBuilder stringBuilder = new StringBuilder();
+			String lineSeparator = System.getProperty("line.separator");
+			String currentLine;
+			
+			while((currentLine = bufferedReader.readLine()) != null)
+			{
+				stringBuilder.append(currentLine);
+				stringBuilder.append(lineSeparator);
+			}
+			
+			fileContents = stringBuilder.toString();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			return;
+		}
+        
+        if(append)
+        {
+        	ui.appendToCurrentEditingTab(fileContents);
+        }
+        else
+        {
+        	ui.setTextForCurrentEditingTab(fileContents);
+        }
 	}
 }
