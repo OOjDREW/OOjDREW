@@ -587,10 +587,16 @@ public class RuleMLDocumentParser{
 		if(foundOp) {
 			Elements funTag = op.getChildElements();
 			fun = funTag.get(0);
+
+			// Remove op and the corresponding Fun child so that they're not processed again 
+			expr.removeChild(op);
         }
         
         if(!foundOp){
         	fun = children.get(0);
+        	
+        	// Remove Fun element so that it is not processed again
+        	expr.removeChild(fun);
         }
                 
         if (!fun.getLocalName().equals(tagNames.FUN)) {
@@ -600,7 +606,8 @@ public class RuleMLDocumentParser{
 
         int symbol = SymbolTable.internSymbol(fun.getValue().trim());
         int typeid = parseTypeAttribute(expr);
-
+        
+        
         Vector<Term> subterms = parseDefaultElements(expr);
         Term t = new Term(symbol, SymbolTable.INOROLE, typeid, subterms);
         return t;
