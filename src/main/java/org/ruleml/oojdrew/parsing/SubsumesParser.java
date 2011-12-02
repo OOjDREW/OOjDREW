@@ -23,6 +23,7 @@ import java.util.Vector;
 
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
+import nu.xom.jaxen.function.SumFunction;
 
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.Term;
@@ -67,6 +68,11 @@ public class SubsumesParser {
 		this.parseString = parseString;
 	}
 	
+	public SubsumesParser()
+	{
+		this.parseString = "";
+	}
+	
 	/**
 	 * This method will parse the given String when the SubsumesParser was created. 
 	 *
@@ -82,6 +88,12 @@ public class SubsumesParser {
 		this.buildRDFObjects();
 		RDFSParser.parseRDFSString(finalRDFSString);
 		//this.buildTypes();
+	}
+	
+	public void parseSubsumes(String parseString) throws SubsumesException, ValidityException, ParseException, ParsingException, IOException
+	{
+		this.parseString = parseString;
+		parseSubsumes();
 	}
 	
 	/**

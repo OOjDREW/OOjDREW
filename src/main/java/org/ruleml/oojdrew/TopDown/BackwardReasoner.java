@@ -215,7 +215,7 @@ public class BackwardReasoner {
      */
          
      
-    public void loadClauses(Iterator it) {
+    public void loadClauses(Iterator it) {    	
         while (it.hasNext()) {
             DefiniteClause dc = (DefiniteClause) it.next();
             //logger.debug("Loaded clause: " + dc.toPOSLString());
@@ -247,6 +247,11 @@ public class BackwardReasoner {
                 clauses.put(sym, v);
             }
         }
+    }
+    
+    public void clearClauses()
+    {
+    	clauses.clear();
     }
 
     /**

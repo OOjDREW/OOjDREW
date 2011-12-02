@@ -30,6 +30,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import org.ruleml.oojdrew.TopDown.TopDownApp;
+import org.ruleml.oojdrew.parsing.InputFormat;
 
 public class TopDownUI {
 
@@ -48,6 +49,9 @@ public class TopDownUI {
 	private JPanel knowledgeBaseTab;
 	private JSplitPane queryTab;
 	private JTabbedPane tabbedPane;
+	private JRadioButton typeDefinitionFormatRDFS;
+	private JButton btnNextSolution;
+	private JRadioButton knowledgeBaseInputFormatRuleML;
 
 	/**
 	 * Launch the application.
@@ -150,10 +154,15 @@ public class TopDownUI {
 		tabbedPane.addTab("Type definition", null, typeDefinitonTab, null);
 		
 		JButton btnLoadTypeInformation = new JButton("Load type information");
+		btnLoadTypeInformation.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.parseTypeInformation();
+			}
+		});
 		
 		JLabel typeDefinitionFormatLabel = new JLabel("Input format:");
 		
-		JRadioButton typeDefinitionFormatRDFS = new JRadioButton("RDFS");
+		typeDefinitionFormatRDFS = new JRadioButton("RDFS");
 		typeDefinitionButtonGroup.add(typeDefinitionFormatRDFS);
 		
 		JRadioButton typeDefinitionFormatPOSL = new JRadioButton("POSL");
@@ -200,10 +209,15 @@ public class TopDownUI {
 		tabbedPane.addTab("Knowledge base", null, knowledgeBaseTab, null);
 		
 		JButton btnParseKnowledgeBase = new JButton("Parse knowledge base");
+		btnParseKnowledgeBase.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.parseKnowledgeBase();
+			}
+		});
 		
 		JLabel knowledgeBaseInputFormatLabel = new JLabel("Input format:");
 		
-		JRadioButton knowledgeBaseInputFormatRuleML = new JRadioButton("RuleML");
+		knowledgeBaseInputFormatRuleML = new JRadioButton("RuleML");
 		knowledgeBaseButtonGroup.add(knowledgeBaseInputFormatRuleML);
 		
 		JRadioButton knowledgeBaseInputFormatPOSL = new JRadioButton("POSL");
@@ -256,7 +270,8 @@ public class TopDownUI {
 		
 		JScrollPane queryScrollPane = new JScrollPane();
 		
-		JButton btnNextSolution = new JButton("Next solution");
+		btnNextSolution = new JButton("Next solution");
+		btnNextSolution.setEnabled(false);
 		
 		JButton btnIssueQuery = new JButton("Issue query");
 		
@@ -512,7 +527,35 @@ public class TopDownUI {
 		return tabbedPane.getSelectedIndex();
 	}
 	
-	private void setTabbedPaneSelectedIndex(int selectedIndex) {
-		tabbedPane.setSelectedIndex(selectedIndex);
+	public InputFormat getTypeInformationInputFormat()
+	{
+		if(getTypeDefinitionFormatRDFSSelected())
+		{
+			return InputFormat.InputFormatRFDS;
+		}
+		
+		return InputFormat.InputFormatPOSL;
+	}
+	
+	private boolean getTypeDefinitionFormatRDFSSelected() {
+		return typeDefinitionFormatRDFS.isSelected();
+	}
+	
+	public void setBtnNextSolutionEnabled(boolean enabled) {
+		btnNextSolution.setEnabled(enabled);
+	}
+	
+	private boolean getKnowledgeBaseInputFormatRuleMLSelected() {
+		return knowledgeBaseInputFormatRuleML.isSelected();
+	}
+	
+	public InputFormat getKnowledgeBaseInputFormat()
+	{
+		if(getKnowledgeBaseInputFormatRuleMLSelected())
+		{
+			return InputFormat.InputFormatRuleML;
+		}
+		
+		return InputFormat.InputFormatPOSL;
 	}
 }

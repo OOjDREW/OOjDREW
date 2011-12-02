@@ -1,6 +1,6 @@
 package org.ruleml.oojdrew.parsing;
 
-public enum InputFormats {
+public enum InputFormat {
 	InputFormatRFDS,
 	InputFormatRuleML,
 	InputFormatPOSL
