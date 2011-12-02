@@ -47,6 +47,7 @@ public class TopDownUI {
 	private JPanel typeDefinitonTab;
 	private JPanel knowledgeBaseTab;
 	private JSplitPane queryTab;
+	private JTabbedPane tabbedPane;
 
 	/**
 	 * Launch the application.
@@ -98,6 +99,7 @@ public class TopDownUI {
 		JMenuItem mntmOpenUri = new JMenuItem("Open URI...");
 		mntmOpenUri.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				controller.openURI();
 			}
 		});
 		mnFile.add(mntmOpenUri);
@@ -140,7 +142,7 @@ public class TopDownUI {
 		mnOptions.add(mntmAdjustFontSize);
 		frmOoJdrew.getContentPane().setLayout(new BorderLayout(0, 0));
 		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		frmOoJdrew.getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		
@@ -196,7 +198,6 @@ public class TopDownUI {
 		
 		knowledgeBaseTab = new JPanel();
 		tabbedPane.addTab("Knowledge base", null, knowledgeBaseTab, null);
-		tabbedPane.setEnabledAt(1, true);
 		
 		JButton btnParseKnowledgeBase = new JButton("Parse knowledge base");
 		
@@ -347,6 +348,8 @@ public class TopDownUI {
 		
 		variableBindingsTable = new JTable();
 		variableBindingsScrollPane.setViewportView(variableBindingsTable);
+		
+		tabbedPane.setSelectedIndex(1);
 	}
 
 	public boolean getFrameVisible() {
@@ -403,22 +406,20 @@ public class TopDownUI {
 	
 	private EditingTab currentEditingTab()
 	{
-		if(getTypeDefinitonTab().isEnabled())
+		switch(getTabbedPaneSelectedIndex())
 		{
+		case 0:
 			return EditingTab.EditingTabTypeDefinition;
-		}
-		
-		if(getKnowledgeBaseTab().isEnabled())
-		{
+			
+		case 1:
 			return EditingTab.EditingTabKnowledgeBase;
-		}
-		
-		if(getQueryTab().isEnabled())
-		{
+			
+		case 2:
 			return EditingTab.EditingTabQuery;
+			
+		default:
+			throw new RuntimeException("Unknown tab selected.");
 		}
-		
-		throw new RuntimeException("Unknown tab selected.");
 	}
 	
 	private JPanel getTypeDefinitonTab() {
@@ -505,5 +506,13 @@ public class TopDownUI {
 	
 	private void setQueryTextAreaText(String text_2) {
 		queryTextArea.setText(text_2);
+	}
+	
+	private int getTabbedPaneSelectedIndex() {
+		return tabbedPane.getSelectedIndex();
+	}
+	
+	private void setTabbedPaneSelectedIndex(int selectedIndex) {
+		tabbedPane.setSelectedIndex(selectedIndex);
 	}
 }

@@ -14,6 +14,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -54,7 +57,8 @@ public class TopDownApp implements UISettingsController, PreferenceChangeListene
 	public void run()
 	{
 		EventQueue.invokeLater(new Runnable() {
-			public void run() {				
+			public void run() {
+				logger.debug("Entering event loop");
 				ui.setFrameVisible(true);
 			}			
 		});
@@ -127,10 +131,14 @@ public class TopDownApp implements UISettingsController, PreferenceChangeListene
 		debugConsole.setVisible(config.getDebugConsoleVisible());
 	}
 	
+	private boolean showOpenForAppendDialog()
+	{
+		return 0 == JOptionPane.showConfirmDialog(null, "Append content?",
+				"Append or replace?", JOptionPane.YES_NO_OPTION);
+	}
+	
 	public void openFile() {
-        boolean append = 0 == JOptionPane.showConfirmDialog(null,
-        		"Append file?", "Append to current text",
-        		JOptionPane.YES_NO_OPTION);
+        boolean append = showOpenForAppendDialog();
         
         JFileChooser fileChooser = new JFileChooser();
         int result = fileChooser.showOpenDialog(ui.getFrmOoJdrew());
@@ -159,6 +167,8 @@ public class TopDownApp implements UISettingsController, PreferenceChangeListene
 			
 			fileContents = stringBuilder.toString();
 		} catch (IOException e) {
+			JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), e.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
 			logger.error(e.getMessage());
 			return;
 		}
@@ -170,6 +180,38 @@ public class TopDownApp implements UISettingsController, PreferenceChangeListene
         else
         {
         	ui.setTextForCurrentEditingTab(fileContents);
+        }
+	}
+	
+	public void openURI()
+	{
+		boolean append = showOpenForAppendDialog();
+		String url = JOptionPane.showInputDialog("Please enter an URI");
+		
+		HttpClient client = new HttpClient();
+		GetMethod method = new GetMethod(url);
+		method.setFollowRedirects(true);
+		String contents;
+
+		try {
+			client.executeMethod(method);
+			contents = method.getResponseBodyAsString();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), e.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+			logger.error(e.getMessage());
+			return;
+		} finally {
+			method.releaseConnection();
+		} 		
+		
+        if(append)
+        {
+        	ui.appendToCurrentEditingTab(contents);
+        }
+        else
+        {
+        	ui.setTextForCurrentEditingTab(contents);
         }
 	}
 }
