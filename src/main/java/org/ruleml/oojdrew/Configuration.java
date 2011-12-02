@@ -22,9 +22,6 @@ public interface Configuration {
     public boolean getValidateRuleMLEnabled();
     public void setValidateRuleMLEnabled(boolean enabled);
     
-    public boolean getDebugConsoleVisible();
-    public void setDebugConsoleVisible(boolean visible);
-    
     public int getTextAreaFontSize();
     public void setTextAreaFontSize(int newSize);
     

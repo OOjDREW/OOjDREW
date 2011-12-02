@@ -23,7 +23,6 @@ import org.ruleml.oojdrew.Configuration;
 
 public class MockConfiguration implements Configuration {
 	private boolean ruleMLCompatibilityModeEnabled;
-	private boolean debugConsoleVisible;
 	private int uiFontSize;
 	
 	public boolean getValidateRuleMLEnabled() {
@@ -43,17 +42,6 @@ public class MockConfiguration implements Configuration {
 	}
 
 	public void addPreferenceChangeListener(PreferenceChangeListener listener) {
-		throw new UnsupportedOperationException();
-	}
-
-	public boolean getDebugConsoleVisible()
-	{
-		return debugConsoleVisible;
-	}
-
-	public void setDebugConsoleVisible(boolean visible)
-	{
-		debugConsoleVisible = visible;
 	}
 
 	public int getUIFontSize()

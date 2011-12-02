@@ -48,7 +48,7 @@ public class TopDownUI {
 	private JTextArea knowledgeBaseTextArea;
 	private JTextArea queryTextArea;
 	private JCheckBoxMenuItem chckbxmntmValidateRuleml;
-	private JCheckBoxMenuItem chckbxmntmShowDebugConsole;
+	private JMenuItem mntmShowDebugConsole;
 	private JPanel typeDefinitonTab;
 	private JPanel knowledgeBaseTab;
 	private JSplitPane queryTab;
@@ -138,13 +138,13 @@ public class TopDownUI {
 		});
 		mnOptions.add(chckbxmntmValidateRuleml);
 		
-		chckbxmntmShowDebugConsole = new JCheckBoxMenuItem("Show debug console");
-		chckbxmntmShowDebugConsole.addActionListener(new ActionListener() {
+		mntmShowDebugConsole = new JMenuItem("Show debug console");
+		mntmShowDebugConsole.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.applySettingsFromUI();
+				controller.showDebugConsole();
 			}
 		});
-		mnOptions.add(chckbxmntmShowDebugConsole);
+		mnOptions.add(mntmShowDebugConsole);
 		
 		JMenuItem mntmAdjustFontSize = new JMenuItem("Adjust font size...");
 		mntmAdjustFontSize.addActionListener(new ActionListener() {
@@ -434,14 +434,6 @@ public class TopDownUI {
 	
 	public void setChckbxmntmValidateRulemlSelected(boolean selected) {
 		chckbxmntmValidateRuleml.setSelected(selected);
-	}
-	
-	public boolean getChckbxmntmShowDebugConsoleSelected() {
-		return chckbxmntmShowDebugConsole.isSelected();
-	}
-	
-	public void setChckbxmntmShowDebugConsoleSelected(boolean selected_1) {
-		chckbxmntmShowDebugConsole.setSelected(selected_1);
 	}
 	
 	private EditingTab currentEditingTab()

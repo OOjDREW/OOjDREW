@@ -166,8 +166,6 @@ public class TopDownApp implements UISettingsController,
 		fontSizeDialogUI.setSpinnerUIFontSizeValue(config.getUIFontSize());
 		ui.setChckbxmntmValidateRulemlSelected(config
 				.getValidateRuleMLEnabled());
-		ui.setChckbxmntmShowDebugConsoleSelected(config
-				.getDebugConsoleVisible());
 	}
 
 	public void applySettingsFromUI() {
@@ -176,10 +174,13 @@ public class TopDownApp implements UISettingsController,
 		config.setUIFontSize(fontSizeDialogUI.getSpinnerUIFontSizeValue());
 		config.setValidateRuleMLEnabled(ui
 				.getChckbxmntmValidateRulemlSelected());
-		config.setDebugConsoleVisible(ui
-				.getChckbxmntmShowDebugConsoleSelected());
 	}
-
+	
+	public void showDebugConsole()
+	{
+		debugConsole.setVisible(true);
+	}
+	
 	public void showFontSizeDialog() {
 		fontSizeDialogUI.setVisible(true);
 	}
@@ -187,7 +188,6 @@ public class TopDownApp implements UISettingsController,
 	public void preferenceChange(PreferenceChangeEvent evt) {
 		ui.updateUI();
 		fontSizeDialogUI.updateUI();
-		debugConsole.setVisible(config.getDebugConsoleVisible());
 	}
 
 	private boolean showOpenForAppendDialog() {
