@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
+import javax.management.RuntimeErrorException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -194,7 +195,14 @@ public class TopDownApp implements UISettingsController, PreferenceChangeListene
 		String contents;
 
 		try {
-			client.executeMethod(method);
+			int httpStatus = client.executeMethod(method);
+			
+			if(httpStatus != 200)
+			{
+				throw new RuntimeException(String.format(
+						"Unexpected HTTP response, status = %d", httpStatus));
+			}
+			
 			contents = method.getResponseBodyAsString();
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), e.getMessage(),
