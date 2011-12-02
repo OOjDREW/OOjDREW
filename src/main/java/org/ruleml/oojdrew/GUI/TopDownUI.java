@@ -31,6 +31,10 @@ import javax.swing.border.EmptyBorder;
 
 import org.ruleml.oojdrew.TopDown.TopDownApp;
 import org.ruleml.oojdrew.parsing.InputFormat;
+import javax.swing.tree.TreeModel;
+import javax.swing.table.TableModel;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public class TopDownUI {
 
@@ -52,6 +56,11 @@ public class TopDownUI {
 	private JRadioButton typeDefinitionFormatRDFS;
 	private JButton btnNextSolution;
 	private JRadioButton knowledgeBaseInputFormatRuleML;
+	private JRadioButton queryFormatRuleML;
+	private JCheckBox typeQueryCheckbox;
+	private JTree solutionTree;
+	private JTextArea solutionText;
+	private JScrollPane solutionTreeScrollPane;
 
 	/**
 	 * Launch the application.
@@ -271,22 +280,44 @@ public class TopDownUI {
 		JScrollPane queryScrollPane = new JScrollPane();
 		
 		btnNextSolution = new JButton("Next solution");
+		btnNextSolution.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.nextSolution();
+			}
+		});
 		btnNextSolution.setEnabled(false);
 		
 		JButton btnIssueQuery = new JButton("Issue query");
+		btnIssueQuery.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.issueQuery();
+			}
+		});
 		
 		JLabel queryLabel = new JLabel("Query:");
 		
 		JLabel queryInputFormatLabel = new JLabel("Input format:");
 		
-		JRadioButton queryFormatRuleML = new JRadioButton("RuleML");
+		queryFormatRuleML = new JRadioButton("RuleML");
 		queryButtonGroup.add(queryFormatRuleML);
 		
 		JRadioButton queryFormatPOSL = new JRadioButton("POSL");
 		queryFormatPOSL.setSelected(true);
 		queryButtonGroup.add(queryFormatPOSL);
 		
-		JCheckBox typeQueryCheckbox = new JCheckBox("Type query");
+		typeQueryCheckbox = new JCheckBox("Type query");
+		typeQueryCheckbox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(getTypeQueryCheckboxSelected())
+				{
+					getSolutionTreeScrollPane().setViewportView(solutionText);
+				}
+				else
+				{
+					getSolutionTreeScrollPane().setViewportView(solutionTree);
+				}
+			}
+		});
 		GroupLayout gl_queryTopPanel = new GroupLayout(queryTopPanel);
 		gl_queryTopPanel.setHorizontalGroup(
 			gl_queryTopPanel.createParallelGroup(Alignment.TRAILING)
@@ -344,10 +375,17 @@ public class TopDownUI {
 		JLabel lblSolution = new JLabel("Solution:");
 		queryLeftPanel.add(lblSolution, BorderLayout.NORTH);
 		
-		JScrollPane solutionTreeScrollPane = new JScrollPane();
+		solutionTreeScrollPane = new JScrollPane();
 		queryLeftPanel.add(solutionTreeScrollPane, BorderLayout.CENTER);
 		
-		JTree solutionTree = new JTree();
+		solutionTree = new JTree();
+		solutionTree.setModel(new DefaultTreeModel(
+			new DefaultMutableTreeNode("unknown") {
+				{
+				}
+			}
+		));		
+		solutionText = new JTextArea();
 		solutionTreeScrollPane.setViewportView(solutionTree);
 		
 		JPanel queryRightPanel = new JPanel();
@@ -386,19 +424,6 @@ public class TopDownUI {
 		getFrmOoJdrew().pack();
 	}
 	
-	// TODO: delete these three methods
-	private JTextArea getTypeDefinitionTextArea() {
-		return typeDefinitionTextArea;
-	}
-	
-	private JTextArea getKnowledgeBaseTextArea() {
-		return knowledgeBaseTextArea;
-	}
-	
-	private JTextArea getQueryTextArea() {
-		return queryTextArea;
-	}
-	
 	public JFrame getFrmOoJdrew() {
 		return frmOoJdrew;
 	}
@@ -435,18 +460,6 @@ public class TopDownUI {
 		default:
 			throw new RuntimeException("Unknown tab selected.");
 		}
-	}
-	
-	private JPanel getTypeDefinitonTab() {
-		return typeDefinitonTab;
-	}
-	
-	private JPanel getKnowledgeBaseTab() {
-		return knowledgeBaseTab;
-	}
-	
-	private JSplitPane getQueryTab() {
-		return queryTab;
 	}
 	
 	private void clearCurrentEditingTab()
@@ -523,6 +536,11 @@ public class TopDownUI {
 		queryTextArea.setText(text_2);
 	}
 	
+	public void setSolutionTextAreaText(String text)
+	{
+		solutionText.setText(text);
+	}
+	
 	private int getTabbedPaneSelectedIndex() {
 		return tabbedPane.getSelectedIndex();
 	}
@@ -557,5 +575,45 @@ public class TopDownUI {
 		}
 		
 		return InputFormat.InputFormatPOSL;
+	}
+	
+	private boolean getQueryFormatRuleMLSelected() {
+		return queryFormatRuleML.isSelected();
+	}
+	
+	public InputFormat getQueryInputFormat()
+	{
+		if(getQueryFormatRuleMLSelected())
+		{
+			return InputFormat.InputFormatRuleML;
+		}
+		
+		return InputFormat.InputFormatPOSL;
+	}
+	
+	public boolean getTypeQueryCheckboxSelected() {
+		return typeQueryCheckbox.isSelected();
+	}
+	
+	public TreeModel getSolutionTreeModel() {
+		return solutionTree.getModel();
+	}
+	
+	public void setSolutionTreeModel(TreeModel model) {
+		solutionTree.setModel(model);
+		solutionTree.updateUI();
+	}
+	
+	public TableModel getVariableBindingsTableModel() {
+		return variableBindingsTable.getModel();
+	}
+	
+	public void setVariableBindingsTableModel(TableModel model_1) {
+		variableBindingsTable.setModel(model_1);
+		variableBindingsTable.updateUI();
+	}
+	
+	private JScrollPane getSolutionTreeScrollPane() {
+		return solutionTreeScrollPane;
 	}
 }
