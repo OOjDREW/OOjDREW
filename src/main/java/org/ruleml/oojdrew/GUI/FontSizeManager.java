@@ -4,6 +4,7 @@ import java.util.Enumeration;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.FontUIResource;
 import org.ruleml.oojdrew.Configuration;
 
@@ -38,6 +39,14 @@ public class FontSizeManager implements PreferenceChangeListener {
 	    		
 	    		UIManager.put (key, newFont);
 	      	}
-	    } 
+	    }
+	    
+	    try
+		{
+			UIManager.setLookAndFeel(config.getSelectedLookAndFeel());
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

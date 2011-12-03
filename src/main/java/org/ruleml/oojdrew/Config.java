@@ -20,6 +20,8 @@ package org.ruleml.oojdrew;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
+import javax.swing.UIManager;
+
 /**
  * <p>Title: OO jDREW</p>
  *
@@ -125,5 +127,14 @@ public class Config implements Configuration {
 
 	public void setDebugConsoleVisible(boolean visible) {
 		preferences.putBoolean("DebugConsoleVisible", visible);
+	}
+	
+	public void setLookAndFeel(String lafClassName)	{
+		preferences.put("LookAndFeel", lafClassName);
+	}
+	
+	public String getSelectedLookAndFeel(){
+		String defaultLookAndFeelName = UIManager.getSystemLookAndFeelClassName();
+		return preferences.get("LookAndFeel", defaultLookAndFeelName);
 	}
 }

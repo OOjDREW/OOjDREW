@@ -28,5 +28,8 @@ public interface Configuration {
     public int getUIFontSize();
     public void setUIFontSize(int newSize);
     
+	public void setLookAndFeel(String lafClassName);
+	public String getSelectedLookAndFeel();
+	
     void addPreferenceChangeListener(PreferenceChangeListener listener);
 }

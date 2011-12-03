@@ -24,6 +24,7 @@ import org.ruleml.oojdrew.Configuration;
 public class MockConfiguration implements Configuration {
 	private boolean ruleMLCompatibilityModeEnabled;
 	private int uiFontSize;
+	private String lookAndFeelClassName;
 	
 	public boolean getValidateRuleMLEnabled() {
 		return ruleMLCompatibilityModeEnabled;
@@ -52,6 +53,16 @@ public class MockConfiguration implements Configuration {
 	public void setUIFontSize(int newSize)
 	{
 		uiFontSize = newSize;
+	}
+
+	public void setLookAndFeel(String lafClassName)
+	{
+		lookAndFeelClassName = lafClassName;
+	}
+
+	public String getSelectedLookAndFeel()
+	{
+		return lookAndFeelClassName;
 	}
 
 }

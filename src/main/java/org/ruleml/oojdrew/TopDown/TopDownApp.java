@@ -164,6 +164,7 @@ public class TopDownApp implements UISettingsController,
 		fontSizeDialogUI.setSpinnerTextAreaFontSizeValue(config
 				.getTextAreaFontSize());
 		fontSizeDialogUI.setSpinnerUIFontSizeValue(config.getUIFontSize());
+		fontSizeDialogUI.setLookAndFeel(config.getSelectedLookAndFeel());
 		ui.setChckbxmntmValidateRulemlSelected(config
 				.getValidateRuleMLEnabled());
 	}
@@ -172,6 +173,7 @@ public class TopDownApp implements UISettingsController,
 		config.setTextAreaFontSize(fontSizeDialogUI
 				.getSpinnerTextAreaFontSizeValue());
 		config.setUIFontSize(fontSizeDialogUI.getSpinnerUIFontSizeValue());
+		config.setLookAndFeel(fontSizeDialogUI.getSelectedLookAndFeel());
 		config.setValidateRuleMLEnabled(ui
 				.getChckbxmntmValidateRulemlSelected());
 	}
