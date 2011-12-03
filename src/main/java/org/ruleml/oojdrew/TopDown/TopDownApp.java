@@ -30,8 +30,8 @@ import org.apache.log4j.PatternLayout;
 import org.ruleml.oojdrew.Config;
 import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.GUI.DebugConsole;
-import org.ruleml.oojdrew.GUI.FontSizeDialogUI;
-import org.ruleml.oojdrew.GUI.FontSizeManager;
+import org.ruleml.oojdrew.GUI.PreferenceDialogUI;
+import org.ruleml.oojdrew.GUI.PreferenceManager;
 import org.ruleml.oojdrew.GUI.TextPaneAppender;
 import org.ruleml.oojdrew.GUI.TopDownUI;
 import org.ruleml.oojdrew.GUI.UISettingsController;
@@ -55,9 +55,9 @@ public class TopDownApp implements UISettingsController,
 		PreferenceChangeListener {
 	private Configuration config;
 	private TopDownUI ui;
-	private FontSizeDialogUI fontSizeDialogUI;
+	private PreferenceDialogUI fontSizeDialogUI;
 	private DebugConsole debugConsole;
-	private FontSizeManager fontSizeManager;
+	private PreferenceManager fontSizeManager;
 	private Logger logger;
 	private RDFSParser rdfsParser;
 	private POSLParser poslParser;
@@ -105,9 +105,9 @@ public class TopDownApp implements UISettingsController,
 	public static TopDownApp getTopDownApp() {
 		// Construct dependencies
 		Configuration config = new Config();
-		FontSizeManager fontSizeManager = new FontSizeManager(config);
+		PreferenceManager fontSizeManager = new PreferenceManager(config);
 		TopDownUI topDownUI = new TopDownUI();
-		FontSizeDialogUI fontSizeDialogUI = new FontSizeDialogUI();
+		PreferenceDialogUI fontSizeDialogUI = new PreferenceDialogUI();
 
 		// Create DebugConsole and logger
 		DebugConsole debugConsole = new DebugConsole();
@@ -137,8 +137,8 @@ public class TopDownApp implements UISettingsController,
 		return topDownApp;
 	}
 
-	private TopDownApp(Configuration config, FontSizeManager fontSizeManager,
-			TopDownUI ui, FontSizeDialogUI fontSizeDialogUI,
+	private TopDownApp(Configuration config, PreferenceManager fontSizeManager,
+			TopDownUI ui, PreferenceDialogUI fontSizeDialogUI,
 			DebugConsole debugConsole, RDFSParser rdfsParser,
 			POSLParser poslParser, RuleMLParser rmlParser,
 			SubsumesParser subsumesParser, BackwardReasoner backwardReasoner) {

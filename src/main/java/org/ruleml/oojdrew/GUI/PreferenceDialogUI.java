@@ -41,20 +41,20 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JComboBox;
 
-public class FontSizeDialogUI extends JDialog {
+public class PreferenceDialogUI extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JSpinner spinnerTextFontSize;
 	private UISettingsController settingsController;
 	private JSpinner spinnerUIFontSize;
-	private JComboBox<String> comboBox;
+	private JComboBox<String> cbBoxLookAndFeel;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
-			FontSizeDialogUI dialog = new FontSizeDialogUI();
+			PreferenceDialogUI dialog = new PreferenceDialogUI();
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -65,7 +65,8 @@ public class FontSizeDialogUI extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public FontSizeDialogUI() {
+	public PreferenceDialogUI() {
+		setTitle("Preferences");
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent arg0) {
@@ -103,10 +104,10 @@ public class FontSizeDialogUI extends JDialog {
 		spinnerUIFontSize.setModel(new SpinnerNumberModel(12, 8, 72, 1));
 		
 		
-		comboBox = new JComboBox<String>();
+		cbBoxLookAndFeel = new JComboBox<String>();
 		for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels())
 		{
-			comboBox.addItem(lafInfo.getName());
+			cbBoxLookAndFeel.addItem(lafInfo.getName());
 		}
 		
 		JLabel lblLookAndFeel = new JLabel("Look and feel");
@@ -123,7 +124,7 @@ public class FontSizeDialogUI extends JDialog {
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addComponent(spinnerUIFontSize, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
 						.addComponent(spinnerTextFontSize, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
-						.addComponent(comboBox, Alignment.TRAILING, 0, 136, Short.MAX_VALUE)
+						.addComponent(cbBoxLookAndFeel, Alignment.TRAILING, 0, 136, Short.MAX_VALUE)
 						.addGroup(Alignment.TRAILING, gl_contentPanel.createSequentialGroup()
 							.addComponent(btnOk)
 							.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -143,7 +144,7 @@ public class FontSizeDialogUI extends JDialog {
 						.addComponent(spinnerTextFontSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(cbBoxLookAndFeel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblLookAndFeel))
 					.addPreferredGap(ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
@@ -189,7 +190,7 @@ public class FontSizeDialogUI extends JDialog {
 		{
 			if (lafInfo.getClassName().equals(lafClassName))
 			{
-				comboBox.setSelectedItem(lafInfo.getName());
+				cbBoxLookAndFeel.setSelectedItem(lafInfo.getName());
 				break;
 			}
 		}
@@ -197,7 +198,7 @@ public class FontSizeDialogUI extends JDialog {
 	
 	public String getSelectedLookAndFeel()
 	{
-		String lafName = comboBox.getSelectedItem().toString();
+		String lafName = cbBoxLookAndFeel.getSelectedItem().toString();
 		for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels())
 		{
 			if (lafInfo.getName().equals(lafName))

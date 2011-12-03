@@ -8,10 +8,10 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.FontUIResource;
 import org.ruleml.oojdrew.Configuration;
 
-public class FontSizeManager implements PreferenceChangeListener {
+public class PreferenceManager implements PreferenceChangeListener {
 	private Configuration config;
 	
-	public FontSizeManager(Configuration config)
+	public PreferenceManager(Configuration config)
 	{
 		this.config = config;
 		config.addPreferenceChangeListener(this);

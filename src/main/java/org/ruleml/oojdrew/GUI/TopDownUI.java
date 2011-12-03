@@ -146,13 +146,13 @@ public class TopDownUI {
 		});
 		mnOptions.add(mntmShowDebugConsole);
 		
-		JMenuItem mntmAdjustFontSize = new JMenuItem("Adjust font size...");
-		mntmAdjustFontSize.addActionListener(new ActionListener() {
+		JMenuItem mntmPreferences = new JMenuItem("Preferences...");
+		mntmPreferences.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.showFontSizeDialog();
 			}
 		});
-		mnOptions.add(mntmAdjustFontSize);
+		mnOptions.add(mntmPreferences);
 		frmOoJdrew.getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
