@@ -200,6 +200,17 @@ public class RuleMLParser implements PreferenceChangeListener {
    public DefiniteClause parseRuleMLQuery(String contents) throws
         ParseException, ParsingException, ValidityException, IOException {
 
+	    // Evil hack: encapsulate the query contents in a pair of <Query> tags 
+	   	RuleMLTagNames rmlTags = new RuleMLTagNames(RuleMLFormat.RuleMLQuery);
+	   	contents = contents.trim();
+	   	String queryTagOpen = String.format("<%s>", rmlTags.QUERY);
+	   	String queryTagClose = String.format("</%s>", rmlTags.QUERY);
+
+	   	if(!contents.contains(queryTagOpen))
+	   	{
+	   		contents = String.format("%s%s%s", queryTagOpen, contents, queryTagClose);
+	   	}
+	   
 		parseRuleMLString(RuleMLFormat.RuleMLQuery, contents);
 		
 		return (DefiniteClause) clauses.lastElement();
