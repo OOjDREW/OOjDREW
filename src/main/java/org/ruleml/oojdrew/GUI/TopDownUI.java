@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
@@ -28,13 +27,14 @@ import javax.swing.JTree;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
+import javax.swing.undo.UndoManager;
 
 import org.ruleml.oojdrew.TopDown.TopDownApp;
 import org.ruleml.oojdrew.parsing.InputFormat;
-import javax.swing.tree.TreeModel;
-import javax.swing.table.TableModel;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 public class TopDownUI {
 
@@ -61,6 +61,8 @@ public class TopDownUI {
 	private JTree solutionTree;
 	private JTextArea solutionText;
 	private JScrollPane solutionTreeScrollPane;
+	
+	private UndoManager kbUndoManager;
 
 	/**
 	 * Launch the application.
@@ -90,6 +92,9 @@ public class TopDownUI {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
+		kbUndoManager = new UndoManager();
+		
 		frmOoJdrew = new JFrame();
 		frmOoJdrew.setTitle("OO jDREW");
 		frmOoJdrew.setBounds(100, 100, 700, 650);
@@ -210,7 +215,7 @@ public class TopDownUI {
 					.addContainerGap())
 		);
 		
-		typeDefinitionTextArea = new JTextArea();
+		typeDefinitionTextArea = new UndoRedoTextArea(new String());
 		typeDefinitionScrollPane.setViewportView(typeDefinitionTextArea);
 		typeDefinitonTab.setLayout(gl_typeDefinitonTab);
 		
@@ -265,7 +270,8 @@ public class TopDownUI {
 					.addContainerGap())
 		);
 		
-		knowledgeBaseTextArea = new JTextArea();
+		knowledgeBaseTextArea = new UndoRedoTextArea(new String());
+
 		knowledgeBaseScrollPane.setViewportView(knowledgeBaseTextArea);
 		knowledgeBaseTab.setLayout(gl_knowledgeBaseTab);
 		
@@ -359,7 +365,7 @@ public class TopDownUI {
 					.addContainerGap())
 		);
 		
-		queryTextArea = new JTextArea();
+		queryTextArea = new UndoRedoTextArea(new String());
 		queryScrollPane.setViewportView(queryTextArea);
 		queryTopPanel.setLayout(gl_queryTopPanel);
 		
@@ -385,7 +391,7 @@ public class TopDownUI {
 				}
 			}
 		));		
-		solutionText = new JTextArea();
+		solutionText = new UndoRedoTextArea(new String());
 		solutionTreeScrollPane.setViewportView(solutionTree);
 		
 		JPanel queryRightPanel = new JPanel();
