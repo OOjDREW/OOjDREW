@@ -377,6 +377,8 @@ public class TopDownApp implements UISettingsController,
 	}
 
 	private void issueRuleMLQuery(String query) {
+		rmlParser.clear();
+		
 		try {
 			DefiniteClause dc = rmlParser.parseRuleMLQuery(query);
 			processQuery(dc);

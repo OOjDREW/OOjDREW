@@ -27,6 +27,9 @@ import java.util.prefs.PreferenceChangeListener;
 
 import nu.xom.Builder;
 import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.Node;
+import nu.xom.Nodes;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
@@ -200,21 +203,69 @@ public class RuleMLParser implements PreferenceChangeListener {
    public DefiniteClause parseRuleMLQuery(String contents) throws
         ParseException, ParsingException, ValidityException, IOException {
 
-	    // Evil hack: encapsulate the query contents in a pair of <Query> tags 
-	   	RuleMLTagNames rmlTags = new RuleMLTagNames(RuleMLFormat.RuleMLQuery);
-	   	contents = contents.trim();
-	   	String queryTagOpen = String.format("<%s>", rmlTags.QUERY);
-	   	String queryTagClose = String.format("</%s>", rmlTags.QUERY);
-
-	   	if(!contents.contains(queryTagOpen))
-	   	{
-	   		contents = String.format("%s%s%s", queryTagOpen, contents, queryTagClose);
-	   	}
+	    contents = ensureQueryTag(contents);
+	    contents = buildFakeImplication(contents);
 	   
 		parseRuleMLString(RuleMLFormat.RuleMLQuery, contents);
 		
 		return (DefiniteClause) clauses.lastElement();
 	}
+   
+    private String buildFakeImplication(String query)
+    {
+    	Builder builder = new Builder();
+    	StringReader stringReader = new StringReader(query);
+    	Document document;
+    	
+    	try {
+			document = builder.build(stringReader);
+		} catch(Exception e) {
+			// Cannot happen
+			e.printStackTrace();
+			return "";
+		}
+    	
+    	Element queryElement = document.getRootElement();
+
+    	RuleMLTagNames rmlTags = new RuleMLTagNames(RuleMLFormat.RuleMLQuery);
+    	
+    	Element rel = new Element(rmlTags.REL);
+    	rel.insertChild("$top", 0);
+    	
+    	Element topAtom = new Element(rmlTags.ATOM);
+    	topAtom.appendChild(rel);
+    	
+    	Nodes atoms = queryElement.removeChildren();
+    	
+    	Element implies = new Element(rmlTags.IMPLIES);
+    	
+    	for(int i = 0; i < atoms.size(); ++i)
+    	{
+			implies.appendChild(atoms.get(i));
+    	}
+    	    	
+    	implies.appendChild(topAtom);
+    	
+    	queryElement.appendChild(implies);
+    	
+    	return document.toXML();
+    }
+   
+    private String ensureQueryTag(String query)
+    {
+		// Evil hack: encapsulate the query contents in a pair of <Query> tags 
+	   	RuleMLTagNames rmlTags = new RuleMLTagNames(RuleMLFormat.RuleMLQuery);
+	   	query = query.trim();
+	   	String queryTagOpen = String.format("<%s>", rmlTags.QUERY);
+	   	String queryTagClose = String.format("</%s>", rmlTags.QUERY);
+	
+	   	if(!query.contains(queryTagOpen))
+	   	{
+	   		query = String.format("%s%s%s", queryTagOpen, query, queryTagClose);
+	   	}
+	   	
+	   	return query;
+    }
 
 	public void preferenceChange(PreferenceChangeEvent evt) {
 		validateRuleML = config.getValidateRuleMLEnabled();
