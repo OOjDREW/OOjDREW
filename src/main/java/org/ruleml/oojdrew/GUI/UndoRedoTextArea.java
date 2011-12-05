@@ -33,7 +33,7 @@ public class UndoRedoTextArea extends JTextArea implements UndoableEditListener,
         undoManager = new UndoManager();
         getDocument().addUndoableEditListener(this);
         
-        contextMenu = new JPopupMenu();
+        contextMenu = new JPopupMenu("Edit");
         contextMenu.add(new SelectAction(this));
     	contextMenu.add(new CutAction(this));
         contextMenu.add(new CopyAction(this));
