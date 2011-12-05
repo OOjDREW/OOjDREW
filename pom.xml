@@ -68,7 +68,7 @@
             <configuration>
                 <archive>
                     <manifest>
-                        <mainClass>org.ruleml.oojdrew.GUI.TopDownGUI</mainClass>
+                        <mainClass>org.ruleml.oojdrew.TopDown.TopDownApp</mainClass>
                     </manifest>
                 </archive>
                 <descriptorRefs>
