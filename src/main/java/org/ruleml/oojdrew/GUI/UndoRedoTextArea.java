@@ -24,7 +24,6 @@ import javax.swing.undo.UndoManager;
 public class UndoRedoTextArea extends JTextArea implements UndoableEditListener, FocusListener, KeyListener
 {
     private UndoManager undoManager;
-    private JPopupMenu contextMenu;
    
     public UndoRedoTextArea(String emptyText)
     {
@@ -32,15 +31,6 @@ public class UndoRedoTextArea extends JTextArea implements UndoableEditListener,
         
         undoManager = new UndoManager();
         getDocument().addUndoableEditListener(this);
-        
-        contextMenu = new JPopupMenu("Edit");
-        contextMenu.add(new SelectAction(this));
-    	contextMenu.add(new CutAction(this));
-        contextMenu.add(new CopyAction(this));
-        contextMenu.add(new PasteAction(this));
-        contextMenu.addSeparator();
-        contextMenu.add(new UndoAction(this, undoManager));
-        contextMenu.add(new RedoAction(this, undoManager));
        
         addKeyListener(this);
         addFocusListener(this);
@@ -98,6 +88,14 @@ public class UndoRedoTextArea extends JTextArea implements UndoableEditListener,
         // Only interested in the right button
         if(SwingUtilities.isRightMouseButton(e))
         {    
+        	JPopupMenu contextMenu = new JPopupMenu("Edit");
+            contextMenu.add(new SelectAction(this));
+        	contextMenu.add(new CutAction(this));
+            contextMenu.add(new CopyAction(this));
+            contextMenu.add(new PasteAction(this));
+            contextMenu.addSeparator();
+            contextMenu.add(new UndoAction(this, undoManager));
+            contextMenu.add(new RedoAction(this, undoManager));
             // Display the menu
             Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(), this);
             contextMenu.show(this, pt.x, pt.y);
