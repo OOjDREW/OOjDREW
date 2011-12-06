@@ -13,7 +13,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
@@ -24,6 +23,7 @@ import javax.swing.undo.UndoManager;
 public class UndoRedoTextArea extends JTextArea implements UndoableEditListener, FocusListener, KeyListener
 {
     private UndoManager undoManager;
+    private JPopupMenu contextMenu;
    
     public UndoRedoTextArea(String emptyText)
     {
@@ -31,29 +31,44 @@ public class UndoRedoTextArea extends JTextArea implements UndoableEditListener,
         
         undoManager = new UndoManager();
         getDocument().addUndoableEditListener(this);
+        inititalizeContextMenu();
        
         addKeyListener(this);
         addFocusListener(this);
         
         addMouseListener(new MouseAdapter()
 		{
-            public void mouseClicked(MouseEvent e)
-            {
+        	@Override
+        	public void mouseReleased(MouseEvent e)
+        	{
                 requestFocus();
                 processMouseClick(e);
-            }
+        	}
 		});
-        
-        addMouseListener(new MouseAdapter()
-        {
-
-        });
     }
     
 
     public void undoableEditHappened(UndoableEditEvent e)
     {
         undoManager.addEdit(e.getEdit());
+    }
+    
+    private void inititalizeContextMenu()
+    {
+    	contextMenu = new JPopupMenu("Edit");
+        contextMenu.add(new SelectAction(this));
+    	contextMenu.add(new CutAction(this));
+        contextMenu.add(new CopyAction(this));
+        contextMenu.add(new PasteAction(this));
+        contextMenu.addSeparator();
+        contextMenu.add(new UndoAction(this, undoManager));
+        contextMenu.add(new RedoAction(this, undoManager));
+    }
+    
+    public void updateUI()
+    {
+    	super.updateUI();
+    	inititalizeContextMenu();
     }
     
     public void keyPressed(KeyEvent e) 
@@ -87,15 +102,7 @@ public class UndoRedoTextArea extends JTextArea implements UndoableEditListener,
     {
         // Only interested in the right button
         if(SwingUtilities.isRightMouseButton(e))
-        {    
-        	JPopupMenu contextMenu = new JPopupMenu("Edit");
-            contextMenu.add(new SelectAction(this));
-        	contextMenu.add(new CutAction(this));
-            contextMenu.add(new CopyAction(this));
-            contextMenu.add(new PasteAction(this));
-            contextMenu.addSeparator();
-            contextMenu.add(new UndoAction(this, undoManager));
-            contextMenu.add(new RedoAction(this, undoManager));
+        {
             // Display the menu
             Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(), this);
             contextMenu.show(this, pt.x, pt.y);
@@ -135,7 +142,7 @@ public class UndoRedoTextArea extends JTextArea implements UndoableEditListener,
      
         public boolean isEnabled()
         { 
-            return textArea.isEditable() && textArea.isEnabled();
+            return textArea.isEnabled();
         }
     }
       
@@ -154,7 +161,7 @@ public class UndoRedoTextArea extends JTextArea implements UndoableEditListener,
      
         public boolean isEnabled()
         { 
-            return textArea.isEditable() && textArea.isEnabled();
+            return textArea.isEnabled();
         } 
     }
     

@@ -31,7 +31,6 @@ import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
-import javax.swing.undo.UndoManager;
 
 import org.ruleml.oojdrew.TopDown.TopDownApp;
 import org.ruleml.oojdrew.parsing.InputFormat;
@@ -44,9 +43,9 @@ public class TopDownUI {
 	private JTable variableBindingsTable;
 	private final ButtonGroup queryButtonGroup = new ButtonGroup();
 	private TopDownApp controller;
-	private JTextArea typeDefinitionTextArea;
-	private JTextArea knowledgeBaseTextArea;
-	private JTextArea queryTextArea;
+	private UndoRedoTextArea typeDefinitionTextArea;
+	private UndoRedoTextArea knowledgeBaseTextArea;
+	private UndoRedoTextArea queryTextArea;
 	private JCheckBoxMenuItem chckbxmntmValidateRuleml;
 	private JMenuItem mntmShowDebugConsole;
 	private JPanel typeDefinitonTab;
@@ -59,10 +58,8 @@ public class TopDownUI {
 	private JRadioButton queryFormatRuleML;
 	private JCheckBox typeQueryCheckbox;
 	private JTree solutionTree;
-	private JTextArea solutionText;
+	private UndoRedoTextArea solutionTextArea;
 	private JScrollPane solutionTreeScrollPane;
-	
-	private UndoManager kbUndoManager;
 
 	/**
 	 * Launch the application.
@@ -91,10 +88,7 @@ public class TopDownUI {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
-		
-		kbUndoManager = new UndoManager();
-		
+	private void initialize() {		
 		frmOoJdrew = new JFrame();
 		frmOoJdrew.setTitle("OO jDREW");
 		frmOoJdrew.setBounds(100, 100, 700, 650);
@@ -316,7 +310,7 @@ public class TopDownUI {
 			public void actionPerformed(ActionEvent e) {
 				if(getTypeQueryCheckboxSelected())
 				{
-					getSolutionTreeScrollPane().setViewportView(solutionText);
+					getSolutionTreeScrollPane().setViewportView(solutionTextArea);
 				}
 				else
 				{
@@ -387,11 +381,10 @@ public class TopDownUI {
 		solutionTree = new JTree();
 		solutionTree.setModel(new DefaultTreeModel(
 			new DefaultMutableTreeNode("unknown") {
-				{
-				}
 			}
 		));		
-		solutionText = new UndoRedoTextArea(new String());
+		solutionTextArea = new UndoRedoTextArea(new String());
+		solutionTextArea.setEditable(false);
 		solutionTreeScrollPane.setViewportView(solutionTree);
 		
 		JPanel queryRightPanel = new JPanel();
@@ -426,6 +419,11 @@ public class TopDownUI {
 	}
 
 	public void updateUI() {
+		knowledgeBaseTextArea.updateUI();
+		queryTextArea.updateUI();
+		typeDefinitionTextArea.updateUI();
+		solutionTextArea.updateUI();
+		
 		SwingUtilities.updateComponentTreeUI(getFrmOoJdrew());
 		getFrmOoJdrew().pack();
 	}
@@ -536,7 +534,7 @@ public class TopDownUI {
 	
 	public void setSolutionTextAreaText(String text)
 	{
-		solutionText.setText(text);
+		solutionTextArea.setText(text);
 	}
 	
 	private int getTabbedPaneSelectedIndex() {
