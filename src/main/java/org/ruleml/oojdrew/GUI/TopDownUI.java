@@ -34,6 +34,9 @@ import javax.swing.tree.TreeModel;
 
 import org.ruleml.oojdrew.TopDown.TopDownApp;
 import org.ruleml.oojdrew.parsing.InputFormat;
+import java.awt.event.KeyEvent;
+import javax.swing.KeyStroke;
+import java.awt.event.InputEvent;
 
 public class TopDownUI {
 
@@ -101,6 +104,7 @@ public class TopDownUI {
 		menuBar.add(mnFile);
 		
 		JMenuItem mntmOpenFile = new JMenuItem("Open file...");
+		mntmOpenFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
 		mntmOpenFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.openFile();
@@ -116,9 +120,20 @@ public class TopDownUI {
 		});
 		mnFile.add(mntmOpenUri);
 		
+		JMenuItem mntmSaveAs = new JMenuItem("Save as...");
+		mntmSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+		mntmSaveAs.setMnemonic(KeyEvent.VK_S);
+		mntmSaveAs.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.saveFileAs();
+			}
+		});
+		mnFile.add(mntmSaveAs);
+		
 		mnFile.addSeparator();
 		
 		JMenuItem mntmExit = new JMenuItem("Exit");
+		mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK));
 		mntmExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
@@ -146,6 +161,7 @@ public class TopDownUI {
 		mnOptions.add(mntmShowDebugConsole);
 		
 		JMenuItem mntmPreferences = new JMenuItem("Preferences...");
+		mntmPreferences.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
 		mntmPreferences.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.showFontSizeDialog();
@@ -506,6 +522,26 @@ public class TopDownUI {
 	{
 		clearCurrentEditingTab();
 		appendToCurrentEditingTab(content);
+	}
+	
+	public String getTextForCurrentEditingTab()
+	{
+		String text = "";
+		switch(currentEditingTab())
+		{
+		case EditingTabTypeDefinition:
+			text = getTypeDefinitionTextAreaText();
+			break;
+			
+		case EditingTabKnowledgeBase:
+			text = getKnowledgeBaseTextAreaText();
+			break;
+			
+		case EditingTabQuery:
+			text = getQueryTextAreaText();
+			break;
+		}
+		return text;
 	}
 	
 	public String getTypeDefinitionTextAreaText() {

@@ -2,8 +2,10 @@ package org.ruleml.oojdrew.TopDown;
 
 import java.awt.EventQueue;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -224,6 +226,7 @@ public class TopDownApp implements UISettingsController,
 			}
 
 			fileContents = stringBuilder.toString();
+			bufferedReader.close();
 		} catch (IOException e) {
 			defaultExceptionHandler(e);
 			return;
@@ -265,6 +268,56 @@ public class TopDownApp implements UISettingsController,
 			ui.appendToCurrentEditingTab(contents);
 		} else {
 			ui.setTextForCurrentEditingTab(contents);
+		}
+	}
+	
+	public void saveFileAs()
+	{
+		JFileChooser fileChooser = new JFileChooser()
+		{
+			@Override
+			public void approveSelection()
+			{
+			    File f = getSelectedFile();
+			    if(f.exists() && getDialogType() == SAVE_DIALOG)
+			    {
+			        int result = JOptionPane.showConfirmDialog(this,"File already exists, overwrite?","Existing file",JOptionPane.YES_NO_OPTION);
+			        switch(result)
+			        {
+			            case JOptionPane.YES_OPTION:
+			                super.approveSelection();
+			                return;
+			            case JOptionPane.NO_OPTION:
+			                return;
+			        }
+			    }
+			    super.approveSelection();
+			}
+		};
+		
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		int result = fileChooser.showSaveDialog(ui.getFrmOoJdrew());
+
+		if (result != JFileChooser.APPROVE_OPTION) 
+		{
+			return;
+		}
+
+		try
+		{
+			File file = fileChooser.getSelectedFile();
+			FileWriter fileWriter = new FileWriter(file);
+			BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+			String textToWrite = ui.getTextForCurrentEditingTab();
+
+			bufferedWriter.write(textToWrite);
+			bufferedWriter.close();
+		} 
+		catch (IOException e) 
+		{
+			defaultExceptionHandler(e);
+			return;
 		}
 	}
 
