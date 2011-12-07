@@ -1004,6 +1004,9 @@ public class RuleMLDocumentParser{
     	} else if (elementName.equals(tagNames.TORSO)) {
     		hasRoleTag = true;
     		logger.warn("torso element skipped.");
+    	} else if (elementName.equals(tagNames.DEGREE)) {
+    		hasRoleTag = true;
+    		logger.warn("degree element skipped.");
     	}
     	
     	if (hasRoleTag)

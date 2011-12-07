@@ -53,6 +53,7 @@ public class RuleMLTagNames {
     public final String RIGHT = "right";
     public final String LEFT = "left";
     public final String TORSO = "torso";
+    public final String DEGREE = "degree";
     
 	public final String DATA = "Data";
 	
