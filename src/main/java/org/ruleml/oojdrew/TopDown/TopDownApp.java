@@ -516,7 +516,22 @@ public class TopDownApp implements UISettingsController,
 	// TODO: This method was copied from the old GUI and has been modified to
 	// work with the current code base. This code should be rewritten in a much
 	// cleaner fashion.
-	public void nextSolution() {
+	
+	public void nextSolution()
+	{
+		boolean typeQuery = ui.getTypeQueryCheckboxSelected();
+		
+		if(typeQuery)
+		{
+			nextSolutionForTypeQuery();
+		}
+		else
+		{
+			nextSolutionForQuery();			
+		}
+	}
+	
+	public void nextSolutionForQuery() {
 		BackwardReasoner.GoalList gl = (BackwardReasoner.GoalList) solit.next();
 		// System.out.println(gl.toString());
 		Hashtable varbind = gl.varBindings;
@@ -550,6 +565,57 @@ public class TopDownApp implements UISettingsController,
 		}
 	}
 
+	// TODO: This method was copied from the old GUI and has been modified to
+	// work with the current code base. This code should be rewritten in a much
+	// cleaner fashion.
+	public void nextSolutionForTypeQuery()
+	{
+		//Var Ind
+		if(t1Var == true && t2Var == false){
+					
+			Object[][] rowdata = new Object[2][2];
+
+       		rowdata[0][0] = "?" + term1VarName;
+       	 	rowdata[0][1] = (String)it.next();
+            
+        	String[] colnames = new String[] {"Variable", "Binding"};
+
+        	ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+		}
+		//Ind Var
+		if(t1Var == false && t2Var == true){
+					
+			Object[][] rowdata = new Object[2][2];
+
+       		rowdata[0][0] = "?" + term2VarName;
+       	 	rowdata[0][1] = (String)it.next();
+            
+        	String[] colnames = new String[] {"Variable", "Binding"};
+
+        	ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+		}		
+		//Var Var
+		if(t1Var == true && t2Var == true){
+					
+			Object[][] rowdata = new Object[2][2];
+
+       		rowdata[0][0] = "?" + term1VarName;
+       	 	rowdata[0][1] = (String)it.next();
+            
+            rowdata[1][0] = "?" + term2VarName;
+            rowdata[1][1] = (String)it.next();
+            
+        	String[] colnames = new String[] {"Variable", "Binding"};
+
+        	ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(rowdata, colnames));
+		}
+		
+		if(!it.hasNext())
+		{
+			ui.setBtnNextSolutionEnabled(false);
+		}
+	}
+	
 	// TODO: This method was copied from the old GUI and has been modified to
 	// work with the current code base. This code should be rewritten in a much
 	// cleaner fashion.
