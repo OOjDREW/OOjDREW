@@ -37,6 +37,7 @@ import org.ruleml.oojdrew.parsing.InputFormat;
 import java.awt.event.KeyEvent;
 import javax.swing.KeyStroke;
 import java.awt.event.InputEvent;
+import java.awt.Dimension;
 
 public class TopDownUI {
 
@@ -290,6 +291,7 @@ public class TopDownUI {
 		tabbedPane.addTab("Query", null, queryTab, null);
 		
 		JPanel queryTopPanel = new JPanel();
+		queryTopPanel.setPreferredSize(new Dimension(10, 150));
 		queryTopPanel.setBorder(null);
 		queryTab.setLeftComponent(queryTopPanel);
 		
