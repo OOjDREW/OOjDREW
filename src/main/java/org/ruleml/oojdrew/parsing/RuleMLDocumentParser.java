@@ -112,7 +112,9 @@ public class RuleMLDocumentParser{
         this.skolemMap = new Hashtable<String, String>();
                
         Element root = doc.getRootElement();        
+        RemoveReifyElements(root);
         Element firstChild = null;
+        
         
         String rootName = root.getLocalName();
         // If RuleML is root element
@@ -173,6 +175,23 @@ public class RuleMLDocumentParser{
                 clauses.addAll(parseImplies(child));
             }
         }
+    }
+    
+    private void RemoveReifyElements(Element element)
+    {
+    	Elements children = element.getChildElements();
+    	for (int  i = 0; i < children.size(); i++)
+    	{
+    		Element child = children.get(i);
+    		if (child.getLocalName().equals(tagNames.REIFY))
+    		{
+    			element.removeChild(child);
+    		}
+    		else 
+    		{ 
+    			RemoveReifyElements(child);
+    		}
+    	}
     }
 
     /**

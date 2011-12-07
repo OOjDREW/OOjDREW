@@ -50,10 +50,14 @@ public class RuleMLTagNames {
     public final String DECLARE = "declare";
     public final String STRONG = "strong";
     public final String WEAK = "weak";
-    public final String RIGHT = "right";
-    public final String LEFT = "left";
     public final String TORSO = "torso";
     public final String DEGREE = "degree";
+    
+    /* Equal incl. left and right is not yet supported  */
+    public final String RIGHT = "right";
+    public final String LEFT = "left";
+    
+    public final String REIFY = "Reify";
     
 	public final String DATA = "Data";
 	
