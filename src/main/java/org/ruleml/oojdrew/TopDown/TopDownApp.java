@@ -7,6 +7,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -25,6 +29,10 @@ import nu.xom.Elements;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.httpclient.params.HttpConnectionParams;
+import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.httpclient.params.HttpParams;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -239,35 +247,52 @@ public class TopDownApp implements UISettingsController,
 		}
 	}
 
+	/**
+	 * Shows open URI dialog and reads from URL to editing tab
+	 */
 	public void openURI() {
 		boolean append = showOpenForAppendDialog();
-		String url = JOptionPane.showInputDialog("Please enter an URI");
-
-		HttpClient client = new HttpClient();
-		GetMethod method = new GetMethod(url);
-		method.setFollowRedirects(true);
-		String contents;
-
+		String uri = JOptionPane.showInputDialog("Please enter an URI");
+		
+		if (uri == null)
+		{
+			return;
+		}
+		
+		// Set connection timeout [ms] for HTTP connection
+		int connectionTimeoutMillis = 3000;
+		
+		StringBuffer buffer = new StringBuffer();
 		try {
-			int httpStatus = client.executeMethod(method);
-
-			if (httpStatus != 200) {
-				throw new RuntimeException(String.format(
-						"Unexpected HTTP response, status = %d", httpStatus));
-			}
-
-			contents = method.getResponseBodyAsString();
+			// Create new HTTP connection with given timeout
+			URL url = new URL(uri);
+			URLConnection urlConnection = url.openConnection();	
+			urlConnection.setConnectTimeout(connectionTimeoutMillis);
+			
+			// Open input stream for reading
+			InputStream inputStream = urlConnection.getInputStream();
+			BufferedReader streamReader = new BufferedReader(new InputStreamReader(inputStream));
+			
+			// Read input stream to string buffer
+	        String inputLine;
+	        String newLine = System.getProperty("line.separator");
+	        while ((inputLine = streamReader.readLine()) != null) 
+	        {
+	        	buffer.append(inputLine);
+	        	buffer.append(newLine);
+	        }
+	        
+	        // Close streams
+	        streamReader.close();
 		} catch (Exception e) {
 			defaultExceptionHandler(e);
 			return;
-		} finally {
-			method.releaseConnection();
 		}
-
+		
 		if (append) {
-			ui.appendToCurrentEditingTab(contents);
+			ui.appendToCurrentEditingTab(buffer.toString());
 		} else {
-			ui.setTextForCurrentEditingTab(contents);
+			ui.setTextForCurrentEditingTab(buffer.toString());
 		}
 	}
 	
