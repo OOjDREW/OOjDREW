@@ -523,6 +523,16 @@ public class RuleMLDocumentParser{
     }
     
     /**
+     * Generates a anonymous identifier for a given symbol name
+     * @param symbolName Input symbol
+     * @return Symbol name with identifier
+     */
+    private String generateAnonymousIdentifier()
+    {
+    	return "$ANON" + anonid++;
+    }
+    
+    /**
      * Method to parse a Var (Variable)
      *
      * @param var Element The XOM element that represents the Var
@@ -538,7 +548,7 @@ public class RuleMLDocumentParser{
         String symbolName = var.getValue().trim();
         
         if (symbolName.isEmpty()) {
-            symbolName = "$ANON" + anonid++;
+            symbolName = generateAnonymousIdentifier();
         }
 
         int sym = this.internVariable(symbolName);
@@ -669,10 +679,10 @@ public class RuleMLDocumentParser{
                 
         if (rel == null) {
             throw new ParseException(
-                    "First child of op in an atom must be a Rel element.");
+                    "In an <Atom>, first child of <op> must be a <Rel>.");
         }
 		
-        String relname = rel.getValue().trim();
+        String relname = rel.getValue().trim();             
         if(neg) {
             relname = "$neg-" + relname;
         }
@@ -687,7 +697,7 @@ public class RuleMLDocumentParser{
             if (element.getLocalName().equals(tagNames.OID)) {
                 if (foundoid) {
                     throw new ParseException(
-                            "Atom should only contain one oid element.");
+                            "<Atom> must contain a most one <oid>.");
                 }
                 term = parseOid(element);
                 foundoid = true;
@@ -706,7 +716,7 @@ public class RuleMLDocumentParser{
                 Term t2 = new Term(symid, SymbolTable.IOID, Types.IOBJECT);
                 subterms.add(t2);
             } else {
-                String varname = "$ANON" + anonid++;
+                String varname = generateAnonymousIdentifier();
                 int symid = this.internVariable(varname);
                 Vector<Integer> types = new Vector<Integer>();
                 types.add(Types.IOBJECT);
@@ -743,7 +753,7 @@ public class RuleMLDocumentParser{
 		}
        
         if (!firstChildName.getLocalName().equals(tagNames.IND) && !firstChildName.getLocalName().equals(tagNames.DATA)) {
-            throw new ParseException("Only Ind and Data slot names are supported.");
+            throw new ParseException("In a <slot> only <Ind> and <Data> are allowed.");
         }    
 		//Getting the Role from the symbol Table, it will assign one if it
 		//doesnt already exist
@@ -1141,8 +1151,13 @@ public class RuleMLDocumentParser{
      */
     private Term parseSimpleElement(Element element) throws ParseException
     {
-    	String symbol = element.getValue().trim();
-        int sym = SymbolTable.internSymbol(symbol);
+    	String symbolName = element.getValue().trim();
+    	
+        if (symbolName.isEmpty()) {
+            symbolName = generateAnonymousIdentifier();
+        }
+    	
+        int sym = SymbolTable.internSymbol(symbolName);
         int typeid = parseTypeAttribute(element);
 
         return new Term(sym, SymbolTable.INOROLE, typeid);

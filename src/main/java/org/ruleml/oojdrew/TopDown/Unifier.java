@@ -989,7 +989,14 @@ public class Unifier {
         } else {
             int side = term.getSide();
             int sym = -(term.getSymbol() + 1);
-            Term termd = vars[side][sym];
+            Term termd = null;
+            if (sym < 0 || side < 0) {
+                throw new RuntimeException(
+                        "Knowledgebase contains unknown symbol.");
+            }
+            
+            termd = vars[side][sym];
+            
             if (termd == null) {
                 return term;
             } else {
