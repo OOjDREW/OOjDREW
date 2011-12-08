@@ -210,6 +210,12 @@ public class RuleMLParser implements PreferenceChangeListener {
 		return (DefiniteClause) clauses.lastElement();
 	}
    
+   /**
+    * Builds a fake implication which is needed to satisfy the 
+    * reasoning engine.
+    * @param query: Input query 
+    * @return Input query as RuleML implication
+    */
     private String buildFakeImplication(String query)
     {
     	Builder builder = new Builder();
@@ -250,6 +256,11 @@ public class RuleMLParser implements PreferenceChangeListener {
     	return document.toXML();
     }
    
+    /**
+     * Manually add <Query> wrapper if not exists
+     * @param query: Input query 
+     * @return Input query encapsulated with <Query> tag
+     */
     private String ensureQueryTag(String query)
     {
 		// Evil hack: encapsulate the query contents in a pair of <Query> tags 
@@ -266,6 +277,9 @@ public class RuleMLParser implements PreferenceChangeListener {
 	   	return query;
     }
 
+    /**
+     * Updates parser configuration when preferences have changed
+     */
 	public void preferenceChange(PreferenceChangeEvent evt) {
 		validateRuleML = config.getValidateRuleMLEnabled();
 	}
