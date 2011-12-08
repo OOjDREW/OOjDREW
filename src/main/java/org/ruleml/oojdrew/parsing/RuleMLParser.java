@@ -132,7 +132,7 @@ public class RuleMLParser implements PreferenceChangeListener {
     public void parseRuleMLString(RuleMLFormat format, String contents) throws
             ParseException, ParsingException, ValidityException, IOException {
     	
-    	if (validateRuleML) {
+    	if (validateRuleML && format != RuleMLFormat.RuleMLQuery) {
         	XMLReader xmlReader;
         	try {
         		xmlReader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser"); 
