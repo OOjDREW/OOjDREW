@@ -27,12 +27,6 @@ import javax.swing.tree.DefaultTreeModel;
 
 import nu.xom.Elements;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.httpclient.params.HttpConnectionParams;
-import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.apache.commons.httpclient.params.HttpParams;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -429,9 +423,18 @@ public class TopDownApp implements UISettingsController,
 	}
 
 	private void defaultExceptionHandler(Exception e) {
-		JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), e.getMessage(),
+		String msg = String.format("Unknown error occured (%s)", e.getClass().getName());
+		if (e.getMessage() != null) {
+			msg = e.getMessage();
+		}
+		else if (e.getCause() != null && e.getCause().getMessage() != null)
+		{
+			msg = e.getCause().getMessage();
+		}
+		
+		JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), msg,
 				"Error", JOptionPane.ERROR_MESSAGE);
-		logger.error(e.getMessage());
+		logger.error(msg);
 	}
 
 	public void issueQuery() {
