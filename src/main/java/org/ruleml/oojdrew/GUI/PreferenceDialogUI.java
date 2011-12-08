@@ -51,7 +51,7 @@ public class PreferenceDialogUI extends JDialog {
 	private JSpinner spinnerTextFontSize;
 	private UISettingsController settingsController;
 	private JSpinner spinnerUIFontSize;
-	private JComboBox<String> cbBoxLookAndFeel;
+	private JComboBox cbBoxLookAndFeel;
 
 	/**
 	 * Launch the application.
@@ -125,7 +125,7 @@ public class PreferenceDialogUI extends JDialog {
 		spinnerUIFontSize.setModel(new SpinnerNumberModel(12, 8, 72, 1));
 		
 		
-		cbBoxLookAndFeel = new JComboBox<String>();
+		cbBoxLookAndFeel = new JComboBox();
 		for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels())
 		{
 			cbBoxLookAndFeel.addItem(lafInfo.getName());
