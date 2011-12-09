@@ -3,9 +3,10 @@ package org.ruleml.oojdrew.GUI;
 import java.util.Enumeration;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.FontUIResource;
+
 import org.ruleml.oojdrew.Configuration;
 
 public class PreferenceManager implements PreferenceChangeListener {

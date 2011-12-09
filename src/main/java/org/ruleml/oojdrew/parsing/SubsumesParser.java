@@ -23,7 +23,6 @@ import java.util.Vector;
 
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
-import nu.xom.jaxen.function.SumFunction;
 
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.Term;

@@ -1,9 +1,12 @@
 package org.ruleml.oojdrew.GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
@@ -22,8 +25,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
@@ -34,10 +37,6 @@ import javax.swing.tree.TreeModel;
 
 import org.ruleml.oojdrew.TopDown.TopDownApp;
 import org.ruleml.oojdrew.parsing.InputFormat;
-import java.awt.event.KeyEvent;
-import javax.swing.KeyStroke;
-import java.awt.event.InputEvent;
-import java.awt.Dimension;
 
 public class TopDownUI {
 

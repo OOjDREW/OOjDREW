@@ -67,11 +67,10 @@ public class RuleMLDocumentParser{
      */
     private RuleMLTagNames tagNames = null;
     
+    
     /**
-     * Indicates whether parser is used for query parsing or not
+     * Log4J logger for document parser class
      */
-    private boolean isQuery;
-
     private Logger logger = Logger.getLogger("jdrew.oo.util.RuleMLParser");
 
     /**
