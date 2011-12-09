@@ -67,7 +67,10 @@ public class RuleMLDocumentParser{
      */
     private RuleMLTagNames tagNames = null;
     
-    private RuleMLFormat rulemlFormat;
+    /**
+     * Indicates whether parser is used for query parsing or not
+     */
+    private boolean isQuery;
 
     private Logger logger = Logger.getLogger("jdrew.oo.util.RuleMLParser");
 
@@ -93,7 +96,6 @@ public class RuleMLDocumentParser{
         this.clauses = clauses;
         
         // Set default RuleML version
-        this.rulemlFormat = format;
         this.tagNames = new RuleMLTagNames(format);
     }
 
@@ -138,18 +140,12 @@ public class RuleMLDocumentParser{
 		    firstChild = getFirstChildElement(root, tagNames.RULEBASE);
 			if (firstChild == null)
 			{
-				// If no Rulebase element exists, it has to be RuleML 0.88
-				if (rulemlFormat != RuleMLFormat.RuleML88)
-				{
-					rulemlFormat = RuleMLFormat.RuleML88;
-					tagNames = new RuleMLTagNames(rulemlFormat);
-				}
-				
+				// No Rulebase element exists		
 				firstChild = getFirstChildElement(root, tagNames.AND);
 			}
 		}
 		// Otherwise use Query as root attribute
-		else if (rulemlFormat.equals(RuleMLFormat.RuleMLQuery) && rootName.equals(tagNames.QUERY))
+		else if (rootName.equals(tagNames.QUERY))
 		{
 			// Use query element as first child
 			firstChild = root;

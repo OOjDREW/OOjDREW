@@ -25,6 +25,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -45,6 +46,8 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 
+import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
+
 public class PreferenceDialogUI extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
@@ -52,7 +55,8 @@ public class PreferenceDialogUI extends JDialog {
 	private UISettingsController settingsController;
 	private JSpinner spinnerUIFontSize;
 	private JComboBox cbBoxLookAndFeel;
-
+	private JComboBox cbBoxRuleMLVersion;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -94,7 +98,7 @@ public class PreferenceDialogUI extends JDialog {
 				settingsController.syncUIWithSettings();
 			}
 		});
-		setBounds(100, 100, 293, 190);
+		setBounds(100, 100, 293, 220);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -124,14 +128,14 @@ public class PreferenceDialogUI extends JDialog {
 		spinnerUIFontSize = new JSpinner();
 		spinnerUIFontSize.setModel(new SpinnerNumberModel(12, 8, 72, 1));
 		
+		JLabel lblLookAndFeel = new JLabel("Look and feel");
 		
 		cbBoxLookAndFeel = new JComboBox();
-		for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels())
-		{
-			cbBoxLookAndFeel.addItem(lafInfo.getName());
-		}
 		
-		JLabel lblLookAndFeel = new JLabel("Look and feel");
+		JLabel lblRuleMLVersion = new JLabel("RuleML version");
+		
+		cbBoxRuleMLVersion = new JComboBox();
+		
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
@@ -140,12 +144,14 @@ public class PreferenceDialogUI extends JDialog {
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addComponent(lblTextFont)
 						.addComponent(lblMainUiFont)
-						.addComponent(lblLookAndFeel))
+						.addComponent(lblLookAndFeel)
+						.addComponent(lblRuleMLVersion))
 					.addGap(12)
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addComponent(spinnerUIFontSize, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
 						.addComponent(spinnerTextFontSize, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
 						.addComponent(cbBoxLookAndFeel, Alignment.TRAILING, 0, 136, Short.MAX_VALUE)
+						.addComponent(cbBoxRuleMLVersion, Alignment.TRAILING, 0, 136, Short.MAX_VALUE)
 						.addGroup(Alignment.TRAILING, gl_contentPanel.createSequentialGroup()
 							.addComponent(btnOk)
 							.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -167,6 +173,10 @@ public class PreferenceDialogUI extends JDialog {
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(cbBoxLookAndFeel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblLookAndFeel))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(cbBoxRuleMLVersion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblRuleMLVersion))
 					.addPreferredGap(ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnOk)
@@ -175,6 +185,21 @@ public class PreferenceDialogUI extends JDialog {
 		);
 		gl_contentPanel.linkSize(SwingConstants.HORIZONTAL, new Component[] {btnCancel, btnOk});
 		contentPanel.setLayout(gl_contentPanel);
+		
+		populateComboBoxes();
+	}
+	
+	private void populateComboBoxes()
+	{
+		for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels())
+		{
+			cbBoxLookAndFeel.addItem(lafInfo.getName());
+		}
+		cbBoxRuleMLVersion.setModel(new DefaultComboBoxModel(RuleMLFormat.getVersionNames()));
+	}
+		
+	private SpinnerModel getSpinnerTextAreaFontSizeModel() {
+		return spinnerTextFontSize.getModel();
 	}
 	
 	public int getSpinnerTextAreaFontSizeValue()
@@ -185,10 +210,6 @@ public class PreferenceDialogUI extends JDialog {
 	public void setSpinnerTextAreaFontSizeValue(int newSize)
 	{
 		getSpinnerTextAreaFontSizeModel().setValue(newSize);
-	}
-	
-	private SpinnerModel getSpinnerTextAreaFontSizeModel() {
-		return spinnerTextFontSize.getModel();
 	}
 	
 	public void setSettingsController(UISettingsController newController)
@@ -205,18 +226,11 @@ public class PreferenceDialogUI extends JDialog {
 		return (Integer) getSpinnerUIFontSizeModel().getValue();
 	}
 	
-	public void setLookAndFeel(String lafClassName)
+	public void setSpinnerUIFontSizeValue(int newSize)
 	{
-		for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels())
-		{
-			if (lafInfo.getClassName().equals(lafClassName))
-			{
-				cbBoxLookAndFeel.setSelectedItem(lafInfo.getName());
-				break;
-			}
-		}
+		getSpinnerUIFontSizeModel().setValue(newSize);
 	}
-	
+		
 	public String getSelectedLookAndFeel()
 	{
 		String lafName = cbBoxLookAndFeel.getSelectedItem().toString();
@@ -230,9 +244,28 @@ public class PreferenceDialogUI extends JDialog {
 		return UIManager.getSystemLookAndFeelClassName();
 	}
 	
-	public void setSpinnerUIFontSizeValue(int newSize)
+	public void setLookAndFeel(String lafClassName)
 	{
-		getSpinnerUIFontSizeModel().setValue(newSize);
+		for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels())
+		{
+			if (lafInfo.getClassName().equals(lafClassName))
+			{
+				cbBoxLookAndFeel.setSelectedItem(lafInfo.getName());
+				break;
+			}
+		}
+	}
+	
+	public RuleMLFormat getSelectedRuleMLFormat()
+	{
+		String selectedRuleMLFormat = cbBoxRuleMLVersion.getSelectedItem().toString();
+		return RuleMLFormat.fromString(selectedRuleMLFormat);
+	}
+	
+	public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat)
+	{
+		String ruleMLVersionName = rmlFormat.getVersionName();
+		cbBoxRuleMLVersion.setSelectedItem(ruleMLVersionName);
 	}
 	
 	public void updateUI() {

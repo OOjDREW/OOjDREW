@@ -165,7 +165,7 @@ public class TopDownUI {
 		mntmPreferences.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
 		mntmPreferences.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.showFontSizeDialog();
+				controller.showPreferenceDialog();
 			}
 		});
 		mnOptions.add(mntmPreferences);

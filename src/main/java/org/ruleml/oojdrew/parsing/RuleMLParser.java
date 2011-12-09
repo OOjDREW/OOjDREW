@@ -62,6 +62,8 @@ public class RuleMLParser implements PreferenceChangeListener {
     private Vector<DefiniteClause> clauses;
     private Configuration config;
     private boolean validateRuleML;
+    
+    private RuleMLFormat ruleMLFormat;
 
     /**
      * This is used to indicate what back-end parser to use. Currently only
@@ -71,10 +73,41 @@ public class RuleMLParser implements PreferenceChangeListener {
      */
     public static enum RuleMLFormat
     {
-    	RuleML88,
-    	RuleML91,
-    	RuleML100,
-    	RuleMLQuery
+    	RuleML88("RuleML 0.88"),
+    	RuleML91("RuleML 0.91"),
+    	RuleML100("RuleML 1.0");
+    	
+    	private String versionName;
+    	
+    	RuleMLFormat(String versionName) {
+    		this.versionName = versionName;
+    	}
+    	
+    	public String getVersionName() {
+		    return this.versionName;
+		}
+    	
+    	public static RuleMLFormat fromString(String versionName) {
+    		if (versionName != null) {
+    			for (RuleMLFormat rmlFormat : RuleMLFormat.values()) {
+    				if (versionName.equalsIgnoreCase(rmlFormat.versionName)) {
+    					return rmlFormat;
+    		        }
+    			}
+    		}
+    		return null;
+    	}
+    	
+    	public static String[] getVersionNames()
+    	{
+    		String[] versionNames = new String[values().length];
+    		int i = 0;
+    		for (RuleMLFormat rmlFormat : values()) {
+    			versionNames[i] = rmlFormat.versionName;
+    			i++;
+    		}
+    		return versionNames;
+    	}
     }
 
     /**
@@ -132,7 +165,7 @@ public class RuleMLParser implements PreferenceChangeListener {
     public void parseRuleMLString(RuleMLFormat format, String contents) throws
             ParseException, ParsingException, ValidityException, IOException {
     	
-    	if (validateRuleML && format != RuleMLFormat.RuleMLQuery) {
+    	if (validateRuleML) {
         	XMLReader xmlReader;
         	try {
         		xmlReader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser"); 
@@ -205,7 +238,19 @@ public class RuleMLParser implements PreferenceChangeListener {
 	    contents = ensureQueryTag(contents);
 	    contents = buildFakeImplication(contents);
 	   
-		parseRuleMLString(RuleMLFormat.RuleMLQuery, contents);
+	    // Disable validation for RuleML queries
+	    boolean skippedValidation = false;
+	    if (validateRuleML) {
+	    	validateRuleML = false;
+	    	skippedValidation = true;
+	    }
+	    	
+		parseRuleMLString(ruleMLFormat, contents);
+		
+		// Re-enable validation 
+		if (skippedValidation) {
+			validateRuleML = true;
+		}
 		
 		return (DefiniteClause) clauses.lastElement();
 	}
@@ -232,7 +277,7 @@ public class RuleMLParser implements PreferenceChangeListener {
     	
     	Element queryElement = document.getRootElement();
 
-    	RuleMLTagNames rmlTags = new RuleMLTagNames(RuleMLFormat.RuleMLQuery);
+    	RuleMLTagNames rmlTags = new RuleMLTagNames(ruleMLFormat);
     	
     	Element rel = new Element(rmlTags.REL);
     	rel.insertChild("$top", 0);
@@ -264,7 +309,7 @@ public class RuleMLParser implements PreferenceChangeListener {
     private String ensureQueryTag(String query)
     {
 		// Evil hack: encapsulate the query contents in a pair of <Query> tags 
-	   	RuleMLTagNames rmlTags = new RuleMLTagNames(RuleMLFormat.RuleMLQuery);
+	   	RuleMLTagNames rmlTags = new RuleMLTagNames(ruleMLFormat);
 	   	query = query.trim();
 	   	String queryTagOpen = String.format("<%s>", rmlTags.QUERY);
 	   	String queryTagClose = String.format("</%s>", rmlTags.QUERY);
@@ -282,5 +327,6 @@ public class RuleMLParser implements PreferenceChangeListener {
      */
 	public void preferenceChange(PreferenceChangeEvent evt) {
 		validateRuleML = config.getValidateRuleMLEnabled();
+		ruleMLFormat = config.getSelectedRuleMLFormat();
 	}
 }

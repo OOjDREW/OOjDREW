@@ -18,6 +18,8 @@
 package org.ruleml.oojdrew;
 import java.util.prefs.PreferenceChangeListener;
 
+import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
+
 public interface Configuration {
     public boolean getValidateRuleMLEnabled();
     public void setValidateRuleMLEnabled(boolean enabled);
@@ -28,8 +30,11 @@ public interface Configuration {
     public int getUIFontSize();
     public void setUIFontSize(int newSize);
     
-	public void setLookAndFeel(String lafClassName);
 	public String getSelectedLookAndFeel();
+	public void setLookAndFeel(String lafClassName);
+	
+	public RuleMLFormat getSelectedRuleMLFormat();
+	public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat);
 	
     void addPreferenceChangeListener(PreferenceChangeListener listener);
 }

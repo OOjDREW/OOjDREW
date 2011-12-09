@@ -22,6 +22,8 @@ import java.util.prefs.Preferences;
 
 import javax.swing.UIManager;
 
+import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
+
 /**
  * <p>Title: OO jDREW</p>
  *
@@ -129,12 +131,26 @@ public class Config implements Configuration {
 		preferences.putBoolean("DebugConsoleVisible", visible);
 	}
 	
-	public void setLookAndFeel(String lafClassName)	{
-		preferences.put("LookAndFeel", lafClassName);
-	}
-	
 	public String getSelectedLookAndFeel(){
 		String defaultLookAndFeelName = UIManager.getSystemLookAndFeelClassName();
 		return preferences.get("LookAndFeel", defaultLookAndFeelName);
 	}
+	
+	public void setLookAndFeel(String lafClassName)	{
+		preferences.put("LookAndFeel", lafClassName);
+	}
+
+	public RuleMLFormat getSelectedRuleMLFormat()
+	{
+		String defaultRuleMLFormat = RuleMLFormat.RuleML100.getVersionName();
+		String configuredRuleMLVersion = preferences.get("RuleMLFormat", defaultRuleMLFormat);
+		return RuleMLFormat.fromString(configuredRuleMLVersion);
+	}
+
+	public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat)
+	{
+		preferences.put("RuleMLFormat", rmlFormat.getVersionName());
+	}
+	
+
 }

@@ -20,11 +20,13 @@ package org.ruleml.oojdrew.tests;
 import java.util.prefs.PreferenceChangeListener;
 
 import org.ruleml.oojdrew.Configuration;
+import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 
 public class MockConfiguration implements Configuration {
 	private boolean ruleMLCompatibilityModeEnabled;
 	private int uiFontSize;
 	private String lookAndFeelClassName;
+	private RuleMLFormat rmlFormat;
 	
 	public boolean getValidateRuleMLEnabled() {
 		return ruleMLCompatibilityModeEnabled;
@@ -63,6 +65,16 @@ public class MockConfiguration implements Configuration {
 	public String getSelectedLookAndFeel()
 	{
 		return lookAndFeelClassName;
+	}
+
+	public RuleMLFormat getSelectedRuleMLFormat()
+	{
+		return rmlFormat;
+	}
+
+	public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat)
+	{
+		this.rmlFormat = rmlFormat;
 	}
 
 }

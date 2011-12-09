@@ -59,9 +59,9 @@ public class TopDownApp implements UISettingsController,
 		PreferenceChangeListener {
 	private Configuration config;
 	private TopDownUI ui;
-	private PreferenceDialogUI fontSizeDialogUI;
+	private PreferenceDialogUI preferenceDialogUI;
 	private DebugConsole debugConsole;
-	private PreferenceManager fontSizeManager;
+	private PreferenceManager preferenceManager;
 	private Logger logger;
 	private RDFSParser rdfsParser;
 	private POSLParser poslParser;
@@ -147,9 +147,9 @@ public class TopDownApp implements UISettingsController,
 			POSLParser poslParser, RuleMLParser rmlParser,
 			SubsumesParser subsumesParser, BackwardReasoner backwardReasoner) {
 		this.config = config;
-		this.fontSizeManager = fontSizeManager;
+		this.preferenceManager = fontSizeManager;
 		this.ui = ui;
-		this.fontSizeDialogUI = fontSizeDialogUI;
+		this.preferenceDialogUI = fontSizeDialogUI;
 		this.debugConsole = debugConsole;
 		this.logger = Logger.getLogger(this.getClass());
 		this.rdfsParser = rdfsParser;
@@ -165,19 +165,22 @@ public class TopDownApp implements UISettingsController,
 	}
 
 	public void syncUIWithSettings() {
-		fontSizeDialogUI.setSpinnerTextAreaFontSizeValue(config
+		preferenceDialogUI.setSpinnerTextAreaFontSizeValue(config
 				.getTextAreaFontSize());
-		fontSizeDialogUI.setSpinnerUIFontSizeValue(config.getUIFontSize());
-		fontSizeDialogUI.setLookAndFeel(config.getSelectedLookAndFeel());
+		preferenceDialogUI.setSpinnerUIFontSizeValue(config.getUIFontSize());
+		preferenceDialogUI.setLookAndFeel(config.getSelectedLookAndFeel());
+		preferenceDialogUI.setSelectedRuleMLFormat(config.getSelectedRuleMLFormat());
+		
 		ui.setChckbxmntmValidateRulemlSelected(config
 				.getValidateRuleMLEnabled());
 	}
 
 	public void applySettingsFromUI() {
-		config.setTextAreaFontSize(fontSizeDialogUI
+		config.setTextAreaFontSize(preferenceDialogUI
 				.getSpinnerTextAreaFontSizeValue());
-		config.setUIFontSize(fontSizeDialogUI.getSpinnerUIFontSizeValue());
-		config.setLookAndFeel(fontSizeDialogUI.getSelectedLookAndFeel());
+		config.setUIFontSize(preferenceDialogUI.getSpinnerUIFontSizeValue());
+		config.setLookAndFeel(preferenceDialogUI.getSelectedLookAndFeel());
+		config.setSelectedRuleMLFormat(preferenceDialogUI.getSelectedRuleMLFormat());
 		config.setValidateRuleMLEnabled(ui
 				.getChckbxmntmValidateRulemlSelected());
 	}
@@ -187,13 +190,13 @@ public class TopDownApp implements UISettingsController,
 		debugConsole.setVisible(true);
 	}
 	
-	public void showFontSizeDialog() {
-		fontSizeDialogUI.setVisible(true);
+	public void showPreferenceDialog() {
+		preferenceDialogUI.setVisible(true);
 	}
 
 	public void preferenceChange(PreferenceChangeEvent evt) {
 		ui.updateUI();
-		fontSizeDialogUI.updateUI();
+		preferenceDialogUI.updateUI();
 	}
 
 	private boolean showOpenForAppendDialog() {
