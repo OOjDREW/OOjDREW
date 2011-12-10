@@ -168,6 +168,7 @@ public class TopDownApp implements UISettingsController,
 		preferenceDialogUI.setSpinnerTextAreaFontSizeValue(config
 				.getTextAreaFontSize());
 		preferenceDialogUI.setSpinnerUIFontSizeValue(config.getUIFontSize());
+		preferenceDialogUI.setLinkFontSizes(config.getLinkFontSizes());
 		preferenceDialogUI.setLookAndFeel(config.getSelectedLookAndFeel());
 		preferenceDialogUI.setSelectedRuleMLFormat(config.getSelectedRuleMLFormat());
 		
@@ -179,6 +180,7 @@ public class TopDownApp implements UISettingsController,
 		config.setTextAreaFontSize(preferenceDialogUI
 				.getSpinnerTextAreaFontSizeValue());
 		config.setUIFontSize(preferenceDialogUI.getSpinnerUIFontSizeValue());
+		config.setLinkFontSizes(preferenceDialogUI.getLinkFontSizes());
 		config.setLookAndFeel(preferenceDialogUI.getSelectedLookAndFeel());
 		config.setSelectedRuleMLFormat(preferenceDialogUI.getSelectedRuleMLFormat());
 		config.setValidateRuleMLEnabled(ui

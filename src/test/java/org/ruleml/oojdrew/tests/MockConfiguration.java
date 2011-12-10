@@ -25,6 +25,7 @@ import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 public class MockConfiguration implements Configuration {
 	private boolean ruleMLCompatibilityModeEnabled;
 	private int uiFontSize;
+	private boolean linkFontSizes;
 	private String lookAndFeelClassName;
 	private RuleMLFormat rmlFormat;
 	
@@ -47,34 +48,36 @@ public class MockConfiguration implements Configuration {
 	public void addPreferenceChangeListener(PreferenceChangeListener listener) {
 	}
 
-	public int getUIFontSize()
-	{
+	public int getUIFontSize() {
 		return uiFontSize;
 	}
 
-	public void setUIFontSize(int newSize)
-	{
+	public void setUIFontSize(int newSize) {
 		uiFontSize = newSize;
 	}
 
-	public void setLookAndFeel(String lafClassName)
-	{
+	public void setLookAndFeel(String lafClassName) {
 		lookAndFeelClassName = lafClassName;
 	}
 
-	public String getSelectedLookAndFeel()
-	{
+	public String getSelectedLookAndFeel() {
 		return lookAndFeelClassName;
 	}
 
-	public RuleMLFormat getSelectedRuleMLFormat()
-	{
+	public RuleMLFormat getSelectedRuleMLFormat() {
 		return rmlFormat;
 	}
 
-	public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat)
-	{
+	public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat) {
 		this.rmlFormat = rmlFormat;
+	}
+
+	public boolean getLinkFontSizes() {
+		return linkFontSizes;
+	}
+
+	public void setLinkFontSizes(boolean linkFontSizes) {
+		this.linkFontSizes = linkFontSizes;
 	}
 
 }

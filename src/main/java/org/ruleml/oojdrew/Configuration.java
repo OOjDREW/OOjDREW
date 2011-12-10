@@ -30,6 +30,9 @@ public interface Configuration {
     public int getUIFontSize();
     public void setUIFontSize(int newSize);
     
+    public boolean getLinkFontSizes();
+    public void setLinkFontSizes(boolean linkFontSizes);
+    
 	public String getSelectedLookAndFeel();
 	public void setLookAndFeel(String lafClassName);
 	
