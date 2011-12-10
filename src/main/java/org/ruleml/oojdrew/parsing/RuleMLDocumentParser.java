@@ -106,57 +106,16 @@ public class RuleMLDocumentParser{
      * document to be parsed.
      *
      * @throws ParseException A ParseException is thrown if there is an error
-     * parseing.
+     * parsing.
      */
-            
     public void parseRuleMLDocument(Document doc) throws ParseException {
         this.skolemMap = new Hashtable<String, String>();
                
-        Element root = doc.getRootElement();        
-        RemoveReifyElements(root);
-        Element firstChild = null;
-        
-        
-        String rootName = root.getLocalName();
-        // If RuleML is root element
-		if (rootName.equals(tagNames.RULEML))
-		{
-			root = getFirstChildElement(root, tagNames.ASSERT);
-			if (root == null)
-			{
-	            throw new ParseException(
-	                    "Assert has to be the first child of the RuleML element!");
-			}
-			firstChild = getFirstChildElement(root, tagNames.RULEBASE);
-			if (firstChild == null)
-			{
-				firstChild = root;
-			}
-		}
-		// If Assert is root element
-		else if (rootName.equals(tagNames.ASSERT))
-		{
-		    firstChild = getFirstChildElement(root, tagNames.RULEBASE);
-			if (firstChild == null)
-			{
-				// No Rulebase element exists		
-				firstChild = getFirstChildElement(root, tagNames.AND);
-			}
-		}
-		// Otherwise use Query as root attribute
-		else if (rootName.equals(tagNames.QUERY))
-		{
-			// Use query element as first child
-			firstChild = root;
-		}
-		
-        if (firstChild == null) {
-        	// Note: first child only can get null if root is no query element
-            throw new ParseException(
-                    "RuleML or Assert element must contain an Rulebase or an And element!");
-        }
+        Element documentRoot = doc.getRootElement();        
+        RemoveReifyElements(documentRoot);
+        documentRoot = getRuleMLRootElement(documentRoot);      
 	
-        Elements children = firstChild.getChildElements();
+        Elements children = documentRoot.getChildElements();
         for (int i = 0; i < children.size(); i++) {
             Element child = skipRoleTag(children.get(i));
             String childName = child.getLocalName();
@@ -172,6 +131,57 @@ public class RuleMLDocumentParser{
         }
     }
     
+    /**
+     * Gets the root element used to begin RuleML parsing at
+     * @param documentRoot Document's root element
+     * @return RuleML root element to begin parsing at
+     * @throws ParseException
+     */
+    private Element getRuleMLRootElement(Element documentRoot) throws ParseException
+    {
+        String rootName = documentRoot.getLocalName();
+        Element ruleMLRoot = null;
+        
+        // If <RuleML> is root element
+		if (rootName.equals(tagNames.RULEML)) {
+			Element assertElement = getFirstChildElement(documentRoot, tagNames.ASSERT);
+			if (assertElement == null) {
+	            throw new ParseException(
+	                    "<Assert> has to be the first child of the <RuleML>.");
+			}
+			documentRoot = assertElement;
+			rootName = assertElement.getLocalName();
+		}
+		
+		// Now, <Assert> has to be the root element, check for optional children
+		if (rootName.equals(tagNames.ASSERT)) {	
+			ruleMLRoot = documentRoot;
+			
+			// <Rulebase> is a optional child of <Assert>
+			Element ruleBaseElement = getFirstChildElement(documentRoot, tagNames.RULEBASE);
+			// <And> is a optional child of either <Rulebase> or <Assert> (RuleML 0.88+)
+			Element andElement = null;
+			if (ruleBaseElement != null) {
+				ruleMLRoot = ruleBaseElement;
+				andElement = getFirstChildElement(ruleBaseElement, tagNames.AND);
+			} else if ((andElement = getFirstChildElement(ruleBaseElement, tagNames.AND)) != null) {
+				ruleMLRoot = andElement;
+			}
+		} else if (rootName.equals(tagNames.QUERY)) {
+			ruleMLRoot = documentRoot;
+		}
+		
+        if (ruleMLRoot == null) {
+            throw new ParseException(String.format("Undefined RuleML root element (%s)", rootName));
+        }
+        
+        return ruleMLRoot;
+    }
+    
+    /**
+     * Removes <Reify> elements recursively from a given element 
+     * @param element Element to skip <Reify> elements in
+     */
     private void RemoveReifyElements(Element element)
     {
     	Elements children = element.getChildElements();
