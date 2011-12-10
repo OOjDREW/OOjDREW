@@ -164,7 +164,7 @@ public class RuleMLDocumentParser{
 			if (ruleBaseElement != null) {
 				ruleMLRoot = ruleBaseElement;
 				andElement = getFirstChildElement(ruleBaseElement, tagNames.AND);
-			} else if ((andElement = getFirstChildElement(ruleBaseElement, tagNames.AND)) != null) {
+			} else if ((andElement = getFirstChildElement(documentRoot, tagNames.AND)) != null) {
 				ruleMLRoot = andElement;
 			}
 		} else if (rootName.equals(tagNames.QUERY)) {
