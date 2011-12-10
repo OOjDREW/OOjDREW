@@ -15,7 +15,6 @@
 
 package org.ruleml.oojdrew.parsing.generated;
 
-import jdrew.oo.util.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -24,6 +23,7 @@ import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.SymbolTable;
 import org.ruleml.oojdrew.util.Term;
 import org.ruleml.oojdrew.util.Types;
+
 import antlr.NoViableAltException;
 import antlr.ParserSharedInputState;
 import antlr.RecognitionException;
