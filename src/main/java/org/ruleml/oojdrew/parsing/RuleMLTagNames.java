@@ -20,12 +20,12 @@ package org.ruleml.oojdrew.parsing;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 
 public class RuleMLTagNames {
-	public final String RULEML = "RuleML";
-		
-	public final String RULEBASE = "Rulebase";
+    public final String RULEML = "RuleML";
+
+    public final String RULEBASE = "Rulebase";
     public final String ASSERT = "Assert";
     public final String QUERY = "Query";
-    
+
     public final String AND = "And";
     public final String ATOM = "Atom";
     public final String UNIVERSAL = "universal";
@@ -43,49 +43,47 @@ public class RuleMLTagNames {
     public final String OID = "oid";
     public final String SKOLEM = "Skolem";
     public final String NEG = "Neg";
-    
+
     public final String ACT = "act";
-    public final String ARG = "arg";    
+    public final String ARG = "arg";
     public final String FORMULA = "formula";
     public final String DECLARE = "declare";
     public final String STRONG = "strong";
     public final String WEAK = "weak";
     public final String TORSO = "torso";
     public final String DEGREE = "degree";
-    
-    /* Equal incl. left and right is not yet supported  */
+
+    /* Equal incl. left and right is not yet supported */
     public final String RIGHT = "right";
     public final String LEFT = "left";
-    
+
     public final String REIFY = "Reify";
-    
-	public final String DATA = "Data";
-	
+
+    public final String DATA = "Data";
+
     public final String PREMISE = "body";
     public final String CONCLUSION = "head";
     public final String PREMISE100 = "if";
     public final String CONCLUSION100 = "then";
 
-	public final String EXPR; 
-	public final String FUN; 
+    public final String EXPR;
+    public final String FUN;
     public final String MAPCLOSURE;
-	public final String OP;
-   	
-	public RuleMLTagNames(RuleMLFormat rulemlFormat)
-	{
-		switch (rulemlFormat)
-		{
-		case RuleML88:
-			EXPR = "Cterm";
-			FUN = "Ctor";
-			MAPCLOSURE = "innerclose";
-			OP = "opr";
-			break;
-		default: // RuleML 0.91 (+Query) and 1.0
-			EXPR = "Expr";
-			FUN = "Fun";
-			MAPCLOSURE  = "mapClosure";
-			OP = "op";
-		}
+    public final String OP;
+
+    public RuleMLTagNames(RuleMLFormat rulemlFormat) {
+	switch (rulemlFormat) {
+	case RuleML88:
+	    EXPR = "Cterm";
+	    FUN = "Ctor";
+	    MAPCLOSURE = "innerclose";
+	    OP = "opr";
+	    break;
+	default: // RuleML 0.91 (+Query) and 1.0
+	    EXPR = "Expr";
+	    FUN = "Fun";
+	    MAPCLOSURE = "mapClosure";
+	    OP = "op";
 	}
+    }
 }

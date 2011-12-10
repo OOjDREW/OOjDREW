@@ -62,72 +62,70 @@ public class RuleMLParser implements PreferenceChangeListener {
     private Vector<DefiniteClause> clauses;
     private Configuration config;
     private boolean validateRuleML;
-    
+
     private RuleMLFormat ruleMLFormat;
 
     /**
      * This is used to indicate what back-end parser to use. Currently only
-     * RuleML 0.88 (+ rests) and RuleML 0.91 is supported; so only the RULEML88 = 1
-     * value isdefined as well as RULEML91 = 2. As new backend parsers are 
+     * RuleML 0.88 (+ rests) and RuleML 0.91 is supported; so only the RULEML88
+     * = 1 value isdefined as well as RULEML91 = 2. As new backend parsers are
      * added then extra defines can be added.
      */
-    public static enum RuleMLFormat
-    {
-    	RuleML88("RuleML 0.88"),
-    	RuleML91("RuleML 0.91"),
-    	RuleML100("RuleML 1.0");
-    	
-    	private String versionName;
-    	
-    	RuleMLFormat(String versionName) {
-    		this.versionName = versionName;
-    	}
-    	
-    	public String getVersionName() {
-		    return this.versionName;
+    public static enum RuleMLFormat {
+	RuleML88("RuleML 0.88"), 
+	RuleML91("RuleML 0.91"), 
+	RuleML100("RuleML 1.0");
+
+	private String versionName;
+
+	RuleMLFormat(String versionName) {
+	    this.versionName = versionName;
+	}
+
+	public String getVersionName() {
+	    return this.versionName;
+	}
+
+	public static RuleMLFormat fromString(String versionName) {
+	    if (versionName != null) {
+		for (RuleMLFormat rmlFormat : RuleMLFormat.values()) {
+		    if (versionName.equalsIgnoreCase(rmlFormat.versionName)) {
+			return rmlFormat;
+		    }
 		}
-    	
-    	public static RuleMLFormat fromString(String versionName) {
-    		if (versionName != null) {
-    			for (RuleMLFormat rmlFormat : RuleMLFormat.values()) {
-    				if (versionName.equalsIgnoreCase(rmlFormat.versionName)) {
-    					return rmlFormat;
-    		        }
-    			}
-    		}
-    		return null;
-    	}
-    	
-    	public static String[] getVersionNames()
-    	{
-    		String[] versionNames = new String[values().length];
-    		int i = 0;
-    		for (RuleMLFormat rmlFormat : values()) {
-    			versionNames[i] = rmlFormat.versionName;
-    			i++;
-    		}
-    		return versionNames;
-    	}
+	    }
+	    return null;
+	}
+
+	public static String[] getVersionNames() {
+	    String[] versionNames = new String[values().length];
+	    int i = 0;
+	    for (RuleMLFormat rmlFormat : values()) {
+		versionNames[i] = rmlFormat.versionName;
+		i++;
+	    }
+	    return versionNames;
+	}
     }
 
     /**
      * Constructs a new parser object.
      */
     public RuleMLParser(Configuration config) {
-        clauses = new Vector<DefiniteClause>();
-        this.config = config;
-        config.addPreferenceChangeListener(this);
-        preferenceChange(null);
+	clauses = new Vector<DefiniteClause>();
+	this.config = config;
+	config.addPreferenceChangeListener(this);
+	preferenceChange(null);
     }
 
     /**
      * Gets an iterator over all clauses that are stored in the internal clause
      * buffer. This method does not automatically clear items from the buffer.
-     *
+     * 
      * @return Iterator An iterator over all clauses in the buffer.
      */
     public Iterator<DefiniteClause> iterator() {
-        return clauses.iterator();
+	return clauses.iterator();
     }
 
     /**
@@ -135,198 +133,208 @@ public class RuleMLParser implements PreferenceChangeListener {
      * allows the easy reuse of a parser object.
      */
     public void clear() {
-        clauses = new Vector<DefiniteClause>();
-        System.gc();
+	clauses = new Vector<DefiniteClause>();
+	System.gc();
     }
 
     /**
-     * @see jdrew.oo.parsing.RuleMLParser#parseDocument 
+     * @see jdrew.oo.parsing.RuleMLParser#parseDocument
      */
-    public void parseFile(RuleMLFormat format, String filename) throws ParseException,
-    ParsingException, ValidityException, IOException 
-    {
-		File file = new File(filename);
-		parseFile(format, file);
+    public void parseFile(RuleMLFormat format, String filename)
+	    throws ParseException, ParsingException, ValidityException,
+	    IOException {
+	File file = new File(filename);
+	parseFile(format, file);
     }
 
     /**
-     * @see jdrew.oo.parsing.RuleMLParser#parseDocument 
+     * @see jdrew.oo.parsing.RuleMLParser#parseDocument
      */
-    public void parseFile(RuleMLFormat format, File file) throws ParseException, ParsingException, ValidityException, IOException 
-    {
-		Builder bl = new Builder();
-		Document doc = bl.build(file);
+    public void parseFile(RuleMLFormat format, File file)
+	    throws ParseException, ParsingException, ValidityException,
+	    IOException {
+	Builder bl = new Builder();
+	Document doc = bl.build(file);
+	parseDocument(format, doc);
+    }
+
+    /**
+     * @see jdrew.oo.parsing.RuleMLParser#parseDocument
+     */
+    public void parseRuleMLString(RuleMLFormat format, String contents)
+	    throws ParseException, ParsingException, ValidityException,
+	    IOException {
+
+	if (validateRuleML) {
+	    XMLReader xmlReader;
+	    try {
+		xmlReader = XMLReaderFactory
+			.createXMLReader("org.apache.xerces.parsers.SAXParser");
+		xmlReader.setFeature(
+			"http://apache.org/xml/features/validation/schema",
+			true);
+	    } catch (SAXException e) {
+		throw new ParseException("Unable to create XML validator");
+	    }
+
+	    Builder bl = new Builder(xmlReader, true);
+	    StringReader sr = new StringReader(contents);
+	    Document doc;
+	    try {
+		doc = bl.build(sr);
 		parseDocument(format, doc);
+	    } catch (Exception e) {
+		throw new ParseException(
+			"Document does not validate against the specified XML schema definition(s)!");
+	    }
+	} else {
+	    Builder bl = new Builder();
+	    StringReader sr = new StringReader(contents);
+	    Document doc = bl.build(sr);
+	    parseDocument(format, doc);
+	}
     }
-    
-    /**
-     * @see jdrew.oo.parsing.RuleMLParser#parseDocument 
-     */
-    public void parseRuleMLString(RuleMLFormat format, String contents) throws
-            ParseException, ParsingException, ValidityException, IOException {
-    	
-    	if (validateRuleML) {
-        	XMLReader xmlReader;
-        	try {
-        		xmlReader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser"); 
-        		xmlReader.setFeature("http://apache.org/xml/features/validation/schema", true);
-    		} catch (SAXException e) {
-    			throw new ParseException("Unable to create XML validator");
-    		}
-        	
-       		Builder bl = new Builder(xmlReader, true);
-       		StringReader sr = new StringReader(contents);
-       		Document doc;
-       		try {
-       			doc = bl.build(sr);	
-       	  	 	parseDocument(format, doc);
-			} catch (Exception e) {
-				throw new ParseException(
-						"Document does not validate against the specified XML schema definition(s)!");
-			}
-    	} else {
-	   		Builder bl = new Builder();
-	   		StringReader sr = new StringReader(contents);
-	  	 	Document doc = bl.build(sr);
-	  	 	parseDocument(format, doc);
-    	}
-    }
-    
+
     /**
      * Parses a document containing a knowledge base that is in the indicated
-     * format.
-     * If additional backed parsers are created then additional formats 
+     * format. If additional backed parsers are created then additional formats
      * will be added.
-     *
+     * 
      * NOTE: It may be a good idea to add format auto detection based upon the
      * XSD and/or DTD that is referenced by the document.
-     *
-     * @param format RuleMLVersion The RuleML version for the backend parser
-     *
-     * @param kb String The filename (including the full path) to the
-     * file to be parsed.
-     *
-     * @throws ParseException A ParseException is thrown if there is an error
-     * in the document that causes parsing to fail.
-     *
-     * @throws ParsingException A ParsingException is thrown if there is an
-     * error in parsing the document at an XML level.
-     *
-     * @throws ValidityException A ValidityException is thrown if the XML
-     * document is not well formed or does not conform to the DTD specified.
+     * 
+     * @param format
+     *            RuleMLVersion The RuleML version for the backend parser
+     * 
+     * @param kb
+     *            String The filename (including the full path) to the file to
+     *            be parsed.
+     * 
+     * @throws ParseException
+     *             A ParseException is thrown if there is an error in the
+     *             document that causes parsing to fail.
+     * 
+     * @throws ParsingException
+     *             A ParsingException is thrown if there is an error in parsing
+     *             the document at an XML level.
+     * 
+     * @throws ValidityException
+     *             A ValidityException is thrown if the XML document is not well
+     *             formed or does not conform to the DTD specified.
      */
-	public void parseDocument(RuleMLFormat format, Document doc)
-			throws ParseException, ParsingException, ValidityException
-	{
-		RuleMLDocumentParser parser = new RuleMLDocumentParser(format, clauses);
+    public void parseDocument(RuleMLFormat format, Document doc)
+	    throws ParseException, ParsingException, ValidityException {
+	RuleMLDocumentParser parser = new RuleMLDocumentParser(format, clauses);
 
-		parser.parseRuleMLDocument(doc);
-	}
-        
-	/**
-	 * Parses a RuleML query
-	 * @param contents
-	 * @return
-	 * @throws ParseException
-	 * @throws ParsingException
-	 * @throws ValidityException
-	 * @throws IOException
-	 */
-   public DefiniteClause parseRuleMLQuery(String contents) throws
-        ParseException, ParsingException, ValidityException, IOException {
-
-	    contents = ensureQueryTag(contents);
-	    contents = buildFakeImplication(contents);
-	   
-	    // Disable validation for RuleML queries
-	    boolean skippedValidation = false;
-	    if (validateRuleML) {
-	    	validateRuleML = false;
-	    	skippedValidation = true;
-	    }
-	    	
-		parseRuleMLString(ruleMLFormat, contents);
-		
-		// Re-enable validation 
-		if (skippedValidation) {
-			validateRuleML = true;
-		}
-		
-		return (DefiniteClause) clauses.lastElement();
-	}
-   
-   /**
-    * Builds a fake implication which is needed to satisfy the 
-    * reasoning engine.
-    * @param query: Input query 
-    * @return Input query as RuleML implication
-    */
-    private String buildFakeImplication(String query)
-    {
-    	Builder builder = new Builder();
-    	StringReader stringReader = new StringReader(query);
-    	Document document;
-    	
-    	try {
-			document = builder.build(stringReader);
-		} catch(Exception e) {
-			// Cannot happen
-			e.printStackTrace();
-			return "";
-		}
-    	
-    	Element queryElement = document.getRootElement();
-
-    	RuleMLTagNames rmlTags = new RuleMLTagNames(ruleMLFormat);
-    	
-    	Element rel = new Element(rmlTags.REL);
-    	rel.insertChild("$top", 0);
-    	
-    	Element topAtom = new Element(rmlTags.ATOM);
-    	topAtom.appendChild(rel);
-    	
-    	Nodes atoms = queryElement.removeChildren();
-    	
-    	Element implies = new Element(rmlTags.IMPLIES);
-    	
-    	for(int i = 0; i < atoms.size(); ++i)
-    	{
-			implies.appendChild(atoms.get(i));
-    	}
-    	    	
-    	implies.appendChild(topAtom);
-    	
-    	queryElement.appendChild(implies);
-    	
-    	return document.toXML();
+	parser.parseRuleMLDocument(doc);
     }
-   
+
+    /**
+     * Parses a RuleML query
+     * 
+     * @param contents
+     * @return
+     * @throws ParseException
+     * @throws ParsingException
+     * @throws ValidityException
+     * @throws IOException
+     */
+    public DefiniteClause parseRuleMLQuery(String contents)
+	    throws ParseException, ParsingException, ValidityException,
+	    IOException {
+
+	contents = ensureQueryTag(contents);
+	contents = buildFakeImplication(contents);
+
+	// Disable validation for RuleML queries
+	boolean skippedValidation = false;
+	if (validateRuleML) {
+	    validateRuleML = false;
+	    skippedValidation = true;
+	}
+
+	parseRuleMLString(ruleMLFormat, contents);
+
+	// Re-enable validation
+	if (skippedValidation) {
+	    validateRuleML = true;
+	}
+
+	return (DefiniteClause) clauses.lastElement();
+    }
+
+    /**
+     * Builds a fake implication which is needed to satisfy the reasoning
+     * engine.
+     * 
+     * @param query
+     *            : Input query
+     * @return Input query as RuleML implication
+     */
+    private String buildFakeImplication(String query) {
+	Builder builder = new Builder();
+	StringReader stringReader = new StringReader(query);
+	Document document;
+
+	try {
+	    document = builder.build(stringReader);
+	} catch (Exception e) {
+	    // Cannot happen
+	    e.printStackTrace();
+	    return "";
+	}
+
+	Element queryElement = document.getRootElement();
+
+	RuleMLTagNames rmlTags = new RuleMLTagNames(ruleMLFormat);
+
+	Element rel = new Element(rmlTags.REL);
+	rel.insertChild("$top", 0);
+
+	Element topAtom = new Element(rmlTags.ATOM);
+	topAtom.appendChild(rel);
+
+	Nodes atoms = queryElement.removeChildren();
+
+	Element implies = new Element(rmlTags.IMPLIES);
+
+	for (int i = 0; i < atoms.size(); ++i) {
+	    implies.appendChild(atoms.get(i));
+	}
+
+	implies.appendChild(topAtom);
+
+	queryElement.appendChild(implies);
+
+	return document.toXML();
+    }
+
     /**
      * Manually add <Query> wrapper if not exists
-     * @param query: Input query 
+     * 
+     * @param query
+     *            : Input query
      * @return Input query encapsulated with <Query> tag
      */
-    private String ensureQueryTag(String query)
-    {
-		// Evil hack: encapsulate the query contents in a pair of <Query> tags 
-	   	RuleMLTagNames rmlTags = new RuleMLTagNames(ruleMLFormat);
-	   	query = query.trim();
-	   	String queryTagOpen = String.format("<%s>", rmlTags.QUERY);
-	   	String queryTagClose = String.format("</%s>", rmlTags.QUERY);
-	
-	   	if(!query.contains(queryTagOpen))
-	   	{
-	   		query = String.format("%s%s%s", queryTagOpen, query, queryTagClose);
-	   	}
-	   	
-	   	return query;
+    private String ensureQueryTag(String query) {
+	// Evil hack: encapsulate the query contents in a pair of <Query> tags
+	RuleMLTagNames rmlTags = new RuleMLTagNames(ruleMLFormat);
+	query = query.trim();
+	String queryTagOpen = String.format("<%s>", rmlTags.QUERY);
+	String queryTagClose = String.format("</%s>", rmlTags.QUERY);
+
+	if (!query.contains(queryTagOpen)) {
+	    query = String.format("%s%s%s", queryTagOpen, query, queryTagClose);
+	}
+
+	return query;
     }
 
     /**
      * Updates parser configuration when preferences have changed
      */
-	public void preferenceChange(PreferenceChangeEvent evt) {
-		validateRuleML = config.getValidateRuleMLEnabled();
-		ruleMLFormat = config.getSelectedRuleMLFormat();
-	}
+    public void preferenceChange(PreferenceChangeEvent evt) {
+	validateRuleML = config.getValidateRuleMLEnabled();
+	ruleMLFormat = config.getSelectedRuleMLFormat();
+    }
 }
