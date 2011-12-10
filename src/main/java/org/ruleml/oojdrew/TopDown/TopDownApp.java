@@ -109,9 +109,9 @@ public class TopDownApp implements UISettingsController,
 	public static TopDownApp getTopDownApp() {
 		// Construct dependencies
 		Configuration config = new Config();
-		PreferenceManager fontSizeManager = new PreferenceManager(config);
+		PreferenceManager preferenceManager = new PreferenceManager(config);
 		TopDownUI topDownUI = new TopDownUI();
-		PreferenceDialogUI fontSizeDialogUI = new PreferenceDialogUI();
+		PreferenceDialogUI preferenceDialogUI = new PreferenceDialogUI();
 
 		// Create DebugConsole and logger
 		DebugConsole debugConsole = new DebugConsole();
@@ -134,8 +134,8 @@ public class TopDownApp implements UISettingsController,
 		BackwardReasoner backwardReasoner = new BackwardReasoner();
 
 		// Create TopDownApp
-		TopDownApp topDownApp = new TopDownApp(config, fontSizeManager,
-				topDownUI, fontSizeDialogUI, debugConsole, rdfsParser,
+		TopDownApp topDownApp = new TopDownApp(config, preferenceManager,
+				topDownUI, preferenceDialogUI, debugConsole, rdfsParser,
 				poslParser, rmlParser, subsumesParser, backwardReasoner);
 
 		return topDownApp;
