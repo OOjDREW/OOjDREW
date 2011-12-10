@@ -15,9 +15,6 @@
 
 package org.ruleml.oojdrew.parsing.generated;
 
-    import jdrew.oo.util.*;
-    import java.util.*;
-
 public interface POSLParserTokenTypes {
 	int EOF = 1;
 	int NULL_TREE_LOOKAHEAD = 3;

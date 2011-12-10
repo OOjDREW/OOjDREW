@@ -16,8 +16,6 @@
 
 package org.ruleml.oojdrew.parsing.generated;
 
-import jdrew.oo.util.*;
-import java.util.*;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Hashtable;
