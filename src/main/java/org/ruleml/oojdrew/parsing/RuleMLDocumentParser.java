@@ -115,26 +115,16 @@ public class RuleMLDocumentParser {
 
 	Element documentRoot = doc.getRootElement();
 	removeReifyElements(documentRoot);
-	documentRoot = getRuleMLRootElement(documentRoot);
-
-	Elements children = documentRoot.getChildElements();
-	for (int i = 0; i < children.size(); i++) {
-	    Element child = skipRoleTag(children.get(i));
-	    String childName = child.getLocalName();
-	    if (childName.equals(tagNames.ATOM)) {
-		resetVariables();
-		clauses.add(parseFact(child));
-	    } else if (childName.equals(tagNames.NEG)) {
-		clauses.addAll(parseNegFact(child));
-	    } else if (childName.equals(tagNames.IMPLIES)) {
-		resetVariables();
-		clauses.addAll(parseImplies(child));
-	    }
-	}
+	Element rmlRoot = getRuleMLRootElement(documentRoot);
+	
+	parseRuleMLRoot(rmlRoot);
     }
-
+    
     /**
      * Gets the root element used to begin RuleML parsing at
+     * 
+     * possible elements are: <RuleML>, <Assert>, <Rulebase>
+     * or <Query> if document is a RuleML query 
      * 
      * @param documentRoot
      *            Document's root element
@@ -165,15 +155,10 @@ public class RuleMLDocumentParser {
 	    // <Rulebase> is a optional child of <Assert>
 	    Element ruleBaseElement = getFirstChildElement(documentRoot,
 		    tagNames.RULEBASE);
-	    // <And> is a optional child of either <Rulebase> or <Assert>
-	    // (RuleML 0.88+)
-	    Element andElement = null;
+
+	    // <And> is a optional child of either <Rulebase> or <Assert> (0.88+)
 	    if (ruleBaseElement != null) {
 		ruleMLRoot = ruleBaseElement;
-		andElement = getFirstChildElement(ruleBaseElement, tagNames.AND);
-	    } else if ((andElement = getFirstChildElement(documentRoot,
-		    tagNames.AND)) != null) {
-		ruleMLRoot = andElement;
 	    }
 	} else if (rootName.equals(tagNames.QUERY)) {
 	    ruleMLRoot = documentRoot;
@@ -186,6 +171,34 @@ public class RuleMLDocumentParser {
 
 	return ruleMLRoot;
     }
+    
+    /**
+     * Parses the RuleML root element (<RuleML>, <Assert> or <Rulebase>)
+     * or if document is query parses <Query> element
+     * 
+     * @param rmlRoot RuleML root element
+     * @throws ParseException
+     */
+    private void parseRuleMLRoot(Element rmlRoot) throws ParseException
+    {
+	Elements children = rmlRoot.getChildElements();
+	for (int i = 0; i < children.size(); i++) {
+	    Element child = skipRoleTag(children.get(i));
+	    String childName = child.getLocalName();
+	    if (childName.equals(tagNames.ATOM)) {
+		resetVariables();
+		clauses.add(parseFact(child));
+	    } else if (childName.equals(tagNames.NEG)) {
+		clauses.addAll(parseNegFact(child));
+	    } else if (childName.equals(tagNames.IMPLIES)) {
+		resetVariables();
+		clauses.addAll(parseImplies(child));
+	    } else if (childName.equals(tagNames.AND)) {
+		parseRuleMLRoot(child);
+	    }
+	}
+    }
+
 
     /**
      * Removes <Reify> elements recursively from a given element
