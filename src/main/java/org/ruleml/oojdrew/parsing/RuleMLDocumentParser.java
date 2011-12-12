@@ -835,8 +835,14 @@ public class RuleMLDocumentParser {
     private Term parseResl(Element resl) throws ParseException {
 	Elements children = resl.getChildElements();
 	Element firstChild = skipRoleTag(children.get(0));
+	
 	Term t = parseDefaultElement(firstChild);
-	t.setRole(SymbolTable.IREST);
+	
+	// HACK: only change symbol, if term is no <Plex>
+	if (t.getSymbol() != SymbolTable.IPLEX)
+	{
+	    t.setRole(SymbolTable.IREST);
+	}
 	return t;
     }
 
