@@ -47,12 +47,11 @@ import org.ruleml.oojdrew.parsing.RuleMLTagNames;
 public class Term implements Comparable {
 	
  
-        /**
-         * This is a regular expression to test against to see if a symbol needs
-         * to be quoted when producing POSL format output.
-         */
-         
-        public static final String regex = "^(-)?[a-zA-Z0-9\\$][a-zA-Z0-9_\\$\\.]*$";
+    /**
+     * This is a regular expression to test against to see if a symbol needs to
+     * be quoted when producing POSL format output.
+     */
+    public static final String regex = "^(-)?[a-zA-Z0-9\\$][a-zA-Z0-9_\\$\\.]*$";
 
     /**
      * The symbol code to be used for this term, for
@@ -63,51 +62,47 @@ public class Term implements Comparable {
      
     public int symbol;
 
-   /**
-    * The role name code to be used for this term, for
-    * a positional argument this is equal to the INOROLE member of the
-    * SymbolTable. For slotted arguments the name of the role is stored in the
-    * SymbolTable.
-    */  
-    public int role;
-   
     /**
-     * @param type int  The type code to be used for this term, the types
-     * for the engine are defined by an RDFS file, and are parsed by the
-     * RDFSParser object into the Types system.
+     * The role name code to be used for this term, for a positional argument
+     * this is equal to the INOROLE member of the SymbolTable. For slotted
+     * arguments the name of the role is stored in the SymbolTable.
      */
-     public int type;
- 
+    public int role;
+
     /**
-     * The symbol code for the URI for this term; The actual
-     * URI is stored in the SymbolTable.
+     * The type code to be used for this term, the types for the engine are
+     * defined by an RDFS file, and are parsed by the RDFSParser object into the
+     * Types system.
+     */
+    public int type;
+
+    /**
+     * The symbol code for the URI for this term; The actual URI is stored in
+     * the SymbolTable.
      */
     public int href = -1;
 
-   /** 
-    * subTerms Term[] An array containing the terms
-    * that will be the parameters of this atom, cterm or plex that is being
-    * created.
-    */  
+    /**
+     * subTerms Term[] An array containing the terms that will be the parameters
+     * of this atom, cterm or plex that is being created.
+     */
     public Term[] subTerms = null;
 
     /**
-     *  This is used to tell if the Term is an atom or not.
+     * This is used to tell if the Term is an atom or not.
      */
     public boolean atom = false;
-    
+
     /**
-     * -1 is assigned as the rest
-     * if this is a simple term or a complex term with no slotted
-     * rest paramater.
-     */   
-    public int rest = -1; 
-    
+     * -1 is assigned as the rest if this is a simple term or a complex term
+     * with no slotted rest parameter.
+     */
+    public int rest = -1;
+
     /**
-     * -1 is assigned as the positional rest
-     * if this is a simple term or a complex term with no positional slotted
-     * rest paramater.
-     */  
+     * -1 is assigned as the positional rest if this is a simple term or a
+     * complex term with no positional slotted rest parameter.
+     */
     public int prest = -1;
 
     /**
@@ -115,62 +110,69 @@ public class Term implements Comparable {
      * when doing unification. This is not used elsewhere.
      */
     int side;
-    
+
     /**
-     *This is used to distinguish between Data and Ind
+     * This is used to distinguish between Data and Ind
      */
-	private boolean isData = false;
-	
-	/**
-     *This is used to distinguish between Data and Ind, when using slots
+    private boolean isData = false;
+
+    /**
+     * This is used to distinguish between Data and Ind, when using slots
      */
-	private boolean dataSlot = false;
+    private boolean dataSlot = false;
 
     /**
      * Creates a new simple term (variable or ind).
-     *
-     * @param symbol int  The symbol code to be used for this term, for
-     * a variable this is a negative number - and the variable name is stored
-     * in the variableNames array of the DefiniteClause object, for a ind this
-     * is a positive number and the symbol text is stored in the SymbolTable.
-     *
-     * @param role int  The role name code to be used for this term, for
-     * a positional argument this is equal to the INOROLE member of the
-     * SymbolTable. For slotted arguments the name of the role is stored in the
-     * SymbolTable.
-     *
-     * @param type int  The type code to be used for this term, the types
-     * for the engine are defined by an RDFS file, and are parsed by the
-     * RDFSParser object into the Types system.
+     * 
+     * @param symbol
+     *            The symbol code to be used for this term, for a variable this
+     *            is a negative number - and the variable name is stored in the
+     *            variableNames array of the DefiniteClause object, for a ind
+     *            this is a positive number and the symbol text is stored in the
+     *            SymbolTable.
+     * 
+     * @param role
+     *            The role name code to be used for this term, for a positional
+     *            argument this is equal to the INOROLE member of the
+     *            SymbolTable. For slotted arguments the name of the role is
+     *            stored in the SymbolTable.
+     * 
+     * @param type
+     *            The type code to be used for this term, the types for the
+     *            engine are defined by an RDFS file, and are parsed by the
+     *            RDFSParser object into the Types system.
      */
-          
     public Term(int symbol, int role, int type) {
-        this.symbol = symbol;
-        this.role = role;
-        this.type = type;
+	this.symbol = symbol;
+	this.role = role;
+	this.type = type;
     }
 
     /**
      * Create a new simple term with a URI reference or label (must be ind)
-     *
-     * @param symbol int The symbol code to be used for this term, for
-     * a variable this is a negative number - and the variable name is stored
-     * in the variableNames array of the DefiniteClause object, for a ind this
-     * is a positive number and the symbol text is stored in the SymbolTable.
-     *
-     * @param role int The role name code to be used for this term, for a
-     * positional argument this is equal to the INOROLE member of the
-     * SymbolTable. For a slotted parameter the role name is stored in the
-     * SymbolTable.
-     *
-     * @param type int The type code to be used for this term, the types
-     * for the engine are defined by an RDFS file, and are parsed by the
-     * RDFSParser object into the Types system.
-     *
-     * @param href int The symbol code for the URI for this term; The actual
-     * URI is stored in the SymbolTable.
+     * 
+     * @param symbol
+     *            The symbol code to be used for this term, for a variable this
+     *            is a negative number - and the variable name is stored in the
+     *            variableNames array of the DefiniteClause object, for a ind
+     *            this is a positive number and the symbol text is stored in the
+     *            SymbolTable.
+     * 
+     * @param role
+     *            The role name code to be used for this term, for a positional
+     *            argument this is equal to the INOROLE member of the
+     *            SymbolTable. For a slotted parameter the role name is stored
+     *            in the SymbolTable.
+     * 
+     * @param type
+     *            The type code to be used for this term, the types for the
+     *            engine are defined by an RDFS file, and are parsed by the
+     *            RDFSParser object into the Types system.
+     * 
+     * @param href
+     *            The symbol code for the URI for this term; The actual URI is
+     *            stored in the SymbolTable.
      */
-       
     public Term(int symbol, int role, int type, int href) {
         this.symbol = symbol;
         this.role = role;
@@ -179,60 +181,65 @@ public class Term implements Comparable {
     }
 
     /**
-     * Creates a new complex term (atom, cterm, plex).
-     *
-     * @param symbol int value The symbol code to be used for the relation or
-     * constructor of this term, this is always a positive number and the symbol
-     * text is stored in the SymbolTable.
-     *
-     * @param role int The role name code to be used for this term, for a
-     * positional argument this is equal to the INOROLE member of the
-     * SymbolTable. For a slotted parameter the role name is stored in the
-     * SymbolTable.
-     *
-     * @param type int The type code to be used for this term, the types
-     * for the engine are defined by an RDFS file, and are parsed by the
-     * RDFSParser object into the Types system.
-     *
-     * @param subTerms Term[] An array containing the terms
-     * that will be the parameters of this atom, cterm or plex that is being
-     * created.
+     * Creates a new complex term (atom, expr, plex).
+     * 
+     * @param symbol
+     *            The symbol code to be used for the relation or constructor of
+     *            this term, this is always a positive number and the symbol
+     *            text is stored in the SymbolTable.
+     * 
+     * @param role
+     *            The role name code to be used for this term, for a positional
+     *            argument this is equal to the INOROLE member of the
+     *            SymbolTable. For a slotted parameter the role name is stored
+     *            in the SymbolTable.
+     * 
+     * @param type
+     *            The type code to be used for this term, the types for the
+     *            engine are defined by an RDFS file, and are parsed by the
+     *            RDFSParser object into the Types system.
+     * 
+     * @param subTerms
+     *            An array containing the terms that will be the parameters of
+     *            this atom, expr or plex that is being created.
      */
-      
     public Term(int symbol, int role, int type, Term[] subTerms) {
-        this(symbol, role, type);
-        Vector st = this.sort(subTerms);
-        this.subTerms = new Term[st.size()];
-        for (int i = 0; i < st.size(); i++) {
-            this.subTerms[i] = (Term) st.get(i);
-            if (this.subTerms[i].getRole() == SymbolTable.IREST) {
-                rest = i;
-            }
-            if (this.subTerms[i].getRole() == SymbolTable.IPREST) {
-                prest = i;
-            }
-        }
+	this(symbol, role, type);
+	Vector st = this.sort(subTerms);
+	this.subTerms = new Term[st.size()];
+	for (int i = 0; i < st.size(); i++) {
+	    this.subTerms[i] = (Term) st.get(i);
+	    if (this.subTerms[i].getRole() == SymbolTable.IREST) {
+		rest = i;
+	    }
+	    if (this.subTerms[i].getRole() == SymbolTable.IPREST) {
+		prest = i;
+	    }
+	}
     }
 
     /**
-     * Creates a new complex term (atom, cterm, plex).
-     *
-     * @param symbol int value The symbol code to be used for the relation or
-     * constructor of this term, this is always a positive number and the symbol
-     * text is stored in the SymbolTable.
-     *
-     * @param role int value The role name code to be used for this term, for a
-     * positional argument this is equal to the INOROLE member of the
-     * SymbolTable. For a slotted parameter the role name is stored in the
-     * SymbolTable.
-     *
-     * @param type int value The type code to be used for this term, the types
-     * for the engine are defined by an RDFS file, and are parsed by the
-     * RDFSParser object into the Types system.
-     *
-     * @param subTerms Vector value An array containing the terms
-     * that will be the parameters of this atom, cterm or plex that is being
-     * created.
+     * Creates a new complex term (atom, expr, plex).
+     * 
+     * @param symbol
+     *            The symbol code to be used for the relation or constructor of
+     *            this term, this is always a positive number and the symbol
+     *            text is stored in the SymbolTable.
+     * 
+     * @param role
+     *            The role name code to be used for this term, for a positional
+     *            argument this is equal to the INOROLE member of the
+     *            SymbolTable. For a slotted parameter the role name is stored
+     *            in the SymbolTable.
+     * 
+     * @param type
+     *            The type code to be used for this term, the types for the
+     *            engine are defined by an RDFS file, and are parsed by the
+     *            RDFSParser object into the Types system.
+     * 
+     * @param subTerms
+     *            Vector value An array containing the terms that will be the
+     *            parameters of this atom, expr or plex that is being created.
      */
     public Term(int symbol, int role, int type, Vector subTerms) {
         this(symbol, role, type);
@@ -253,16 +260,17 @@ public class Term implements Comparable {
      * A method to get the symbol for a role within a complex term. If the r
      * value is "" this will return the first positional argument. Also if there
      * is more than one value of a role name this will return the first one.
-     *
-     * @param r String A string containing the name of the role to
-     * retrieve the symbol for.
-     *
-     * @return String A string containing the symbol associated with the
-     * passed role. If this is a variable it will be returned as ?Varx, were x
-     * is the variable id, for for complex term this will contain the
-     * constructor symbol. Values are not enclosed within " even if this would
-     * be required for POSL Syntax.
-     *
+     * 
+     * @param r
+     *            String A string containing the name of the role to retrieve
+     *            the symbol for.
+     * 
+     * @return A string containing the symbol associated with the passed role.
+     *         If this is a variable it will be returned as ?Varx, were x is the
+     *         variable id, for for complex term this will contain the
+     *         constructor symbol. Values are not enclosed within " even if this
+     *         would be required for POSL Syntax.
+     * 
      */
     public String getSymbolForRole(String r) {
         int role = SymbolTable.internRole(r);
@@ -278,8 +286,8 @@ public class Term implements Comparable {
      * Gets the symbol code for this term. If it is a complex term this gives
      * the symbol code for the predicate/constructor. If this value is a
      * negative number then this term is a variable.
-     *
-     * @return int value - the symbol code for this term.
+     * 
+     * @return The symbol code for this term.
      */
     public int getSymbol() {
         return symbol;
@@ -287,8 +295,9 @@ public class Term implements Comparable {
 
     /**
      * Sets the symbol code for this term.
-     *
-     * @param symbol int value - the value to set symbol to.
+     * 
+     * @param symbol
+     *            The value to set symbol to.
      */
     public void setSymbol(int symbol) {
         this.symbol = symbol;
@@ -299,7 +308,7 @@ public class Term implements Comparable {
      * symbol for the predicate/constructor. If it is a variable then the
      * symbol is prefixed with a ?.
      *
-     * @return java.lang.String value - the symbol for this term.
+     * @return The symbol for this term.
      */
     public String getSymbolString() {
         if (symbol > 0) {
@@ -315,7 +324,7 @@ public class Term implements Comparable {
      * is a positional argument it will be equal to the INOROLE member of the
      * associated SymbolTable.
      *
-     * @return int value - the role code for this term.
+     * @return The role code for this term.
      */
     public int getRole() {
         return role;
@@ -323,8 +332,9 @@ public class Term implements Comparable {
 
     /**
      * Sets the role code for this term.
-     *
-     * @param role int value - the value to set role to.
+     * 
+     * @param role
+     *            The value to set role to.
      */
     public void setRole(int role) {
         this.role = role;
@@ -332,10 +342,10 @@ public class Term implements Comparable {
 
     /**
      * Gets the role name for this term. If this is a positional argument this
-     * will be an empty string, for a rest paramater it will be '$REST',
+     * will be an empty string, for a rest parameter it will be '$REST',
      * otherwise it is the name of the role.
-     *
-     * @return java.lang.String value - the role name for this term.
+     * 
+     * @return The role name for this term.
      */
     public String getRoleString() {
         return SymbolTable.role(role);
@@ -345,7 +355,7 @@ public class Term implements Comparable {
      * Gets the type code for this term. For an untyped term this will be equal
      * to the IOBJECT member of the TypeHierarchy associated with the clause.
      *
-     * @return int value - the type code for this term.
+     * @return The type code for this term.
      */
     public int getType() {
         return type;
@@ -353,8 +363,9 @@ public class Term implements Comparable {
 
     /**
      * Sets the type code for this term.
-     *
-     * @param type int value - the value to set type to.
+     * 
+     * @param type
+     *            The value to set type to.
      */
     public void setType(int type) {
         this.type = type;
@@ -364,7 +375,7 @@ public class Term implements Comparable {
      * Gets the value of the side member variable - this is used by the
      * unification process to keep track of terms.
      *
-     * @return int value - the current value of the side member.
+     * @return The current value of the side member.
      */
     public int getSide() {
         return side;
@@ -372,19 +383,20 @@ public class Term implements Comparable {
 
     /**
      * Sets the value of the side member variable.
-     *
-     * @param side int value - the value to set side to.
+     * 
+     * @param side
+     *            The value to set side to.
      */
     public void setSide(int side) {
         this.side = side;
     }
 
     /**
-     * Gets the index of the slotted rest paramater.
-     *
-     * @return int value - the index of the slotted rest parameter within this
-     * term, or -1 if this is a simple term or a complex term with no slotted
-     * rest paramater.
+     * Gets the index of the slotted rest parameter.
+     * 
+     * @return The index of the slotted rest parameter within this term, or -1
+     *         if this is a simple term or a complex term with no slotted rest
+     *         parameter.
      */
     public int getRest() {
         return rest;
@@ -392,10 +404,10 @@ public class Term implements Comparable {
 
     /**
      * Gets the index of the positional rest parameter.
-     *
-     * @return int value - the index of the position rest parameter within this
-     * term, or -1 if this is a simple term or a complex term with no positional
-     * rest parameter.
+     * 
+     * @return The index of the position rest parameter within this term, or -1
+     *         if this is a simple term or a complex term with no positional
+     *         rest parameter.
      */
     public int getPosRest() {
         return prest;
@@ -403,9 +415,9 @@ public class Term implements Comparable {
 
     /**
      * Gets an array of the arguments for this term.
-     *
-     * @return org.ruleml.oojdrew.util.Term[] value - a Term[] array of the paramaters for
-     * this term. Returns null if this is a simple term (variable or ind).
+     * 
+     * @return A Term[] array of the parameters for this term. Returns null if
+     *         this is a simple term (variable or ind).
      */
     public Term[] getSubTerms() {
         return subTerms;
@@ -413,9 +425,9 @@ public class Term implements Comparable {
 
     /**
      * Tests if a term is a complex term.
-     *
-     * @return boolean value - true if this term is a complex term (atom, cterm,
-     * tup) false otherwise.
+     * 
+     * @return True if this term is a complex term (atom, expr, tup) false
+     *         otherwise.
      */
     public boolean isExpr() {
         return (subTerms != null);
@@ -423,10 +435,10 @@ public class Term implements Comparable {
 
     /**
      * Test if this term is an atom.
-     *
+     * 
      * @return boolean value - true if this term is an atom, false otherwise.
-     * This is used only by the output routines, for other things cterms and
-     * atoms can be treated the same.
+     *         This is used only by the output routines, for other things Expr
+     *         and Atoms can be treated the same.
      */
     public boolean isAtom() {
         return (subTerms != null && atom);
@@ -436,87 +448,92 @@ public class Term implements Comparable {
      * Sets the boolean atom flag to the passed value, if the atom member
      * variable is set to true and it is not a complex term (subTerms array is
      * set to null) isAtom() will still return false.
-     *
-     * @param atom boolean value - the value that the atom member should be set
-     * to.
+     * 
+     * @param atom
+     *            The value that the atom member should be set to.
      */
     public void setAtom(boolean atom) {
-        this.atom = atom;
+	this.atom = atom;
     }
-       
+
     /**
-     * Sets the isData flag to the passed value, if isData
-     * variable is set to true then it is a data element if not
-     * it is a Ind
-     * @param data boolean value - the value that the isData member should be
-     * set to.
+     * Sets the isData flag to the passed value, if isData variable is set to
+     * true then it is a data element if not it is a Ind
+     * 
+     * @param data
+     *            The value that the isData member should be set to.
      */
-    public void setData(boolean data){
-    	isData = data;
+    public void setData(boolean data) {
+	isData = data;
     }
     
     /**
      * Gets the isData vaule
-     * @return boolean - the value that the isData member
-     */    
-    public boolean getData(){
-  		return isData;  	
+     * 
+     * @return The value of the isData member
+     */
+    public boolean getData() {
+	return isData;
     }
     
     /**
-     * Sets the isDataSlot flag to the passed value, if isDataSlot
-     * variable is set to true then it is a data element if not
-     * it is a Ind inside the slot.
-     * @param data boolean value - the value that the isDataSlot member should be
-     * set to.
+     * Sets the isDataSlot flag to the passed value, if isDataSlot variable is
+     * set to true then it is a data element if not it is a Ind inside the slot.
+     * 
+     * @param data
+     *            The value that the isDataSlot member should be set to.
      */
-	public void setDataSlot(boolean data){
-		dataSlot = data;
-	}
-   
+    public void setDataSlot(boolean data) {
+	dataSlot = data;
+    }
+
     /**
-     * Gets the isDataSlot vaule
-     * @return boolean - the value that the isDataSlot member
-     */  
-	public boolean getDataSlot(){
-		return dataSlot;
-	}
+     * Gets the isDataSlot value
+     * 
+     * @return The value that the isDataSlot member
+     */
+    public boolean getDataSlot() {
+	return dataSlot;
+    }
 		
     /**
      * Returns a string representation of this term. The format of this string
      * is determined by the value of the PRPRINT static variable in the
-     * org.ruleml.oojdrew.Config class. If this is true, this will produce a string in
-     * POSL syntax, otherwise it will produce a string in OO RuleML XML
-     * syntax.
-     *
+     * org.ruleml.oojdrew.Config class. If this is true, this will produce a
+     * string in POSL syntax, otherwise it will produce a string in OO RuleML
+     * XML syntax.
+     * 
      * This method is used when you do not have access to the variable names;
      * variables are output as ?Varx - where x is the variable id.
-     *
-     * @param version RuleMLVersion - this is to determine what RuleML parser to use.
-     *
-     * @return java.lang.String value - the String representation of this term.
+     * 
+     * @param rmlFormat
+     *            RuleMLFormat, to determine which RuleML version to use.
+     * 
+     * @return The String representation of this term.
      */
-    public String toString(RuleMLFormat version) {
+    public String toString(RuleMLFormat rmlFormat) {
         if (Config.PRPRINT) {
             return this.toPOSLString(true);
         } else {
         	
-            return this.toRuleMLString(version);
+            return this.toRuleMLString(rmlFormat);
         }
     }
 
     /**
      * Returns a string representation of this term. The format of this string
      * is determined by the value of the PRPRINT static variable in the
-     * org.ruleml.oojdrew.Config class. If this is true, this will produce a string in
-     * POSL syntax, otherwise it will produce a string in OO RuleML XML
-     * syntax.
-     *
-     * @param version RuleMLVersion - this is to determine what RuleML parser to use.
-     *
-     * @param varNames String[] - this string array contains the variable names
-     *
-     * @return java.lang.String value - the String representation of this term.
+     * org.ruleml.oojdrew.Config class. If this is true, this will produce a
+     * string in POSL syntax, otherwise it will produce a string in OO RuleML
+     * XML syntax.
+     * 
+     * @param rmlFormat
+     *            RuleMLFormat, to determine which RuleML version to use.
+     * 
+     * @param varNames
+     *            String array containing the variable names
+     * 
+     * @return The String representation of this term.
      */
     public String toString(String[] varNames, RuleMLFormat version) {
         if (Config.PRPRINT) {
@@ -531,11 +548,10 @@ public class Term implements Comparable {
     /**
      * Returns a string representation of this term in POSL syntax. This method
      * is used in cases where you do not have access to the variable names
-     * associated with the clause - variablenames will be output as ?Varx where
+     * associated with the clause - variable names will be output as ?Varx where
      * x is the variable id.
-     *
-     * @return java.lang.String value - the POSL syntax representation of this
-     * term.
+     * 
+     * @return The POSL syntax representation of this term.
      */
 
     public String toPOSLString(boolean head) {
@@ -657,12 +673,13 @@ public class Term implements Comparable {
 
     /**
      * Returns a string representation of this term in POSL syntax.
-     *
-     * @param varNames String[] A string array containing the variable names
-     * to use when outputting the string. These are stored in the
-     * DefiniteClause that the term is part of.
-     *
-     * @return String The POSL syntax representation of the term.
+     * 
+     * @param varNames
+     *            A string array containing the variable names to use
+     *            when outputting the string. These are stored in the
+     *            DefiniteClause that the term is part of.
+     * 
+     * @return The POSL syntax representation of the term.
      */
     public String toPOSLString(String[] varNames) {
         return toPOSLString(varNames, false, true);
@@ -676,15 +693,18 @@ public class Term implements Comparable {
      * Returns a string representation of this term in POSL syntax, with the
      * option of omitting the role name. This is used by the mechanism for
      * saving variable bindings.
-     *
-     * @param varNames String[] A string array containing the variable names
-     * to use when outputting the string. These are stored in the
-     * DefiniteClause that the term is part of.
-     *
-     * @param skiprole boolean If true then the role name is omitted from the
-     * string output - if false then the role name is included.
-     *
-     * @param boolean head If true then the atom is the head of a rule.
+     * 
+     * @param varNames
+     *            A string array containing the variable names to use when
+     *            outputting the string. These are stored in the DefiniteClause
+     *            that the term is part of.
+     * 
+     * @param skiprole
+     *            If true then the role name is omitted from the string output,
+     *            otherwise the role name is included.
+     * 
+     * @param head
+     *            If true then the atom is the head of a rule.
      * 
      * @return String The POSL syntax representation of the term.
      */
@@ -960,20 +980,19 @@ public class Term implements Comparable {
     /**
      * Produces an OO RuleML XML syntax representation of this term, stored in a
      * string.
-     *
-     * This version is for the case where you do not have access to the
-     * variable names for the term.
      * 
-     * @param version RuleMLVersion - this is to determine what RuleML parser to use.
-     *
-     * @return java.lang.String value - The OO RuleML syntax representation of
-     * this, stored as a "pretty printed" string.
-     */
-     
-     
-    public String toRuleMLString(RuleMLFormat version) {
+     * This version is for the case where you do not have access to the variable
+     * names for the term.
+     * 
+     * @param rmlFormat
+     *            RuleMLFormat, to determine which RuleML version to use.
+     * 
+     * @return The OO RuleML syntax representation of this, stored as a
+     *         "pretty printed" string.
+     */     
+    public String toRuleMLString(RuleMLFormat rmlFormat) {
     	
-        Element rml = this.toRuleML(true, version);
+        Element rml = this.toRuleML(true, rmlFormat);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         nu.xom.Serializer sl = new nu.xom.Serializer(os);
         sl.setIndent(3);
@@ -990,15 +1009,17 @@ public class Term implements Comparable {
     /**
      * Produces an OO RuleML XML syntax representation of this term, stored in a
      * string.
-     *
-     * @param varNames String[] A string array containing the variable names to
-     * use when outputting - these are stored in the DefiniteClause object
-     * associated with the term.
-     *
-     * @param version RuleMLVersion - this is to determine what RuleML parser to use. 
-     *
-     * @return String A string containing the OO RuleML XML representation of
-     * this term.
+     * 
+     * @param varNames
+     *            A string array containing the variable names to use when
+     *            outputting - these are stored in the DefiniteClause object
+     *            associated with the term.
+     * 
+     * @param rmlFormat
+     *            RuleMLFormat, to determine which RuleML version to use.
+     * 
+     * @return A string containing the OO RuleML XML representation of this
+     *         term.
      */
     public String toRuleMLString(String[] varNames, RuleMLFormat version) {
     	
@@ -1019,15 +1040,16 @@ public class Term implements Comparable {
     /**
      * Produces an OO RuleML XML syntax representation of this term, stored in a
      * nu.xom.Element object.
-     *
-     * This version is for when you do not have access to the variable names.
-     *
-     * @param rmlFormat RuleMLVersion - this is to determine what RuleML parser to use.
-     *
-     * @param boolean head - If true then the atom is the head of a rule. 
      * 
-     * @return Element The OO RuleML syntax representation of
-     * this, as a Element value.
+     * This version is for when you do not have access to the variable names.
+     * 
+     * @param rmlFormat
+     *            RuleMLFormat, to determine which RuleML version to use.
+     * 
+     * @param head
+     *            If true then the atom is the head of a rule.
+     * 
+     * @return The OO RuleML syntax representation of this, as an Element value.
      */
 
     public Element toRuleML(boolean head, RuleMLFormat rmlFormat) {
@@ -1164,16 +1186,16 @@ public class Term implements Comparable {
     /**
      * Produces an OO RuleML XML syntax representation of this term, stored in a
      * nu.xom.Element object.
-     *
-     * @param varNames String[] The variable names associated with the term;
-     * these are stored in the DefiniteClause object associated with the term.
-     *
-     * @param rmlFormat int - this is to determine what RuleML parser to use.
-     *
-     * @return Element The OO RuleML syntax representation of this, as an
-     * Element value.
+     * 
+     * @param varNames
+     *            The variable names associated with the term; these are stored
+     *            in the DefiniteClause object associated with the term.
+     * 
+     * @param rmlFormat
+     *            RuleMLFormat, to determine which RuleML version to use.
+     * 
+     * @return The OO RuleML syntax representation of this, as an Element value.
      */
-         
     public Element toRuleML(String[] varNames, boolean head,
 	    RuleMLFormat rmlFormat) {
 
@@ -1323,10 +1345,10 @@ public class Term implements Comparable {
 
     /**
      * Make an identical deep (recursive) copy of this term. This is used when
-     * unifying to avoid making changes to the original data strucutres that
+     * unifying to avoid making changes to the original data structures that
      * represent clauses.
-     *
-     * @return org.ruleml.oojdrew.util.Term value - the copy of this term.
+     * 
+     * @return A full copy of this term.
      */
     public Term deepCopy() {
         if (this.subTerms != null) {
@@ -1359,11 +1381,11 @@ public class Term implements Comparable {
      * Produces a deep (recursive) copy of this term, with the side member set
      * to the specified value. This is used when Unifying to avoid making
      * changes to the original data structures that represent clauses.
-     *
-     * @param pside int The side value that should be stored in the
-     * copy.
-     *
-     * @return Term The copy of this term.
+     * 
+     * @param pside
+     *            The side value that should be stored in the copy.
+     * 
+     * @return A full copy of this term.
      */
     public Term deepCopy(int pside) {
         if (this.subTerms != null) {
@@ -1393,10 +1415,11 @@ public class Term implements Comparable {
 
     /**
      * Sorts a Vector of term objects by the role code.
-     *
-     * @param toSort Vector A Vector containing only Term objects - to be
-     * sorted by the role name code.
-     *
+     * 
+     * @param toSort
+     *            A Vector containing only Term objects - to be sorted by
+     *            the role name code.
+     * 
      * @return Vector A Vector containing the sorted terms.
      */
     public static Vector sort(Vector toSort) {
@@ -1421,11 +1444,11 @@ public class Term implements Comparable {
 
     /**
      * Sorts an array of org.ruleml.oojdrew.util.Term values by the role code.
-     *
-     * @param toSort Term[] An array of Term objects to be sorted by the role
-     * name code.
-     *
-     * @return Vector A Vector containing the sorted terms.
+     * 
+     * @param toSort
+     *            An array of Term objects to be sorted by the role name code.
+     * 
+     * @return A Vector containing the sorted terms.
      */
     public static Vector sort(Term[] toSort) {
         Vector ts = new Vector();
@@ -1436,24 +1459,23 @@ public class Term implements Comparable {
     }
 
     /**
-     * Compares one term to another object. If this object is a Term object,
-     * it will compare first by the symbol code, then the role name code, the
-     * number of paramaters, and finally by the actual paramaters themselves. If
+     * Compares one term to another object. If this object is a Term object, it
+     * will compare first by the symbol code, then the role name code, the
+     * number of parameters, and finally by the actual parameters themselves. If
      * the other object is not a Term, then this always returns 1.
-     *
-     * @param oth java.lang.Object value - the other object to compare this term
-     * to.
-     *
-     * @return int value - the result of the comparison 1 if the other term is
-     * "less than", 0 if they are equal, or -1 if the other term is
-     * "greater than".
+     * 
+     * @param toCompare
+     *            The object to compare this term to.
+     * 
+     * @return The result of the comparison 1 if the other term is "less than",
+     *         0 if they are equal, or -1 if the other term is "greater than".
      */
-    public int compareTo(Object oth) {
-        if (this.getClass() != oth.getClass()) {
+    public int compareTo(Object toCompare) {
+        if (this.getClass() != toCompare.getClass()) {
             return 1;
         }
 
-        Term o = (Term) oth;
+        Term o = (Term) toCompare;
         if (this.symbol < o.symbol) {   
             return 1;
         } else if (this.symbol > o.symbol) {
