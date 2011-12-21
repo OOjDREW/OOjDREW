@@ -35,16 +35,21 @@ import org.ruleml.oojdrew.util.Term;
 import org.ruleml.oojdrew.util.Types;
 
 /**
- * This class implements the back-end parser for the RuleML 0.91
- * format.
- *
- * <p>Title: OO jDREW</p>
- *
- * <p>Description: Reasoning Engine for the Semantic Web - Supporting OO RuleML
- * 0.91</p>
- *
- * <p>Copyright: Copyright (c) 2005</p>
- *
+ * This class implements the back-end parser for the RuleML 0.91 format.
+ * 
+ * <p>
+ * Title: OO jDREW
+ * </p>
+ * 
+ * <p>
+ * Description: Reasoning Engine for the Semantic Web - Supporting OO RuleML
+ * 0.91
+ * </p>
+ * 
+ * <p>
+ * Copyright: Copyright (c) 2005
+ * </p>
+ * 
  * @author Ben Craig
  * @version 0.93
  */
@@ -116,19 +121,21 @@ public class RuleMLDocumentParser {
 	Element documentRoot = doc.getRootElement();
 	removeReifyElements(documentRoot);
 	Element rmlRoot = getRuleMLRootElement(documentRoot);
-	
+
 	parseRuleMLRoot(rmlRoot);
     }
-    
+
     /**
      * Gets the root element used to begin RuleML parsing at
      * 
-     * possible elements are: <RuleML>, <Assert>, <Rulebase>
-     * or <Query> if document is a RuleML query 
+     * possible elements are: <RuleML>, <Assert>, <Rulebase> or <Query> if
+     * document is a RuleML query
      * 
      * @param documentRoot
      *            Document's root element
-     * @return RuleML root element to begin parsing at
+     * 
+     * @return The RuleML root element on which the parser should start at
+     * 
      * @throws ParseException
      */
     private Element getRuleMLRootElement(Element documentRoot)
@@ -156,7 +163,8 @@ public class RuleMLDocumentParser {
 	    Element ruleBaseElement = getFirstChildElement(documentRoot,
 		    tagNames.RULEBASE);
 
-	    // <And> is a optional child of either <Rulebase> or <Assert> (0.88+)
+	    // <And> is a optional child of either <Rulebase> or <Assert>
+	    // (0.88+)
 	    if (ruleBaseElement != null) {
 		ruleMLRoot = ruleBaseElement;
 	    }
@@ -171,16 +179,17 @@ public class RuleMLDocumentParser {
 
 	return ruleMLRoot;
     }
-    
+
     /**
-     * Parses the RuleML root element (<RuleML>, <Assert> or <Rulebase>)
-     * or if document is query parses <Query> element
+     * Parses the RuleML root element (<RuleML>, <Assert> or <Rulebase>) or if
+     * document is query parses <Query> element
      * 
-     * @param rmlRoot RuleML root element
+     * @param rmlRoot
+     *            The RuleML root element on which we start parsing at
+     * 
      * @throws ParseException
      */
-    private void parseRuleMLRoot(Element rmlRoot) throws ParseException
-    {
+    private void parseRuleMLRoot(Element rmlRoot) throws ParseException {
 	Elements children = rmlRoot.getChildElements();
 	for (int i = 0; i < children.size(); i++) {
 	    Element child = skipRoleTag(children.get(i));
@@ -198,7 +207,6 @@ public class RuleMLDocumentParser {
 	    }
 	}
     }
-
 
     /**
      * Removes <Reify> elements recursively from a given element
@@ -224,8 +232,8 @@ public class RuleMLDocumentParser {
      * @param ass
      *            Element The XOM Element object that represents the assertion.
      * 
-     * @return Term A term object that represents the assertion in a way that
-     *         can be used by the reasoning engine.
+     * @return A term object that represents the assertion in a way that can be
+     *         used by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if there is a serious error parsing the assertion.
@@ -268,8 +276,8 @@ public class RuleMLDocumentParser {
      * @param neg
      *            Element The XOM Element object that represents the neg fact.
      * 
-     * @return Vector a vector object that represents the negFact in a way that
-     *         can be used by the reasoning engine.
+     * @return A definite clause vector that represents the negFact in a way
+     *         that can be used by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if there is a serious error parsing the negFact.
@@ -329,15 +337,11 @@ public class RuleMLDocumentParser {
      * variable list must be used.
      * 
      * @param atom
-     *            Element The XOM Element objec that represents the fact to be
+     *            Element The XOM Element object that represents the fact to be
      *            parsed.
      * 
-     * @param newVarnames
-     *            boolean If true a new variable names list is created and used;
-     *            otherwise the current variable name list is used.
-     * 
-     * @return DefiniteClause A DefiniteClause data structure that represents
-     *         the fact in a way that can be used by the reasoning engine.
+     * @return A DefiniteClause data structure that represents the fact in a way
+     *         that can be used by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if there is a serious error parsing the fact.
@@ -362,16 +366,11 @@ public class RuleMLDocumentParser {
      * same variable list must be used.
      * 
      * @param implies
-     *            Element The XOM Element objec that represents the implication
+     *            Element The XOM Element object that represents the implication
      *            to be parsed.
      * 
-     * @param newVarnames
-     *            boolean If true a new variable names list is created and used;
-     *            otherwise the current variable name list is used.
-     * 
-     * @return DefiniteClause A DefiniteClause data structure that represents
-     *         the implication in a way that can be used by the reasoning
-     *         engine.
+     * @return A vector of DefiniteClause data structures that represents the
+     *         implication in a way that can be used by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if there is a serious error parsing the implication.
@@ -395,20 +394,18 @@ public class RuleMLDocumentParser {
 	String firstChildName = firstChild.getLocalName();
 	Element premise, conclusion;
 	// Check if implies starts with premise element
-	if (firstChildName.equals(tagNames.PREMISE100)
-		|| firstChildName.equals(tagNames.PREMISE)) {
+	if (firstChildName.equals(tagNames.PREMISE)) {
 	    premise = firstChild.getChildElements().get(0);
 	    conclusion = secondChild.getChildElements().get(0);
 	}
 	// If implies starts with conclusion element
-	else if (firstChildName.equals(tagNames.CONCLUSION100)
-		|| firstChildName.equals(tagNames.CONCLUSION)) {
+	else if (firstChildName.equals(tagNames.CONCLUSION)) {
 	    premise = secondChild.getChildElements().get(0);
 	    conclusion = firstChild.getChildElements().get(0);
 	}
 	// No premise or conclusion tag available
 	else {
-	    // Use default order
+	    // Use canonical order for stripe-skipped syntax
 	    premise = firstChild;
 	    conclusion = secondChild;
 	}
@@ -502,8 +499,8 @@ public class RuleMLDocumentParser {
      * @param oid
      *            Element The XOM element that represents the oid to be parsed.
      * 
-     * @return Term Returns the data structure that represents the oid in a way
-     *         that can be used by the reasoning engine.
+     * @return Returns the data structure that represents the oid in a way that
+     *         can be used by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if there is an error parsing the oid.
@@ -523,8 +520,8 @@ public class RuleMLDocumentParser {
      * @param ind
      *            Element The XOM element that represents the Ind to be parsed.
      * 
-     * @return Term Returns the data structure that represents the Ind in a way
-     *         that can be used by the reasoning engine.
+     * @return Returns the data structure that represents the Ind in a way that
+     *         can be used by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if there is an error parsing the Ind.
@@ -540,8 +537,8 @@ public class RuleMLDocumentParser {
      * @param ind
      *            Element The XOM element that represents the Data to be parsed.
      * 
-     * @return Term Returns the data structure that represents the Data in a way
-     *         that can be used by the reasoning engine.
+     * @return Returns the data structure that represents the Data in a way that
+     *         can be used by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if there is an error parsing the Data.
@@ -565,7 +562,8 @@ public class RuleMLDocumentParser {
      * 
      * @param symbolName
      *            Input symbol
-     * @return Symbol name with identifier
+     * 
+     * @return String Symbol name as a unique anonymous identifier
      */
     private String generateAnonymousIdentifier() {
 	return "$ANON" + anonid++;
@@ -577,8 +575,8 @@ public class RuleMLDocumentParser {
      * @param var
      *            Element The XOM element that represents the Var to be parsed.
      * 
-     * @return Term Returns the data structure that represents the Var in a way
-     *         that can be used by the reasoning engine.
+     * @return Returns the data structure that represents the Var in a way that
+     *         can be used by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if there is an error parsing the Var.
@@ -618,8 +616,8 @@ public class RuleMLDocumentParser {
      * @param plex
      *            Element The XOM element that represents the plex to be parsed.
      * 
-     * @return Term Returns the data structure that represents the plex in a way
-     *         that can be used by the reasoning engine.
+     * @return Returns the data structure that represents the plex in a way that
+     *         can be used by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if there is an error parsing the plex.
@@ -638,8 +636,8 @@ public class RuleMLDocumentParser {
      * @param expr
      *            Element The XOM element that represents the Expr to be parsed.
      * 
-     * @return Term Returns the data structure that represents the Expr in a way
-     *         that can be used by the reasoning engine.
+     * @return Returns the data structure that represents the Expr in a way that
+     *         can be used by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if there is an error parsing the Expr.
@@ -659,15 +657,15 @@ public class RuleMLDocumentParser {
 	    Elements funTag = op.getChildElements();
 	    fun = funTag.get(0);
 
-	    // Remove op and the corresponding Fun child so that they're not
-	    // processed again
+	    // Remove <op> element including its child element <Fun>, so
+	    // it will not be parsed twice
 	    expr.removeChild(op);
 	}
 
 	if (!foundOp) {
 	    fun = children.get(0);
 
-	    // Remove Fun element so that it is not processed again
+	    // Remove <Fun> element so that it will not be parsed twice
 	    expr.removeChild(fun);
 	}
 
@@ -697,8 +695,8 @@ public class RuleMLDocumentParser {
      *            boolean This tells the engine if the atom is a negative atom
      *            (Neg)
      * 
-     * @return Term Returns the data structure that represents the Atom in a way
-     *         that can be used by the reasoning engine.
+     * @return Returns the data structure that represents the Atom in a way that
+     *         can be used by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if there is an error parsing the Atom.
@@ -783,8 +781,8 @@ public class RuleMLDocumentParser {
      * @param slot
      *            Element The XOM element that represents the slot to be parsed.
      * 
-     * @return Term Returns the data structure that represents the slot in a way
-     *         that can be used by the reasoning engine.
+     * @return Returns the data structure that represents the slot in a way that
+     *         can be used by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if there is an error parsing the slot.
@@ -826,8 +824,8 @@ public class RuleMLDocumentParser {
      * @param resl
      *            Element The XOM element that represents the resl to be parsed.
      * 
-     * @return Term Returns the data structure that represents the resl in a way
-     *         that can be used by the reasoning engine.
+     * @return Returns the data structure that represents the resl in a way that
+     *         can be used by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if there is an error parsing the resl.
@@ -835,12 +833,11 @@ public class RuleMLDocumentParser {
     private Term parseResl(Element resl) throws ParseException {
 	Elements children = resl.getChildElements();
 	Element firstChild = skipRoleTag(children.get(0));
-	
+
 	Term t = parseDefaultElement(firstChild);
-	
+
 	// HACK: only change symbol, if term is no <Plex>
-	if (t.getSymbol() != SymbolTable.IPLEX)
-	{
+	if (t.getSymbol() != SymbolTable.IPLEX) {
 	    t.setRole(SymbolTable.IREST);
 	}
 	return t;
@@ -871,8 +868,8 @@ public class RuleMLDocumentParser {
      *            Element The XOM element that represents the naf atom to be
      *            parsed.
      * 
-     * @return Term Returns the data structure that represents the naf atom in a
-     *         way that can be used by the reasoning engine.
+     * @return Returns the data structure that represents the naf in a way that
+     *         can be used by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if there is an error parsing the naf.
@@ -909,16 +906,17 @@ public class RuleMLDocumentParser {
     }
 
     /**
-     * Method to parse a sko(Skolem Constant)
+     * Method to parse a Skolem constant
      * 
      * @param sko
-     *            Element The XOM element that represents the sko to be parsed.
+     *            Element The XOM element that represents the Skolem to be
+     *            parsed.
      * 
-     * @return Term Returns the data structure that represents the sko in a way
+     * @return Returns the data structure that represents the Skolem in a way
      *         that can be used by the reasoning engine.
      * 
      * @throws ParseException
-     *             Thrown if there is an error parsing the sko.
+     *             Thrown if there is an error parsing the Skolem.
      */
     private Term parseSkolem(Element sko) throws ParseException {
 	String skoname = sko.getValue().trim();
@@ -950,7 +948,7 @@ public class RuleMLDocumentParser {
      * @param varName
      *            String The variable name.
      * 
-     * @return int The integer identifier for this variable
+     * @return The integer identifier for this variable
      */
     private int internVariable(String varName) {
 	int idx;
@@ -966,14 +964,14 @@ public class RuleMLDocumentParser {
 
     /**
      * A method that will go through a term and fix all variable types to be
-     * consistant.
+     * consistent.
      * 
      * @param complexTerm
      *            Term The term to normalize the types in.
      * 
      * @param types
-     *            Hashtable A hash table containing the normalized types for
-     *            each variable in the clause.
+     *            A hash table containing the normalized types for each variable
+     *            in the clause.
      */
     private void fixVarTypes(Term complexTerm, Hashtable<Integer, Integer> types) {
 	// logger.debug("Fixing term: " + complexTerm.toPOSLString(true));
@@ -993,8 +991,8 @@ public class RuleMLDocumentParser {
     /**
      * A method to find the normalized types for each variable in the clause.
      * 
-     * @return Hashtable A hashtable containing the normalized type for each
-     *         variable in the current clause.
+     * @return A hash table containing the normalized type for each variable in
+     *         the current clause.
      * 
      * @throws ParseException
      *             A ParseException is thrown a variable does not have a
@@ -1021,38 +1019,41 @@ public class RuleMLDocumentParser {
     }
 
     /**
-     * Parses the given element and adds parsed data to subterms
+     * Parses the given element and adds parsed data to sub terms
      * 
-     * Known elements are: Plex, Expr, Ind, Data, Var, slot, repo, resl
+     * Known elements are: Plex, Expr, Ind, Data, sko, Var, slot, repo, resl
      * 
-     * @param el
-     *            Element to parse
-     * @return Parsed element as Term
+     * @param element
+     *            The element which has to be parsed
+     * 
+     * @return Returns the data structure that represents the Element in a way
+     *         that can be used by the reasoning engine.
+     * 
      * @throws ParseException
      *             Thrown if this method is not able to handle element.
      */
-    private Term parseDefaultElement(Element el) throws ParseException {
-	String elementName = el.getLocalName();
+    private Term parseDefaultElement(Element element) throws ParseException {
+	String elementName = element.getLocalName();
 	Term result = null;
 
 	if (elementName.equals(tagNames.PLEX)) {
-	    result = parsePlex(el);
+	    result = parsePlex(element);
 	} else if (elementName.equals(tagNames.EXPR)) {
-	    result = parseExpression(el);
+	    result = parseExpression(element);
 	} else if (elementName.equals(tagNames.IND)) {
-	    result = parseInd(el);
+	    result = parseInd(element);
 	} else if (elementName.equals(tagNames.DATA)) {
-	    result = parseData(el);
+	    result = parseData(element);
 	} else if (elementName.equals(tagNames.SKOLEM)) {
-	    result = parseSkolem(el);
+	    result = parseSkolem(element);
 	} else if (elementName.equals(tagNames.VAR)) {
-	    result = parseVar(el);
+	    result = parseVar(element);
 	} else if (elementName.equals(tagNames.SLOT)) {
-	    result = parseSlot(el);
+	    result = parseSlot(element);
 	} else if (elementName.equals(tagNames.RESL)) {
-	    result = parseResl(el);
+	    result = parseResl(element);
 	} else if (elementName.equals(tagNames.REPO)) {
-	    result = parseRepo(el);
+	    result = parseRepo(element);
 	} else {
 	    throw new ParseException(String.format(
 		    "Element (%s) not supported!", elementName));
@@ -1064,11 +1065,13 @@ public class RuleMLDocumentParser {
     /**
      * Get the inner element with role tag skipped
      * 
-     * (e.g. <arg><Atom>...</Atom></arg> returns Atom element)
+     * (e.g. <arg><Atom>...</Atom></arg> returns Atom element including all
+     * children of the Atom element)
      * 
      * @param element
      *            Element for which role tags should be skipped
-     * @return Element with role tags skipped
+     * 
+     * @return The inner element without role tag encapsulation
      */
     private Element skipRoleTag(Element element) {
 	Element result = element;
@@ -1114,7 +1117,10 @@ public class RuleMLDocumentParser {
      * 
      * @param element
      *            The element whose children should be parsed.
-     * @return A collection of Term objects generated from the children.
+     * 
+     * @return A Vector of Term objects generated by parsing the element's
+     *         children.
+     * 
      * @throws ParseException
      *             Thrown if the parseDefaultElement method is unable to handle
      *             one of element's children.
@@ -1138,9 +1144,11 @@ public class RuleMLDocumentParser {
      * 
      * @param elements
      *            Element to search for the child
+     * 
      * @param childName
      *            Name of the element to look for
-     * @return First element which is labeled with childName
+     * 
+     * @return The first Element which is labeled with childName
      */
     private Element getFirstChildElement(Element element, String childName) {
 	Elements children = element.getChildElements();
@@ -1158,8 +1166,10 @@ public class RuleMLDocumentParser {
      * 
      * @param elements
      *            Elements to search for child
+     * 
      * @param startIndex
      *            Start index to start search at
+     * 
      * @return Index of the first element which is not labeled with OID. If not
      *         exist, returns -1.
      */
@@ -1178,8 +1188,10 @@ public class RuleMLDocumentParser {
      * Parse the type attribute of <Expr>, <Ind>, <Data> and <Var> elements.
      * 
      * @param element
-     *            The element whose type attribute sould be parsed.
+     *            The element whose type attribute should be parsed.
+     * 
      * @return A unique numeric identifier generated by the type system.
+     * 
      * @throws ParseException
      *             Thrown if the type specified in the type attribute is
      *             invalid.
@@ -1207,8 +1219,8 @@ public class RuleMLDocumentParser {
      * @param element
      *            The element to parse
      * 
-     * @return A Term data structure that represents the data element in a way
-     *         that can be understood by the reasoning engine.
+     * @return A Term data structure that represents the element in a way that
+     *         can be understood by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if the type specified in the optional type attribute

@@ -233,7 +233,10 @@ public class RuleMLParser implements PreferenceChangeListener {
      * Parses a RuleML query
      * 
      * @param contents
-     * @return
+     *            The document content
+     * 
+     * @return A DefiniteClause containing the parsed document
+     * 
      * @throws ParseException
      * @throws ParsingException
      * @throws ValidityException
@@ -268,8 +271,9 @@ public class RuleMLParser implements PreferenceChangeListener {
      * engine.
      * 
      * @param query
-     *            : Input query
-     * @return Input query as RuleML implication
+     *            An input query
+     *            
+     * @return Input query as a RuleML implication
      */
     private String buildFakeImplication(String query) {
 	Builder builder = new Builder();
@@ -313,8 +317,9 @@ public class RuleMLParser implements PreferenceChangeListener {
      * Manually add <Query> wrapper if not exists
      * 
      * @param query
-     *            : Input query
-     * @return Input query encapsulated with <Query> tag
+     *            An input query
+     *            
+     * @return Input query encapsulated with a <Query> tag
      */
     private String ensureQueryTag(String query) {
 	// Evil hack: encapsulate the query contents in a pair of <Query> tags
