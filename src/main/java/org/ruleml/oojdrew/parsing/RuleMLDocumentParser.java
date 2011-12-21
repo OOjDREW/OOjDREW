@@ -751,8 +751,8 @@ public class RuleMLDocumentParser {
 	    subterms.add(term);
 	}
 
-	// if foundoid is false
-	// no idea what this is doing
+	// Generate a fake OID if the atom does not have one.
+	// This is a requirement put in place by the reasoner.
 	if (!foundoid) {
 	    if (head) {
 		String symname = "$gensym" + SymbolTable.genid++;
