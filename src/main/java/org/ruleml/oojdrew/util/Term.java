@@ -1168,286 +1168,157 @@ public class Term implements Comparable {
      * @param varNames String[] The variable names associated with the term;
      * these are stored in the DefiniteClause object associated with the term.
      *
-     * @param version int - this is to determine what RuleML parser to use.
+     * @param rmlFormat int - this is to determine what RuleML parser to use.
      *
      * @return Element The OO RuleML syntax representation of this, as an
      * Element value.
      */
          
-    public Element toRuleML(String[] varNames, boolean head, RuleMLFormat version) {
-    	
-    	//Printing the Clauses in RuleML 0.91 Format
-    			
-		if(version == RuleMLFormat.RuleML91){
+    public Element toRuleML(String[] varNames, boolean head,
+	    RuleMLFormat rmlFormat) {
 
-        Element el = null;
-        boolean dst = false;
-        if (this.isExpr()) {
-            if (this.isAtom() && this.symbol == SymbolTable.INAF) {
-                el = new Element("Naf");
-            } else if (this.isAtom() && this.symbol == SymbolTable.IASSERT) {
-                el = new Element("Assert");
-                if (this.subTerms.length == 1) {
-                    el.insertChild(subTerms[0].toRuleML(varNames, true,version), 0);
-                } else {
-                    Element el2 = new Element("Implies");
-                    if (this.subTerms.length > 2) {
-                        Element el3 = new Element("And");
-                        for (int i = 1; i < this.subTerms.length; i++) {
-                            el3.appendChild(this.subTerms[i].toRuleML(varNames, false,version));
-                        }
-                        el2.appendChild(el3);
-                    } else {
-                        el2.appendChild(this.subTerms[1].toRuleML(varNames, false,version));
-                    }
-                    el2.appendChild(this.subTerms[0].toRuleML(varNames, true,version));
-                    el.appendChild(el2);
+	RuleMLTagNames rmlTagNames = new RuleMLTagNames(rmlFormat);
+	
+	// Printing the Clauses in RuleML Format
 
-                }
-                dst = true;
-            }
+	    Element el = null;
+	    boolean dst = false;
+	    if (this.isExpr()) {
+		if (this.isAtom() && this.symbol == SymbolTable.INAF) {
+		    el = new Element(rmlTagNames.NAF);
+		} else if (this.isAtom() && this.symbol == SymbolTable.IASSERT) {
+		    el = new Element(rmlTagNames.ASSERT);
+		    if (this.subTerms.length == 1) {
+			el.insertChild(
+				subTerms[0].toRuleML(varNames, true, rmlFormat),
+				0);
+		    } else {
+			Element el2 = new Element(rmlTagNames.IMPLIES);
+			if (this.subTerms.length > 2) {
+			    Element el3 = new Element(rmlTagNames.AND);
+			    for (int i = 1; i < this.subTerms.length; i++) {
+				el3.appendChild(this.subTerms[i].toRuleML(
+					varNames, false, rmlFormat));
+			    }
+			    el2.appendChild(el3);
+			} else {
+			    el2.appendChild(this.subTerms[1].toRuleML(varNames,
+				    false, rmlFormat));
+			}
+			el2.appendChild(this.subTerms[0].toRuleML(varNames,
+				true, rmlFormat));
+			el.appendChild(el2);
 
-            else if (this.isAtom()) {
-                el = new Element("Atom");
-                
-                //Element op = new Element("op");
-                //el.insertChild(op,el.getChildCount());
-                                
-                Element rel = new Element("Rel");
-                el.insertChild(rel, el.getChildCount());
-                
-                rel.insertChild(SymbolTable.symbol(this.symbol), 0);
-            } else if (this.symbol == SymbolTable.IPLEX) {
-                el = new Element("Plex");
-            } else {
-                el = new Element("Expr");
-                
-                //Element op = new Element("op");
-                //el.insertChild(op,el.getChildCount());
-                
-                Element ctor = new Element("Fun");
-                el.insertChild(ctor, el.getChildCount());
-                ctor.insertChild(SymbolTable.symbol(this.symbol), 0);
-            }
+		    }
+		    dst = true;
+		}
 
-            for (int i = 0; i < this.subTerms.length && !dst; i++) {
-                Element tmp = this.subTerms[i].toRuleML(varNames, head,version);
-                if(tmp != null)
-                    el.insertChild(tmp, el.getChildCount());
-            }
-        } else {
-            if(this.role == SymbolTable.IOID && !org.ruleml.oojdrew.Config.PRINTGENOIDS){
-                if(this.symbol > 0 && this.getSymbolString().startsWith("$gensym") && head)
-                    return null;
-                else if(this.symbol < 0 && varNames[-(this.symbol + 1)].startsWith("$ANON") && !head)
-                    return null;
-            }
-            if (this.symbol < 0) {
-                el = new Element("Var");
-                if (!varNames[ -(symbol + 1)].startsWith("$ANON") || org.ruleml.oojdrew.Config.PRINTANONVARNAMES) {
-                    String vname = varNames[ -(symbol + 1)];
-                    if(org.ruleml.oojdrew.Config.PRINTVARID)
-                        vname += -(symbol + 1);
-                    el.insertChild(vname, 0);
-                }
-            } else {
-                String sym = SymbolTable.symbol(this.symbol);
-                if(sym.startsWith("$gensym") && !org.ruleml.oojdrew.Config.PRINTGENSYMS){
-                    el = new Element("Skolem");
-                    int idx = sym.indexOf("$", 7);
-                    if(idx > -1){
-                        String skoname = sym.substring(idx + 1);
-                        el.appendChild(skoname);
-                    }
-                }else{
-                	
-                	if(!isData){
-                    	el = new Element("Ind");
-                    	el.insertChild(sym, 0);
-                	}
-                	if(isData){
-                    	el = new Element("Data");
-                    	el.insertChild(sym, 0);                		
-                	}
-                }
-            }
-        }
+		else if (this.isAtom()) {
+		    el = new Element(rmlTagNames.ATOM);
+		    
+		    Element rel = new Element(rmlTagNames.REL);
+		    el.insertChild(rel, el.getChildCount());
 
-        if (this.type != Types.IOBJECT) {
-            Attribute a = new Attribute("type", Types.typeName(this.type));
-            el.addAttribute(a);
-        }
+		    rel.insertChild(SymbolTable.symbol(this.symbol), 0);
+		} else if (this.symbol == SymbolTable.IPLEX) {
+		    el = new Element(rmlTagNames.PLEX);
+		} else {
+		    el = new Element(rmlTagNames.EXPR);
 
-        if (this.role == SymbolTable.IREST) {
-            Element e2 = new Element("resl");
-            e2.insertChild(el, 0);
-            return e2;
-        } else if (this.role == SymbolTable.IPREST) {
-            Element e2 = new Element("repo");
-            e2.insertChild(el, 0);
-            return e2;
-        } else if (this.role == SymbolTable.IOID) {
-            Element e2 = new Element("oid");
-            e2.insertChild(el, 0);
-            return e2;
-        } else if (this.role == SymbolTable.INOROLE) {
-            return el;
-        } else {
-        	        	
-            Element e2 = new Element("slot");
-			
-            Element e3 = null;
- 
-            if(!dataSlot){
-            	e3 = new Element("Ind");
-            	e3.appendChild(SymbolTable.role(this.role));
-            }
-            if(dataSlot){
-            	e3 = new Element("Data");
-            	e3.appendChild(SymbolTable.role(this.role));
-            }
-            
-            
-            e2.appendChild(e3);
-            e2.appendChild(el);
-            return e2;
-        }
-		
-   	}//RuleML 0.91
-    	
-    	//RuleML 0.88 Format	
-      	
-      	if(version == RuleMLFormat.RuleML88){
-      	
-      	Element el = null;
-        boolean dst = false;
-        if (this.isExpr()) {
-            if (this.isAtom() && this.symbol == SymbolTable.INAF) {
-                el = new Element("Naf");
-            } else if (this.isAtom() && this.symbol == SymbolTable.IASSERT) {
-                el = new Element("Assert");
-                if (this.subTerms.length == 1) {
-                    el.insertChild(subTerms[0].toRuleML(varNames, true,version), 0);
-                } else {
-                    Element el2 = new Element("Implies");
-                    if (this.subTerms.length > 2) {
-                        Element el3 = new Element("And");
-                        for (int i = 1; i < this.subTerms.length; i++) {
-                            el3.appendChild(this.subTerms[i].toRuleML(varNames, false,version));
-                        }
-                        el2.appendChild(el3);
-                    } else {
-                        el2.appendChild(this.subTerms[1].toRuleML(varNames, false,version));
-                    }
-                    el2.appendChild(this.subTerms[0].toRuleML(varNames, true,version));
-                    el.appendChild(el2);
+		    Element ctor = new Element(rmlTagNames.FUN);
+		    el.insertChild(ctor, el.getChildCount());
+		    ctor.insertChild(SymbolTable.symbol(this.symbol), 0);
+		}
 
-                }
-                dst = true;
-            }
+		for (int i = 0; i < this.subTerms.length && !dst; i++) {
+		    Element tmp = this.subTerms[i].toRuleML(varNames, head,
+			    rmlFormat);
+		    if (tmp != null)
+			el.insertChild(tmp, el.getChildCount());
+		}
+	    } else {
+		if (this.role == SymbolTable.IOID
+			&& !org.ruleml.oojdrew.Config.PRINTGENOIDS) {
+		    if (this.symbol > 0
+			    && this.getSymbolString().startsWith("$gensym")
+			    && head)
+			return null;
+		    else if (this.symbol < 0
+			    && varNames[-(this.symbol + 1)].startsWith("$ANON")
+			    && !head)
+			return null;
+		}
+		if (this.symbol < 0) {
+		    el = new Element(rmlTagNames.VAR);
+		    if (!varNames[-(symbol + 1)].startsWith("$ANON")
+			    || org.ruleml.oojdrew.Config.PRINTANONVARNAMES) {
+			String vname = varNames[-(symbol + 1)];
+			if (org.ruleml.oojdrew.Config.PRINTVARID)
+			    vname += -(symbol + 1);
+			el.insertChild(vname, 0);
+		    }
+		} else {
+		    String sym = SymbolTable.symbol(this.symbol);
+		    if (sym.startsWith("$gensym")
+			    && !org.ruleml.oojdrew.Config.PRINTGENSYMS) {
+			el = new Element(rmlTagNames.SKOLEM);
+			int idx = sym.indexOf("$", 7);
+			if (idx > -1) {
+			    String skoname = sym.substring(idx + 1);
+			    el.appendChild(skoname);
+			}
+		    } else {
 
-            else if (this.isAtom()) {
-                el = new Element("Atom");
-                Element rel = new Element("Rel");
-                el.insertChild(rel, el.getChildCount());
-                rel.insertChild(SymbolTable.symbol(this.symbol), 0);
-            } else if (this.symbol == SymbolTable.IPLEX) {
-                el = new Element("Plex");
-            } else {
-                el = new Element("Cterm");
-                Element ctor = new Element("Ctor");
-                el.insertChild(ctor, el.getChildCount());
-                ctor.insertChild(SymbolTable.symbol(this.symbol), 0);
-            }
+			if (!isData) {
+			    el = new Element(rmlTagNames.IND);
+			    el.insertChild(sym, 0);
+			}
+			if (isData) {
+			    el = new Element(rmlTagNames.DATA);
+			    el.insertChild(sym, 0);
+			}
+		    }
+		}
+	    }
 
-            for (int i = 0; i < this.subTerms.length && !dst; i++) {
-                Element tmp = this.subTerms[i].toRuleML(varNames, head,version);
-                if(tmp != null)
-                    el.insertChild(tmp, el.getChildCount());
-            }
-        } else {
-            if(this.role == SymbolTable.IOID && !org.ruleml.oojdrew.Config.PRINTGENOIDS){
-                if(this.symbol > 0 && this.getSymbolString().startsWith("$gensym") && head)
-                    return null;
-                else if(this.symbol < 0 && varNames[-(this.symbol + 1)].startsWith("$ANON") && !head)
-                    return null;
-            }
-            if (this.symbol < 0) {
-                el = new Element("Var");
-                if (!varNames[ -(symbol + 1)].startsWith("$ANON") || org.ruleml.oojdrew.Config.PRINTANONVARNAMES) {
-                    String vname = varNames[ -(symbol + 1)];
-                    if(org.ruleml.oojdrew.Config.PRINTVARID)
-                        vname += -(symbol + 1);
-                    el.insertChild(vname, 0);
-                }
-            } else {
-                String sym = SymbolTable.symbol(this.symbol);
-                if(sym.startsWith("$gensym") && !org.ruleml.oojdrew.Config.PRINTGENSYMS){
-                    el = new Element("Skolem");
-                    int idx = sym.indexOf("$", 7);
-                    if(idx > -1){
-                        String skoname = sym.substring(idx + 1);
-                        el.appendChild(skoname);
-                    }
-                }else{
-                	
-                	if(!isData){
-                    	el = new Element("Ind");
-                    	el.insertChild(sym, 0);
-                	}
-                	if(isData){
-                    	el = new Element("Data");
-                    	el.insertChild(sym, 0);                		
-                	}
-                }
-            }
-        }
+	    if (this.type != Types.IOBJECT) {
+		Attribute a = new Attribute(rmlTagNames.TYPE, Types.typeName(this.type));
+		el.addAttribute(a);
+	    }
 
-        if (this.type != Types.IOBJECT) {
-            Attribute a = new Attribute("type", Types.typeName(this.type));
-            el.addAttribute(a);
-        }
+	    if (this.role == SymbolTable.IREST) {
+		Element e2 = new Element(rmlTagNames.RESL);
+		e2.insertChild(el, 0);
+		return e2;
+	    } else if (this.role == SymbolTable.IPREST) {
+		Element e2 = new Element(rmlTagNames.REPO);
+		e2.insertChild(el, 0);
+		return e2;
+	    } else if (this.role == SymbolTable.IOID) {
+		Element e2 = new Element(rmlTagNames.OID);
+		e2.insertChild(el, 0);
+		return e2;
+	    } else if (this.role == SymbolTable.INOROLE) {
+		return el;
+	    } else {
 
-        if (this.role == SymbolTable.IREST) {
-            Element e2 = new Element("resl");
-            e2.insertChild(el, 0);
-            return e2;
-        } else if (this.role == SymbolTable.IPREST) {
-            Element e2 = new Element("repo");
-            e2.insertChild(el, 0);
-            return e2;
-        } else if (this.role == SymbolTable.IOID) {
-            Element e2 = new Element("oid");
-            e2.insertChild(el, 0);
-            return e2;
-        } else if (this.role == SymbolTable.INOROLE) {
-            return el;
-        } else {
-        	
-            Element e2 = new Element("slot");
-			
-            Element e3 = null;
-            
-            if(!dataSlot){
-            	e3 = new Element("Ind");
-            	e3.appendChild(SymbolTable.role(this.role));
-            }
-            if(dataSlot){
-            	e3 = new Element("Data");
-            	e3.appendChild(SymbolTable.role(this.role));
-            }
-            
-            
-            e2.appendChild(e3);
-            e2.appendChild(el);
-            return e2;
-        }
-      	
-      	
-    }//RuleML 0.88
-      	
-      	Element ret = null;
-		return ret;
+		Element e2 = new Element(rmlTagNames.SLOT);
+
+		Element e3 = null;
+
+		if (!dataSlot) {
+		    e3 = new Element(rmlTagNames.IND);
+		    e3.appendChild(SymbolTable.role(this.role));
+		}
+		if (dataSlot) {
+		    e3 = new Element(rmlTagNames.DATA);
+		    e3.appendChild(SymbolTable.role(this.role));
+		}
+
+		e2.appendChild(e3);
+		e2.appendChild(el);
+		return e2;
+	    }
     }
 
     /**
