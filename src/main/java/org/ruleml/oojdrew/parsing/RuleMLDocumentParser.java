@@ -741,11 +741,14 @@ public class RuleMLDocumentParser {
 	    if (element.getLocalName().equals(tagNames.OID)) {
 		if (foundoid) {
 		    throw new ParseException(
-			    "<Atom> must contain a most one <oid>.");
+			    "<Atom> must contain at most one <oid>.");
 		}
 		term = parseOid(element);
 		foundoid = true;
 	    } else {
+		// Hack: remove <arg index="..."> element and assume
+		// that elements are in canonical order
+		element = skipRoleTag(element);
 		term = parseDefaultElement(element);
 	    }
 	    subterms.add(term);
@@ -803,7 +806,7 @@ public class RuleMLDocumentParser {
 		    "In a <slot> only <Ind> and <Data> are allowed.");
 	}
 	// Getting the Role from the symbol Table, it will assign one if it
-	// doesnt already exist
+	// does not already exist
 	int role = SymbolTable.internRole(firstChildName.getValue().trim());
 
 	Element element = children.get(1);
@@ -974,15 +977,15 @@ public class RuleMLDocumentParser {
      *            in the clause.
      */
     private void fixVarTypes(Term complexTerm, Hashtable<Integer, Integer> types) {
-	// logger.debug("Fixing term: " + complexTerm.toPOSLString(true));
+	logger.debug("Fixing term: " + complexTerm.toPOSLString(true));
 	for (int i = 0; i < complexTerm.subTerms.length; i++) {
 	    if (complexTerm.subTerms[i].isExpr()) {
 		fixVarTypes(complexTerm.subTerms[i], types);
 	    } else if (complexTerm.subTerms[i].getSymbol() < 0) {
 		Integer sym = complexTerm.subTerms[i].getSymbol();
-		// logger.debug("Fixing symbol = " + sym);
+		logger.debug("Fixing symbol = " + sym);
 		Integer type = (Integer) types.get(sym);
-		// logger.debug("Type = " + type);
+		logger.debug("Type = " + type);
 		complexTerm.subTerms[i].type = type.intValue();
 	    }
 	}
@@ -1080,31 +1083,24 @@ public class RuleMLDocumentParser {
 	boolean hasRoleTag = false;
 	if (elementName.equals(tagNames.ARG)) {
 	    hasRoleTag = true;
-	    logger.warn("arg element skipped.");
 	} else if (elementName.equals(tagNames.FORMULA)) {
 	    hasRoleTag = true;
-	    logger.warn("formula element skipped.");
 	} else if (elementName.equals(tagNames.ACT)) {
 	    hasRoleTag = true;
-	    logger.warn("act element skipped.");
 	} else if (elementName.equals(tagNames.DECLARE)) {
 	    hasRoleTag = true;
-	    logger.warn("declare element skipped.");
 	} else if (elementName.equals(tagNames.STRONG)) {
 	    hasRoleTag = true;
-	    logger.warn("strong element skipped.");
 	} else if (elementName.equals(tagNames.WEAK)) {
 	    hasRoleTag = true;
-	    logger.warn("weak element skipped.");
 	} else if (elementName.equals(tagNames.TORSO)) {
 	    hasRoleTag = true;
-	    logger.warn("torso element skipped.");
 	} else if (elementName.equals(tagNames.DEGREE)) {
 	    hasRoleTag = true;
-	    logger.warn("degree element skipped.");
 	}
 
 	if (hasRoleTag) {
+	    logger.debug(String.format("%s element skipped", elementName));
 	    result = element.getChildElements().get(0);
 	}
 
