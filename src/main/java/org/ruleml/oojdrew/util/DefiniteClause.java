@@ -23,6 +23,7 @@ import java.util.Vector;
 import nu.xom.Document;
 import nu.xom.Element;
 
+import org.ruleml.oojdrew.parsing.RuleMLTagNames;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 
 /**
@@ -200,34 +201,34 @@ public class DefiniteClause {
      */
     public Element toRuleML(RuleMLFormat rmlFormat) {
 
-	Element el;
-	if (atoms.length == 1) {
+	RuleMLTagNames rmlTagNames = new RuleMLTagNames(rmlFormat);
 
-	    el = atoms[0].toRuleML(variableNames, true, rmlFormat);
+	Element element;
+	if (atoms.length == 1) {
+	    element = atoms[0].toRuleML(variableNames, true, rmlFormat);
 	} else {
-	    el = new Element("Implies");
+	    element = new Element(rmlTagNames.IMPLIES);
 	    if (atoms.length > 2) {
-		Element el2 = new Element("And");
+		Element el2 = new Element(rmlTagNames.AND);
 		for (int i = 1; i < atoms.length; i++) {
 
 		    el2.appendChild(atoms[i].toRuleML(variableNames, false,
 			    rmlFormat));
 		}
-		el.appendChild(el2);
+		element.appendChild(el2);
 	    } else {
-		el.appendChild(atoms[1].toRuleML(variableNames, false,
+		element.appendChild(atoms[1].toRuleML(variableNames, false,
 			rmlFormat));
 	    }
 
-	    el.appendChild(atoms[0].toRuleML(variableNames, true, rmlFormat));
-
+	    element.appendChild(atoms[0].toRuleML(variableNames, true, rmlFormat));
 	}
 	// Each atom no longer needs a closure attribute, the closure is
 	// defined at the Rulebase level
 	// Attribute a = new Attribute("closure", "universal");
 	// el.addAttribute(a);
 
-	return el;
+	return element;
     }
 
     /**
