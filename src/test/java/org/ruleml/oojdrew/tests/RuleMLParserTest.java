@@ -24,70 +24,71 @@ import org.ruleml.oojdrew.parsing.RuleMLParser;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 
 public class RuleMLParserTest extends TestCase {
-	private Configuration config;
-	
-	public static void main(String[] args)
-	{
-		try
-		{
-			RuleMLParserTest test = new RuleMLParserTest("RuleML 0.91 Compatibility Parsing (discount)");
-			test.testRuleML91CompatibilityParsing();
-			
-			test = new RuleMLParserTest("RuleML 0.91 Parsing (discount)");
-			test.testRuleML91Parsing();
-			
-			test = new RuleMLParserTest("RuleML 1.0 Parsing (discount)");
-			test.testRuleML100Parsing();
-			
-			System.out.println("All tests passed.");
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		
-	}
-	
-	public RuleMLParserTest(String testName)
-	{
-		super(testName);
-		this.config = new MockConfiguration();
-		config.setValidateRuleMLEnabled(false);
+    private Configuration config;
+
+    public static void main(String[] args) {
+	try {
+	    RuleMLParserTest test = new RuleMLParserTest(
+		    "RuleML 0.91 Compatibility Parsing (discount)");
+	    test.testRuleML91CompatibilityParsing();
+
+	    test = new RuleMLParserTest("RuleML 0.91 Parsing (discount)");
+	    test.testRuleML91Parsing();
+
+	    test = new RuleMLParserTest("RuleML 1.0 Parsing (discount)");
+	    test.testRuleML100Parsing();
+
+	    System.out.println("All tests passed.");
+	} catch (Exception e) {
+	    e.printStackTrace();
 	}
 
-	public void testRuleML91CompatibilityParsing()
-	{
-		genericRuleMLParsingTest("src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/discount_091_compat.ruleml.xml", false);
-	}
-	
-	public void testRuleML91Parsing()
-	{
-		genericRuleMLParsingTest("src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/discount-0.91.ruleml.xml", false);
-	}
-	
-	public void testRuleML100Parsing()
-	{
-		genericRuleMLParsingTest("src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/discount-1.0.ruleml.xml", false);
-	}
-	
-	public void testRuleML100WithoutRoot()
-	{
-		genericRuleMLParsingTest("src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/studycourse.ruleml.xml", false);
-	}
-	
-	public void genericRuleMLParsingTest(String ruleMLFile, boolean shouldThrow)
-	{
-		boolean thrown = false;
+    }
 
-		RuleMLParser rmlParser = new RuleMLParser(config);
-		
-		try {
-			rmlParser.parseFile(RuleMLFormat.RuleML91, ruleMLFile);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			thrown = true;
-		}
-		
-		// Parsing in compatibility mode should throw no exception
-		assertEquals(shouldThrow, thrown);
+    public RuleMLParserTest(String testName) {
+	super(testName);
+	this.config = new MockConfiguration();
+	config.setValidateRuleMLEnabled(false);
+    }
+
+    public void testRuleML91CompatibilityParsing() {
+	genericRuleMLParsingTest(
+		"src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/discount_091_compat.ruleml.xml",
+		RuleMLFormat.RuleML91, false);
+    }
+
+    public void testRuleML91Parsing() {
+	genericRuleMLParsingTest(
+		"src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/discount-0.91.ruleml.xml",
+		RuleMLFormat.RuleML91, false);
+    }
+
+    public void testRuleML100Parsing() {
+	genericRuleMLParsingTest(
+		"src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/discount-1.0.ruleml.xml",
+		RuleMLFormat.RuleML100, false);
+    }
+
+    public void testRuleML100WithoutRoot() {
+	genericRuleMLParsingTest(
+		"src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/studycourse.ruleml.xml",
+		RuleMLFormat.RuleML100, false);
+    }
+
+    public void genericRuleMLParsingTest(String ruleMLFile,
+	    RuleMLFormat rmlFormat, boolean shouldThrow) {
+	boolean thrown = false;
+
+	RuleMLParser rmlParser = new RuleMLParser(config);
+
+	try {
+	    rmlParser.parseFile(rmlFormat, ruleMLFile);
+	} catch (Exception e1) {
+	    e1.printStackTrace();
+	    thrown = true;
 	}
+
+	// Parsing in compatibility mode should throw no exception
+	assertEquals(shouldThrow, thrown);
+    }
 }
