@@ -535,12 +535,12 @@ public class Term implements Comparable {
      * 
      * @return The String representation of this term.
      */
-    public String toString(String[] varNames, RuleMLFormat version) {
+    public String toString(String[] varNames, RuleMLFormat rmlFormat) {
         if (Config.PRPRINT) {
             return this.toPOSLString(varNames, true);
         } else {
         	
-            return this.toRuleMLString(varNames, version);
+            return this.toRuleMLString(varNames, rmlFormat);
         
         }
     }
