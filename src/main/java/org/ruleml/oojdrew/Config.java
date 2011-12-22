@@ -22,53 +22,58 @@ import java.util.prefs.Preferences;
 
 import javax.swing.UIManager;
 
+import org.apache.log4j.Level;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 
 /**
- * <p>Title: OO jDREW</p>
- *
- * <p>Description: Reasoning Engine for the Semantic Web - Supporting OO RuleML
- * 0.88</p>
- *s
- * <p>Copyright: Copyright (c) 2005</p>
- *
+ * <p>
+ * Title: OO jDREW
+ * </p>
+ * 
+ * <p>
+ * Description: Reasoning Engine for the Semantic Web - Supporting OO RuleML
+ * 0.88
+ * </p>
+ * s
+ * <p>
+ * Copyright: Copyright (c) 2005
+ * </p>
+ * 
  * @author Marcel A. Ball
  * @version 0.89
  */
 public class Config implements Configuration {
     /**
-     * This variable specifies the default output format that is produced
-     * when toString() calls are made on Term and DefiniteClause Objects.
-     * If this is true then output is in POSL syntax, otherwise RuleML 0.88
-     * is produced.
+     * This variable specifies the default output format that is produced when
+     * toString() calls are made on Term and DefiniteClause Objects. If this is
+     * true then output is in POSL syntax, otherwise RuleML 0.88 is produced.
      */
     public static boolean PRPRINT = false;
 
     /**
      * This variable controls how Variables are printed. If true then the
-     * variable name is combined with the variable id in the output,
-     * otherwise only the variable name is printed. This is useful as after
-     * unification it is possible to have two different variable with the
-     * same base name, but the option to disable is there so that the
-     * parsing and output libraries can be used to translate from POSL
-     * syntax to RuleML 0.88 syntax without chaning the variable names.
+     * variable name is combined with the variable id in the output, otherwise
+     * only the variable name is printed. This is useful as after unification it
+     * is possible to have two different variable with the same base name, but
+     * the option to disable is there so that the parsing and output libraries
+     * can be used to translate from POSL syntax to RuleML 0.88 syntax without
+     * chaning the variable names.
      */
     public static boolean PRINTVARID = true;
 
-
     /**
      * This variable controls how generated symbols (skolem constants) are
-     * printed. If this is set to true, then the generated symbol is output as
-     * a regular constant (eg. <Ind>$gensym10000</Ind> or $gensym10000; in
-     * RuleML and POSL respectively). If this is set to false then the
-     * generated symbol is output the same as it was input (eg. <Skolem /> or _;
-     * in RuleML and POSL respectively).
+     * printed. If this is set to true, then the generated symbol is output as a
+     * regular constant (eg. <Ind>$gensym10000</Ind> or $gensym10000; in RuleML
+     * and POSL respectively). If this is set to false then the generated symbol
+     * is output the same as it was input (eg. <Skolem /> or _; in RuleML and
+     * POSL respectively).
      */
     public static boolean PRINTGENSYMS = false;
 
     /**
-     * This variable controls how system generated oids are printed. If this
-     * is set to true, then the generated symbol is output; with the generated
+     * This variable controls how system generated oids are printed. If this is
+     * set to true, then the generated symbol is output; with the generated
      * symbol printed as determined by PRINTGENSYMS. If it is set to false then
      * generated oids are completely omitted. This variable does not effect the
      * RuleML output, only POSL; in RuleML the oids are always printed, but
@@ -79,82 +84,89 @@ public class Config implements Configuration {
     /**
      * This variable controls how anonymous varaibles are printed. If this is
      * set to false (the default), then anonymous variables are printed as they
-     * are input (<Var /> or ?; for RuleML and POSL respectively). If it is
-     * set to true then the generated variable name is output (eg.
+     * are input (<Var /> or ?; for RuleML and POSL respectively). If it is set
+     * to true then the generated variable name is output (eg.
      * <Var>$anonvar1</Var> or ?$ANON1; for RuleML and POSL respectively).
      */
     public static boolean PRINTANONVARNAMES = false;
-    
+
     private Preferences preferences;
-    
-    public Config()
-    {
-    	this.preferences = Preferences.userNodeForPackage(getClass());
-    }
-    
-    public boolean getValidateRuleMLEnabled()
-    {
-    	return preferences.getBoolean("ValidateRuleML", false);
-    }
-    
-    public void setValidateRuleMLEnabled(boolean enabled)
-    {
-    	preferences.putBoolean("ValidateRuleML", enabled);
+
+    public Config() {
+	this.preferences = Preferences.userNodeForPackage(getClass());
     }
 
-	public int getTextAreaFontSize() {
-		return preferences.getInt("TextAreaFontSize" , 12);
-	}
+    public boolean getValidateRuleMLEnabled() {
+	return preferences.getBoolean("ValidateRuleML", false);
+    }
 
-	public void setTextAreaFontSize(int newSize) {
-		preferences.putInt("TextAreaFontSize", newSize);
-	}
+    public void setValidateRuleMLEnabled(boolean enabled) {
+	preferences.putBoolean("ValidateRuleML", enabled);
+    }
 
-	public void addPreferenceChangeListener(
-			PreferenceChangeListener listener) {
-		preferences.addPreferenceChangeListener(listener);
-	}
+    public int getTextAreaFontSize() {
+	return preferences.getInt("TextAreaFontSize", 12);
+    }
 
-	public int getUIFontSize() {
-		return preferences.getInt("UIFontSize" , 12);
-	}
+    public void setTextAreaFontSize(int newSize) {
+	preferences.putInt("TextAreaFontSize", newSize);
+    }
 
-	public void setUIFontSize(int newSize) {
-		preferences.putInt("UIFontSize", newSize);
-	}
+    public void addPreferenceChangeListener(PreferenceChangeListener listener) {
+	preferences.addPreferenceChangeListener(listener);
+    }
 
-	public boolean getDebugConsoleVisible() {
-		return preferences.getBoolean("DebugConsoleVisible", false);
-	}
+    public int getUIFontSize() {
+	return preferences.getInt("UIFontSize", 12);
+    }
 
-	public void setDebugConsoleVisible(boolean visible) {
-		preferences.putBoolean("DebugConsoleVisible", visible);
-	}
-	
-	public String getSelectedLookAndFeel() {
-		String defaultLookAndFeelName = UIManager.getSystemLookAndFeelClassName();
-		return preferences.get("LookAndFeel", defaultLookAndFeelName);
-	}
-	
-	public void setLookAndFeel(String lafClassName)	{
-		preferences.put("LookAndFeel", lafClassName);
-	}
+    public void setUIFontSize(int newSize) {
+	preferences.putInt("UIFontSize", newSize);
+    }
 
-	public RuleMLFormat getSelectedRuleMLFormat() {
-		String defaultRuleMLFormat = RuleMLFormat.RuleML100.getVersionName();
-		String configuredRuleMLVersion = preferences.get("RuleMLFormat", defaultRuleMLFormat);
-		return RuleMLFormat.fromString(configuredRuleMLVersion);
-	}
+    public boolean getDebugConsoleVisible() {
+	return preferences.getBoolean("DebugConsoleVisible", false);
+    }
 
-	public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat) {
-		preferences.put("RuleMLFormat", rmlFormat.getVersionName());
-	}
+    public void setDebugConsoleVisible(boolean visible) {
+	preferences.putBoolean("DebugConsoleVisible", visible);
+    }
 
-	public boolean getLinkFontSizes() {
-		return preferences.getBoolean("LinkFontSizes", false);
-	}
+    public String getSelectedLookAndFeel() {
+	String defaultLookAndFeelName = UIManager
+		.getSystemLookAndFeelClassName();
+	return preferences.get("LookAndFeel", defaultLookAndFeelName);
+    }
 
-	public void setLinkFontSizes(boolean linkFontSizes) {
-		preferences.putBoolean("LinkFontSizes", linkFontSizes);
-	}
+    public void setLookAndFeel(String lafClassName) {
+	preferences.put("LookAndFeel", lafClassName);
+    }
+
+    public RuleMLFormat getSelectedRuleMLFormat() {
+	String defaultRuleMLFormat = RuleMLFormat.RuleML100.getVersionName();
+	String configuredRuleMLVersion = preferences.get("RuleMLFormat",
+		defaultRuleMLFormat);
+	return RuleMLFormat.fromString(configuredRuleMLVersion);
+    }
+
+    public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat) {
+	preferences.put("RuleMLFormat", rmlFormat.getVersionName());
+    }
+
+    public boolean getLinkFontSizes() {
+	return preferences.getBoolean("LinkFontSizes", false);
+    }
+
+    public void setLinkFontSizes(boolean linkFontSizes) {
+	preferences.putBoolean("LinkFontSizes", linkFontSizes);
+    }
+
+    public Level getLogLevel() {
+	int logLevel = preferences.getInt("LogLevel", Level.ERROR.toInt());
+	return Level.toLevel(logLevel);
+    }
+
+    public void setLogLevel(Level logLevel) {
+	preferences.putInt("LogLevel", logLevel.toInt());
+    }
 }

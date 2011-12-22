@@ -19,65 +19,74 @@ package org.ruleml.oojdrew.tests;
 
 import java.util.prefs.PreferenceChangeListener;
 
+import org.apache.log4j.Level;
 import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 
 public class MockConfiguration implements Configuration {
-	private boolean ruleMLCompatibilityModeEnabled;
-	private int uiFontSize;
-	private boolean linkFontSizes;
-	private String lookAndFeelClassName;
-	private RuleMLFormat rmlFormat;
-	
-	public boolean getValidateRuleMLEnabled() {
-		return ruleMLCompatibilityModeEnabled;
-	}
+    private boolean ruleMLCompatibilityModeEnabled;
+    private int uiFontSize;
+    private boolean linkFontSizes;
+    private String lookAndFeelClassName;
+    private RuleMLFormat rmlFormat;
+    private Level logLevel;
 
-	public void setValidateRuleMLEnabled(boolean enabled) {
-		ruleMLCompatibilityModeEnabled = enabled;
-	}
+    public boolean getValidateRuleMLEnabled() {
+	return ruleMLCompatibilityModeEnabled;
+    }
 
-	public int getTextAreaFontSize() {
-		throw new UnsupportedOperationException();
-	}
+    public void setValidateRuleMLEnabled(boolean enabled) {
+	ruleMLCompatibilityModeEnabled = enabled;
+    }
 
-	public void setTextAreaFontSize(int newSize) {
-		throw new UnsupportedOperationException();
-	}
+    public int getTextAreaFontSize() {
+	throw new UnsupportedOperationException();
+    }
 
-	public void addPreferenceChangeListener(PreferenceChangeListener listener) {
-	}
+    public void setTextAreaFontSize(int newSize) {
+	throw new UnsupportedOperationException();
+    }
 
-	public int getUIFontSize() {
-		return uiFontSize;
-	}
+    public void addPreferenceChangeListener(PreferenceChangeListener listener) {
+    }
 
-	public void setUIFontSize(int newSize) {
-		uiFontSize = newSize;
-	}
+    public int getUIFontSize() {
+	return uiFontSize;
+    }
 
-	public void setLookAndFeel(String lafClassName) {
-		lookAndFeelClassName = lafClassName;
-	}
+    public void setUIFontSize(int newSize) {
+	uiFontSize = newSize;
+    }
 
-	public String getSelectedLookAndFeel() {
-		return lookAndFeelClassName;
-	}
+    public void setLookAndFeel(String lafClassName) {
+	lookAndFeelClassName = lafClassName;
+    }
 
-	public RuleMLFormat getSelectedRuleMLFormat() {
-		return rmlFormat;
-	}
+    public String getSelectedLookAndFeel() {
+	return lookAndFeelClassName;
+    }
 
-	public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat) {
-		this.rmlFormat = rmlFormat;
-	}
+    public RuleMLFormat getSelectedRuleMLFormat() {
+	return rmlFormat;
+    }
 
-	public boolean getLinkFontSizes() {
-		return linkFontSizes;
-	}
+    public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat) {
+	this.rmlFormat = rmlFormat;
+    }
 
-	public void setLinkFontSizes(boolean linkFontSizes) {
-		this.linkFontSizes = linkFontSizes;
-	}
+    public boolean getLinkFontSizes() {
+	return linkFontSizes;
+    }
 
+    public void setLinkFontSizes(boolean linkFontSizes) {
+	this.linkFontSizes = linkFontSizes;
+    }
+
+    public Level getLogLevel() {
+	return logLevel;
+    }
+
+    public void setLogLevel(Level logLevel) {
+	this.logLevel = logLevel;
+    }
 }

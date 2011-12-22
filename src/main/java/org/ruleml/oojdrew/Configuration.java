@@ -18,26 +18,30 @@
 package org.ruleml.oojdrew;
 import java.util.prefs.PreferenceChangeListener;
 
+import org.apache.log4j.Level;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 
 public interface Configuration {
     public boolean getValidateRuleMLEnabled();
     public void setValidateRuleMLEnabled(boolean enabled);
-    
+
     public int getTextAreaFontSize();
     public void setTextAreaFontSize(int newSize);
-    
+
     public int getUIFontSize();
     public void setUIFontSize(int newSize);
-    
+
     public boolean getLinkFontSizes();
     public void setLinkFontSizes(boolean linkFontSizes);
+
+    public String getSelectedLookAndFeel();
+    public void setLookAndFeel(String lafClassName);
+
+    public RuleMLFormat getSelectedRuleMLFormat();
+    public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat);
     
-	public String getSelectedLookAndFeel();
-	public void setLookAndFeel(String lafClassName);
-	
-	public RuleMLFormat getSelectedRuleMLFormat();
-	public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat);
-	
+    public Level getLogLevel();
+    public void setLogLevel(Level logLevel);
+
     void addPreferenceChangeListener(PreferenceChangeListener listener);
 }

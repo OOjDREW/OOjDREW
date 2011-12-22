@@ -32,6 +32,7 @@ import nu.xom.Nodes;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
+import org.apache.log4j.Level;
 import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.xml.sax.SAXException;
@@ -64,6 +65,8 @@ public class RuleMLParser implements PreferenceChangeListener {
     private boolean validateRuleML;
 
     private RuleMLFormat ruleMLFormat;
+    
+    private Level logLevel;
 
     /**
      * This is used to indicate what back-end parser to use. Currently only
@@ -225,7 +228,8 @@ public class RuleMLParser implements PreferenceChangeListener {
     public void parseDocument(RuleMLFormat format, Document doc)
 	    throws ParseException, ParsingException, ValidityException {
 	RuleMLDocumentParser parser = new RuleMLDocumentParser(format, clauses);
-
+	parser.setLogLevel(logLevel);
+	
 	parser.parseRuleMLDocument(doc);
     }
 
@@ -341,5 +345,6 @@ public class RuleMLParser implements PreferenceChangeListener {
     public void preferenceChange(PreferenceChangeEvent evt) {
 	validateRuleML = config.getValidateRuleMLEnabled();
 	ruleMLFormat = config.getSelectedRuleMLFormat();
+	logLevel = config.getLogLevel();
     }
 }

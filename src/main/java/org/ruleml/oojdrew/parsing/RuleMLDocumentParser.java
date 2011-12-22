@@ -27,6 +27,7 @@ import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 import org.ruleml.oojdrew.util.DefiniteClause;
@@ -1241,5 +1242,15 @@ public class RuleMLDocumentParser {
     private void resetVariables() {
 	this.variableNames = new Vector<String>();
 	this.varClasses = new Hashtable<Integer, Vector<Integer>>();
+    }
+
+    /**
+     * Set the logging level of the log4j logger
+     * 
+     * @param logLevel
+     *            The logging level
+     */
+    public void setLogLevel(Level logLevel) {
+	logger.setLevel(logLevel);
     }
 }
