@@ -42,8 +42,8 @@ public class UndoRedoTextArea extends JTextArea implements
     private UndoManager undoManager;
     private JPopupMenu contextMenu;
 
-    public UndoRedoTextArea(String emptyText) {
-        super(emptyText);
+    public UndoRedoTextArea(String text) {
+        super(text);
 
         undoManager = new UndoManager();
         getDocument().addUndoableEditListener(this);
@@ -124,9 +124,9 @@ public class UndoRedoTextArea extends JTextArea implements
     }
 
     class SelectAction extends AbstractAction {
-        JTextArea textArea;
+        private final JTextArea textArea;
 
-        public SelectAction(JTextArea textArea) {
+        public SelectAction(final JTextArea textArea) {
             super("Select all");
             this.textArea = textArea;
         }
@@ -141,9 +141,9 @@ public class UndoRedoTextArea extends JTextArea implements
     }
 
     class CopyAction extends AbstractAction {
-        JTextArea textArea;
+        private final JTextArea textArea;
 
-        public CopyAction(JTextArea textArea) {
+        public CopyAction(final JTextArea textArea) {
             super("Copy");
             this.textArea = textArea;
         }
@@ -158,9 +158,9 @@ public class UndoRedoTextArea extends JTextArea implements
     }
 
     class CutAction extends AbstractAction {
-        JTextArea textArea;
+        private final JTextArea textArea;
 
-        public CutAction(JTextArea textArea) {
+        public CutAction(final JTextArea textArea) {
             super("Cut");
             this.textArea = textArea;
         }
@@ -175,9 +175,9 @@ public class UndoRedoTextArea extends JTextArea implements
     }
 
     class PasteAction extends AbstractAction {
-        JTextArea textArea;
+        private final JTextArea textArea;
 
-        public PasteAction(JTextArea textArea) {
+        public PasteAction(final JTextArea textArea) {
             super("Paste");
             this.textArea = textArea;
         }
@@ -198,10 +198,10 @@ public class UndoRedoTextArea extends JTextArea implements
     }
 
     class UndoAction extends AbstractAction {
-        JTextArea textArea;
-        UndoManager undoManager;
+        private final JTextArea textArea;
+        private UndoManager undoManager;
 
-        public UndoAction(JTextArea textArea, UndoManager undoManager) {
+        public UndoAction(final JTextArea textArea, UndoManager undoManager) {
             super("Undo");
             this.textArea = textArea;
             this.undoManager = undoManager;
@@ -221,10 +221,10 @@ public class UndoRedoTextArea extends JTextArea implements
     }
 
     class RedoAction extends AbstractAction {
-        JTextArea textArea;
-        UndoManager undoManager;
+        private final JTextArea textArea;
+        private UndoManager undoManager;
 
-        public RedoAction(JTextArea textArea, UndoManager undoManager) {
+        public RedoAction(final JTextArea textArea, UndoManager undoManager) {
             super("Redo");
             this.textArea = textArea;
             this.undoManager = undoManager;

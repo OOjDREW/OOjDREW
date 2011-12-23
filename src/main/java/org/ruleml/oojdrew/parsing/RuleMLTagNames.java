@@ -73,7 +73,7 @@ public class RuleMLTagNames {
     public final String TORSO = "torso";
     public final String DEGREE = "degree";
 
-    public RuleMLTagNames(RuleMLFormat rmlFormat) {
+    public RuleMLTagNames(final RuleMLFormat rmlFormat) {
         // Initialize RuleML premise and conclusion tags
         if (rmlFormat == RuleMLFormat.RuleML100) {
             // RuleML version 1.0

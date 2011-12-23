@@ -54,7 +54,6 @@ import org.ruleml.oojdrew.util.Types;
  * @author Ben Craig
  * @version 0.93
  */
-
 public class RuleMLDocumentParser {
 
     private Hashtable<String, String> skolemMap;
@@ -94,8 +93,8 @@ public class RuleMLDocumentParser {
      * Constructs the back-end parser.
      * 
      * @param clauses
-     *            Vector The vector to use as a buffer - this is generally
-     *            passed by the RuleMLParser front-end.
+     *            A vector to use as a buffer - this is generally passed by the
+     *            RuleMLParser front-end.
      */
     public RuleMLDocumentParser(RuleMLFormat format,
             Vector<DefiniteClause> clauses) {
@@ -110,8 +109,8 @@ public class RuleMLDocumentParser {
      * XOM tree.
      * 
      * @param doc
-     *            Document The XOM Document object that represents the RuleML
-     *            document to be parsed.
+     *            The XOM Document object that represents the RuleML document to
+     *            be parsed.
      * 
      * @throws ParseException
      *             A ParseException is thrown if there is an error parsing.
@@ -231,7 +230,7 @@ public class RuleMLDocumentParser {
      * This method is used to parse an Assertion in the RuleML Document.
      * 
      * @param ass
-     *            Element The XOM Element object that represents the assertion.
+     *            The XOM Element object that represents the assertion.
      * 
      * @return A term object that represents the assertion in a way that can be
      *         used by the reasoning engine.
@@ -275,7 +274,7 @@ public class RuleMLDocumentParser {
      * This method is used to parse a Negative Fact in the RuleML Document.
      * 
      * @param neg
-     *            Element The XOM Element object that represents the neg fact.
+     *            The XOM Element object that represents the neg fact.
      * 
      * @return A definite clause vector that represents the negFact in a way
      *         that can be used by the reasoning engine.
@@ -338,8 +337,7 @@ public class RuleMLDocumentParser {
      * variable list must be used.
      * 
      * @param atom
-     *            Element The XOM Element object that represents the fact to be
-     *            parsed.
+     *            The XOM Element object that represents the fact to be parsed.
      * 
      * @return A DefiniteClause data structure that represents the fact in a way
      *         that can be used by the reasoning engine.
@@ -367,8 +365,8 @@ public class RuleMLDocumentParser {
      * same variable list must be used.
      * 
      * @param implies
-     *            Element The XOM Element object that represents the implication
-     *            to be parsed.
+     *            The XOM Element object that represents the implication to be
+     *            parsed.
      * 
      * @return A vector of DefiniteClause data structures that represents the
      *         implication in a way that can be used by the reasoning engine.
@@ -498,7 +496,7 @@ public class RuleMLDocumentParser {
      * This method is used to parse and <oid> element.
      * 
      * @param oid
-     *            Element The XOM element that represents the oid to be parsed.
+     *            The XOM element that represents the oid to be parsed.
      * 
      * @return Returns the data structure that represents the oid in a way that
      *         can be used by the reasoning engine.
@@ -519,7 +517,7 @@ public class RuleMLDocumentParser {
      * Method to parse an individual constant (Ind)
      * 
      * @param ind
-     *            Element The XOM element that represents the Ind to be parsed.
+     *            The XOM element that represents the Ind to be parsed.
      * 
      * @return Returns the data structure that represents the Ind in a way that
      *         can be used by the reasoning engine.
@@ -536,7 +534,7 @@ public class RuleMLDocumentParser {
      * Method to parse an Data (Data)
      * 
      * @param ind
-     *            Element The XOM element that represents the Data to be parsed.
+     *            The XOM element that represents the Data to be parsed.
      * 
      * @return Returns the data structure that represents the Data in a way that
      *         can be used by the reasoning engine.
@@ -571,10 +569,10 @@ public class RuleMLDocumentParser {
     }
 
     /**
-     * Method to parse a Var (Variable)
+     * Method to parse a Var (variable)
      * 
      * @param var
-     *            Element The XOM element that represents the Var to be parsed.
+     *            The XOM element that represents the Var to be parsed.
      * 
      * @return Returns the data structure that represents the Var in a way that
      *         can be used by the reasoning engine.
@@ -632,10 +630,10 @@ public class RuleMLDocumentParser {
     }
 
     /**
-     * Method to parse a Expr (Expresion)
+     * Method to parse an Expr (expression)
      * 
      * @param expr
-     *            Element The XOM element that represents the Expr to be parsed.
+     *            The XOM element that represents the Expr to be parsed.
      * 
      * @return Returns the data structure that represents the Expr in a way that
      *         can be used by the reasoning engine.
@@ -687,14 +685,13 @@ public class RuleMLDocumentParser {
      * Method to parse an Atom
      * 
      * @param Atom
-     *            Element The XOM element that represents the Atom to be parsed.
+     *            The XOM element that represents the Atom to be parsed.
      * 
      * @param head
-     *            boolean This tells the engine if the atom is a head of a rule.
+     *            This tells the engine if the atom is a head of a rule.
      * 
      * @param neg
-     *            boolean This tells the engine if the atom is a negative atom
-     *            (Neg)
+     *            This tells the engine if the atom is a negative atom (Neg)
      * 
      * @return Returns the data structure that represents the Atom in a way that
      *         can be used by the reasoning engine.
@@ -783,7 +780,7 @@ public class RuleMLDocumentParser {
      * Method to parse a Slot
      * 
      * @param slot
-     *            Element The XOM element that represents the slot to be parsed.
+     *            The XOM element that represents the slot to be parsed.
      * 
      * @return Returns the data structure that represents the slot in a way that
      *         can be used by the reasoning engine.
@@ -826,7 +823,7 @@ public class RuleMLDocumentParser {
      * Method to parse a resl (Rested Slot)
      * 
      * @param resl
-     *            Element The XOM element that represents the resl to be parsed.
+     *            The XOM element that represents the resl to be parsed.
      * 
      * @return Returns the data structure that represents the resl in a way that
      *         can be used by the reasoning engine.
@@ -851,10 +848,10 @@ public class RuleMLDocumentParser {
      * Method to parse a repo (Rested Positional Slot)
      * 
      * @param repo
-     *            Element The XOM element that represents the repo to be parsed.
+     *            The XOM element that represents the repo to be parsed.
      * 
-     * @return Term Returns the data structure that represents the repo in a way
-     *         that can be used by the reasoning engine.
+     * @return Returns the data structure that represents the repo in a way that
+     *         can be used by the reasoning engine.
      * 
      * @throws ParseException
      *             Thrown if there is an error parsing the repo.
@@ -869,8 +866,7 @@ public class RuleMLDocumentParser {
      * Method to parse a naf (Negation as Failure)
      * 
      * @param naf
-     *            Element The XOM element that represents the naf atom to be
-     *            parsed.
+     *            The XOM element that represents the naf atom to be parsed.
      * 
      * @return Returns the data structure that represents the naf in a way that
      *         can be used by the reasoning engine.

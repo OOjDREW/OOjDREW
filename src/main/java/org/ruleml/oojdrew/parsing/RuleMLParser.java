@@ -77,7 +77,7 @@ public class RuleMLParser implements PreferenceChangeListener {
     /**
      * This is used to indicate what back-end parser to use. Currently only
      * RuleML 0.88 (+ rests) and RuleML 0.91 is supported; so only the RULEML88
-     * = 1 value isdefined as well as RULEML91 = 2. As new backend parsers are
+     * = 1 value is defined as well as RULEML91 = 2. As new back-end parsers are
      * added then extra defines can be added.
      */
     public static enum RuleMLFormat {
@@ -118,6 +118,9 @@ public class RuleMLParser implements PreferenceChangeListener {
 
     /**
      * Constructs a new parser object.
+     * 
+     * @param config
+     *            The configuration instance which should be used
      */
     public RuleMLParser(Configuration config) {
         clauses = new Vector<DefiniteClause>();
@@ -149,8 +152,7 @@ public class RuleMLParser implements PreferenceChangeListener {
      * @see jdrew.oo.parsing.RuleMLParser#parseDocument
      */
     public void parseFile(RuleMLFormat format, String filename)
-            throws ParseException, ParsingException, ValidityException,
-            IOException {
+            throws ParseException, ParsingException, IOException {
         File file = new File(filename);
         parseFile(format, file);
     }
@@ -159,8 +161,7 @@ public class RuleMLParser implements PreferenceChangeListener {
      * @see jdrew.oo.parsing.RuleMLParser#parseDocument
      */
     public void parseFile(RuleMLFormat format, File file)
-            throws ParseException, ParsingException, ValidityException,
-            IOException {
+            throws ParseException, ParsingException, IOException {
         Builder bl = new Builder();
         Document doc = bl.build(file);
         parseDocument(format, doc);
@@ -170,8 +171,7 @@ public class RuleMLParser implements PreferenceChangeListener {
      * @see jdrew.oo.parsing.RuleMLParser#parseDocument
      */
     public void parseRuleMLString(RuleMLFormat format, String contents)
-            throws ParseException, ParsingException, ValidityException,
-            IOException {
+            throws ParseException, ParsingException, IOException {
 
         if (validateRuleML) {
             XMLReader xmlReader;
@@ -212,11 +212,10 @@ public class RuleMLParser implements PreferenceChangeListener {
      * XSD and/or DTD that is referenced by the document.
      * 
      * @param format
-     *            RuleMLVersion The RuleML version for the backend parser
+     *            RuleMLVersion The RuleML version for the back-end parser
      * 
-     * @param kb
-     *            String The filename (including the full path) to the file to
-     *            be parsed.
+     * @param doc
+     *            The document which should be parsed
      * 
      * @throws ParseException
      *             A ParseException is thrown if there is an error in the
@@ -224,14 +223,12 @@ public class RuleMLParser implements PreferenceChangeListener {
      * 
      * @throws ParsingException
      *             A ParsingException is thrown if there is an error in parsing
-     *             the document at an XML level.
-     * 
-     * @throws ValidityException
-     *             A ValidityException is thrown if the XML document is not well
-     *             formed or does not conform to the DTD specified.
+     *             the document at an XML level or a ValidityException
+     *             (subclass) is thrown if the XML document is not well * formed
+     *             or does not conform to the DTD specified.
      */
     public void parseDocument(RuleMLFormat format, Document doc)
-            throws ParseException, ParsingException, ValidityException {
+            throws ParseException, ParsingException {
         RuleMLDocumentParser parser = new RuleMLDocumentParser(format, clauses);
         parser.setLogLevel(logLevel);
 
@@ -248,12 +245,10 @@ public class RuleMLParser implements PreferenceChangeListener {
      * 
      * @throws ParseException
      * @throws ParsingException
-     * @throws ValidityException
      * @throws IOException
      */
     public DefiniteClause parseRuleMLQuery(String contents)
-            throws ParseException, ParsingException, ValidityException,
-            IOException {
+            throws ParseException, ParsingException, IOException {
 
         contents = ensureQueryTag(contents);
         contents = buildFakeImplication(contents);
