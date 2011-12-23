@@ -40,18 +40,24 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * A class for parsing RuleML. This is broken into two section. The
- * RuleMLParser class which is the public interface that users access; and the
- * RuleML88Parser class; which implements the parsing of the RuleML 0.88 +
- * rests syntax that is currently supported.
- *
- * <p>Title: OO jDREW</p>
- *
- * <p>Description: Reasoning Engine for the Semantic Web - Supporting OO RuleML
- * 0.88</p>
- *
- * <p>Copyright: Copyright (c) 2005</p>
- *
+ * A class for parsing RuleML. This is broken into two section. The RuleMLParser
+ * class which is the public interface that users access; and the RuleML88Parser
+ * class; which implements the parsing of the RuleML 0.88 + rests syntax that is
+ * currently supported.
+ * 
+ * <p>
+ * Title: OO jDREW
+ * </p>
+ * 
+ * <p>
+ * Description: Reasoning Engine for the Semantic Web - Supporting OO RuleML
+ * 0.88
+ * </p>
+ * 
+ * <p>
+ * Copyright: Copyright (c) 2005
+ * </p>
+ * 
  * @author Marcel A. Ball
  * @version 0.89
  */
@@ -65,7 +71,7 @@ public class RuleMLParser implements PreferenceChangeListener {
     private boolean validateRuleML;
 
     private RuleMLFormat ruleMLFormat;
-    
+
     private Level logLevel;
 
     /**
@@ -75,50 +81,49 @@ public class RuleMLParser implements PreferenceChangeListener {
      * added then extra defines can be added.
      */
     public static enum RuleMLFormat {
-	RuleML88("RuleML 0.88"), 
-	RuleML91("RuleML 0.91"), 
-	RuleML100("RuleML 1.0");
+        RuleML88("RuleML 0.88"), RuleML91("RuleML 0.91"), RuleML100(
+                "RuleML 1.0");
 
-	private String versionName;
+        private String versionName;
 
-	RuleMLFormat(String versionName) {
-	    this.versionName = versionName;
-	}
+        RuleMLFormat(String versionName) {
+            this.versionName = versionName;
+        }
 
-	public String getVersionName() {
-	    return this.versionName;
-	}
+        public String getVersionName() {
+            return this.versionName;
+        }
 
-	public static RuleMLFormat fromString(String versionName) {
-	    if (versionName != null) {
-		for (RuleMLFormat rmlFormat : RuleMLFormat.values()) {
-		    if (versionName.equalsIgnoreCase(rmlFormat.versionName)) {
-			return rmlFormat;
-		    }
-		}
-	    }
-	    return null;
-	}
+        public static RuleMLFormat fromString(String versionName) {
+            if (versionName != null) {
+                for (RuleMLFormat rmlFormat : RuleMLFormat.values()) {
+                    if (versionName.equalsIgnoreCase(rmlFormat.versionName)) {
+                        return rmlFormat;
+                    }
+                }
+            }
+            return null;
+        }
 
-	public static String[] getVersionNames() {
-	    String[] versionNames = new String[values().length];
-	    int i = 0;
-	    for (RuleMLFormat rmlFormat : values()) {
-		versionNames[i] = rmlFormat.versionName;
-		i++;
-	    }
-	    return versionNames;
-	}
+        public static String[] getVersionNames() {
+            String[] versionNames = new String[values().length];
+            int i = 0;
+            for (RuleMLFormat rmlFormat : values()) {
+                versionNames[i] = rmlFormat.versionName;
+                i++;
+            }
+            return versionNames;
+        }
     }
 
     /**
      * Constructs a new parser object.
      */
     public RuleMLParser(Configuration config) {
-	clauses = new Vector<DefiniteClause>();
-	this.config = config;
-	config.addPreferenceChangeListener(this);
-	preferenceChange(null);
+        clauses = new Vector<DefiniteClause>();
+        this.config = config;
+        config.addPreferenceChangeListener(this);
+        preferenceChange(null);
     }
 
     /**
@@ -128,7 +133,7 @@ public class RuleMLParser implements PreferenceChangeListener {
      * @return Iterator An iterator over all clauses in the buffer.
      */
     public Iterator<DefiniteClause> iterator() {
-	return clauses.iterator();
+        return clauses.iterator();
     }
 
     /**
@@ -136,66 +141,66 @@ public class RuleMLParser implements PreferenceChangeListener {
      * allows the easy reuse of a parser object.
      */
     public void clear() {
-	clauses = new Vector<DefiniteClause>();
-	System.gc();
+        clauses = new Vector<DefiniteClause>();
+        System.gc();
     }
 
     /**
      * @see jdrew.oo.parsing.RuleMLParser#parseDocument
      */
     public void parseFile(RuleMLFormat format, String filename)
-	    throws ParseException, ParsingException, ValidityException,
-	    IOException {
-	File file = new File(filename);
-	parseFile(format, file);
+            throws ParseException, ParsingException, ValidityException,
+            IOException {
+        File file = new File(filename);
+        parseFile(format, file);
     }
 
     /**
      * @see jdrew.oo.parsing.RuleMLParser#parseDocument
      */
     public void parseFile(RuleMLFormat format, File file)
-	    throws ParseException, ParsingException, ValidityException,
-	    IOException {
-	Builder bl = new Builder();
-	Document doc = bl.build(file);
-	parseDocument(format, doc);
+            throws ParseException, ParsingException, ValidityException,
+            IOException {
+        Builder bl = new Builder();
+        Document doc = bl.build(file);
+        parseDocument(format, doc);
     }
 
     /**
      * @see jdrew.oo.parsing.RuleMLParser#parseDocument
      */
     public void parseRuleMLString(RuleMLFormat format, String contents)
-	    throws ParseException, ParsingException, ValidityException,
-	    IOException {
+            throws ParseException, ParsingException, ValidityException,
+            IOException {
 
-	if (validateRuleML) {
-	    XMLReader xmlReader;
-	    try {
-		xmlReader = XMLReaderFactory
-			.createXMLReader("org.apache.xerces.parsers.SAXParser");
-		xmlReader.setFeature(
-			"http://apache.org/xml/features/validation/schema",
-			true);
-	    } catch (SAXException e) {
-		throw new ParseException("Unable to create XML validator");
-	    }
+        if (validateRuleML) {
+            XMLReader xmlReader;
+            try {
+                xmlReader = XMLReaderFactory
+                        .createXMLReader("org.apache.xerces.parsers.SAXParser");
+                xmlReader.setFeature(
+                        "http://apache.org/xml/features/validation/schema",
+                        true);
+            } catch (SAXException e) {
+                throw new ParseException("Unable to create XML validator");
+            }
 
-	    Builder bl = new Builder(xmlReader, true);
-	    StringReader sr = new StringReader(contents);
-	    Document doc;
-	    try {
-		doc = bl.build(sr);
-		parseDocument(format, doc);
-	    } catch (Exception e) {
-		throw new ParseException(
-			"Document does not validate against the specified XML schema definition(s)!");
-	    }
-	} else {
-	    Builder bl = new Builder();
-	    StringReader sr = new StringReader(contents);
-	    Document doc = bl.build(sr);
-	    parseDocument(format, doc);
-	}
+            Builder bl = new Builder(xmlReader, true);
+            StringReader sr = new StringReader(contents);
+            Document doc;
+            try {
+                doc = bl.build(sr);
+                parseDocument(format, doc);
+            } catch (Exception e) {
+                throw new ParseException(
+                        "Document does not validate against the specified XML schema definition(s)!");
+            }
+        } else {
+            Builder bl = new Builder();
+            StringReader sr = new StringReader(contents);
+            Document doc = bl.build(sr);
+            parseDocument(format, doc);
+        }
     }
 
     /**
@@ -226,11 +231,11 @@ public class RuleMLParser implements PreferenceChangeListener {
      *             formed or does not conform to the DTD specified.
      */
     public void parseDocument(RuleMLFormat format, Document doc)
-	    throws ParseException, ParsingException, ValidityException {
-	RuleMLDocumentParser parser = new RuleMLDocumentParser(format, clauses);
-	parser.setLogLevel(logLevel);
-	
-	parser.parseRuleMLDocument(doc);
+            throws ParseException, ParsingException, ValidityException {
+        RuleMLDocumentParser parser = new RuleMLDocumentParser(format, clauses);
+        parser.setLogLevel(logLevel);
+
+        parser.parseRuleMLDocument(doc);
     }
 
     /**
@@ -247,27 +252,27 @@ public class RuleMLParser implements PreferenceChangeListener {
      * @throws IOException
      */
     public DefiniteClause parseRuleMLQuery(String contents)
-	    throws ParseException, ParsingException, ValidityException,
-	    IOException {
+            throws ParseException, ParsingException, ValidityException,
+            IOException {
 
-	contents = ensureQueryTag(contents);
-	contents = buildFakeImplication(contents);
+        contents = ensureQueryTag(contents);
+        contents = buildFakeImplication(contents);
 
-	// Disable validation for RuleML queries
-	boolean skippedValidation = false;
-	if (validateRuleML) {
-	    validateRuleML = false;
-	    skippedValidation = true;
-	}
+        // Disable validation for RuleML queries
+        boolean skippedValidation = false;
+        if (validateRuleML) {
+            validateRuleML = false;
+            skippedValidation = true;
+        }
 
-	parseRuleMLString(ruleMLFormat, contents);
+        parseRuleMLString(ruleMLFormat, contents);
 
-	// Re-enable validation
-	if (skippedValidation) {
-	    validateRuleML = true;
-	}
+        // Re-enable validation
+        if (skippedValidation) {
+            validateRuleML = true;
+        }
 
-	return (DefiniteClause) clauses.lastElement();
+        return (DefiniteClause) clauses.lastElement();
     }
 
     /**
@@ -276,45 +281,45 @@ public class RuleMLParser implements PreferenceChangeListener {
      * 
      * @param query
      *            An input query
-     *            
+     * 
      * @return Input query as a RuleML implication
      */
     private String buildFakeImplication(String query) {
-	Builder builder = new Builder();
-	StringReader stringReader = new StringReader(query);
-	Document document;
+        Builder builder = new Builder();
+        StringReader stringReader = new StringReader(query);
+        Document document;
 
-	try {
-	    document = builder.build(stringReader);
-	} catch (Exception e) {
-	    // Cannot happen
-	    e.printStackTrace();
-	    return "";
-	}
+        try {
+            document = builder.build(stringReader);
+        } catch (Exception e) {
+            // Cannot happen
+            e.printStackTrace();
+            return "";
+        }
 
-	Element queryElement = document.getRootElement();
+        Element queryElement = document.getRootElement();
 
-	RuleMLTagNames rmlTags = new RuleMLTagNames(ruleMLFormat);
+        RuleMLTagNames rmlTags = new RuleMLTagNames(ruleMLFormat);
 
-	Element rel = new Element(rmlTags.REL);
-	rel.insertChild("$top", 0);
+        Element rel = new Element(rmlTags.REL);
+        rel.insertChild("$top", 0);
 
-	Element topAtom = new Element(rmlTags.ATOM);
-	topAtom.appendChild(rel);
+        Element topAtom = new Element(rmlTags.ATOM);
+        topAtom.appendChild(rel);
 
-	Nodes atoms = queryElement.removeChildren();
+        Nodes atoms = queryElement.removeChildren();
 
-	Element implies = new Element(rmlTags.IMPLIES);
+        Element implies = new Element(rmlTags.IMPLIES);
 
-	for (int i = 0; i < atoms.size(); ++i) {
-	    implies.appendChild(atoms.get(i));
-	}
+        for (int i = 0; i < atoms.size(); ++i) {
+            implies.appendChild(atoms.get(i));
+        }
 
-	implies.appendChild(topAtom);
+        implies.appendChild(topAtom);
 
-	queryElement.appendChild(implies);
+        queryElement.appendChild(implies);
 
-	return document.toXML();
+        return document.toXML();
     }
 
     /**
@@ -322,29 +327,29 @@ public class RuleMLParser implements PreferenceChangeListener {
      * 
      * @param query
      *            An input query
-     *            
+     * 
      * @return Input query encapsulated with a <Query> tag
      */
     private String ensureQueryTag(String query) {
-	// Evil hack: encapsulate the query contents in a pair of <Query> tags
-	RuleMLTagNames rmlTags = new RuleMLTagNames(ruleMLFormat);
-	query = query.trim();
-	String queryTagOpen = String.format("<%s>", rmlTags.QUERY);
-	String queryTagClose = String.format("</%s>", rmlTags.QUERY);
+        // Evil hack: encapsulate the query contents in a pair of <Query> tags
+        RuleMLTagNames rmlTags = new RuleMLTagNames(ruleMLFormat);
+        query = query.trim();
+        String queryTagOpen = String.format("<%s>", rmlTags.QUERY);
+        String queryTagClose = String.format("</%s>", rmlTags.QUERY);
 
-	if (!query.contains(queryTagOpen)) {
-	    query = String.format("%s%s%s", queryTagOpen, query, queryTagClose);
-	}
+        if (!query.contains(queryTagOpen)) {
+            query = String.format("%s%s%s", queryTagOpen, query, queryTagClose);
+        }
 
-	return query;
+        return query;
     }
 
     /**
      * Updates parser configuration when preferences have changed
      */
     public void preferenceChange(PreferenceChangeEvent evt) {
-	validateRuleML = config.getValidateRuleMLEnabled();
-	ruleMLFormat = config.getSelectedRuleMLFormat();
-	logLevel = config.getLogLevel();
+        validateRuleML = config.getValidateRuleMLEnabled();
+        ruleMLFormat = config.getSelectedRuleMLFormat();
+        logLevel = config.getLogLevel();
     }
 }

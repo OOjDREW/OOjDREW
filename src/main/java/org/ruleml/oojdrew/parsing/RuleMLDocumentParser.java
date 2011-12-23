@@ -98,11 +98,11 @@ public class RuleMLDocumentParser {
      *            passed by the RuleMLParser front-end.
      */
     public RuleMLDocumentParser(RuleMLFormat format,
-	    Vector<DefiniteClause> clauses) {
-	this.clauses = clauses;
+            Vector<DefiniteClause> clauses) {
+        this.clauses = clauses;
 
-	// Set default RuleML version
-	this.tagNames = new RuleMLTagNames(format);
+        // Set default RuleML version
+        this.tagNames = new RuleMLTagNames(format);
     }
 
     /**
@@ -117,13 +117,13 @@ public class RuleMLDocumentParser {
      *             A ParseException is thrown if there is an error parsing.
      */
     public void parseRuleMLDocument(Document doc) throws ParseException {
-	this.skolemMap = new Hashtable<String, String>();
+        this.skolemMap = new Hashtable<String, String>();
 
-	Element documentRoot = doc.getRootElement();
-	removeReifyElements(documentRoot);
-	Element rmlRoot = getRuleMLRootElement(documentRoot);
+        Element documentRoot = doc.getRootElement();
+        removeReifyElements(documentRoot);
+        Element rmlRoot = getRuleMLRootElement(documentRoot);
 
-	parseRuleMLRoot(rmlRoot);
+        parseRuleMLRoot(rmlRoot);
     }
 
     /**
@@ -140,45 +140,45 @@ public class RuleMLDocumentParser {
      * @throws ParseException
      */
     private Element getRuleMLRootElement(Element documentRoot)
-	    throws ParseException {
-	String rootName = documentRoot.getLocalName();
-	Element ruleMLRoot = null;
+            throws ParseException {
+        String rootName = documentRoot.getLocalName();
+        Element ruleMLRoot = null;
 
-	// If <RuleML> is root element
-	if (rootName.equals(tagNames.RULEML)) {
-	    Element assertElement = getFirstChildElement(documentRoot,
-		    tagNames.ASSERT);
-	    if (assertElement == null) {
-		throw new ParseException(
-			"<Assert> has to be the first child of the <RuleML>.");
-	    }
-	    documentRoot = assertElement;
-	    rootName = assertElement.getLocalName();
-	}
+        // If <RuleML> is root element
+        if (rootName.equals(tagNames.RULEML)) {
+            Element assertElement = getFirstChildElement(documentRoot,
+                    tagNames.ASSERT);
+            if (assertElement == null) {
+                throw new ParseException(
+                        "<Assert> has to be the first child of the <RuleML>.");
+            }
+            documentRoot = assertElement;
+            rootName = assertElement.getLocalName();
+        }
 
-	// Now, <Assert> has to be the root element, check for optional children
-	if (rootName.equals(tagNames.ASSERT)) {
-	    ruleMLRoot = documentRoot;
+        // Now, <Assert> has to be the root element, check for optional children
+        if (rootName.equals(tagNames.ASSERT)) {
+            ruleMLRoot = documentRoot;
 
-	    // <Rulebase> is a optional child of <Assert>
-	    Element ruleBaseElement = getFirstChildElement(documentRoot,
-		    tagNames.RULEBASE);
+            // <Rulebase> is a optional child of <Assert>
+            Element ruleBaseElement = getFirstChildElement(documentRoot,
+                    tagNames.RULEBASE);
 
-	    // <And> is a optional child of either <Rulebase> or <Assert>
-	    // (0.88+)
-	    if (ruleBaseElement != null) {
-		ruleMLRoot = ruleBaseElement;
-	    }
-	} else if (rootName.equals(tagNames.QUERY)) {
-	    ruleMLRoot = documentRoot;
-	}
+            // <And> is a optional child of either <Rulebase> or <Assert>
+            // (0.88+)
+            if (ruleBaseElement != null) {
+                ruleMLRoot = ruleBaseElement;
+            }
+        } else if (rootName.equals(tagNames.QUERY)) {
+            ruleMLRoot = documentRoot;
+        }
 
-	if (ruleMLRoot == null) {
-	    throw new ParseException(String.format(
-		    "Undefined RuleML root element (%s)", rootName));
-	}
+        if (ruleMLRoot == null) {
+            throw new ParseException(String.format(
+                    "Undefined RuleML root element (%s)", rootName));
+        }
 
-	return ruleMLRoot;
+        return ruleMLRoot;
     }
 
     /**
@@ -191,22 +191,22 @@ public class RuleMLDocumentParser {
      * @throws ParseException
      */
     private void parseRuleMLRoot(Element rmlRoot) throws ParseException {
-	Elements children = rmlRoot.getChildElements();
-	for (int i = 0; i < children.size(); i++) {
-	    Element child = skipRoleTag(children.get(i));
-	    String childName = child.getLocalName();
-	    if (childName.equals(tagNames.ATOM)) {
-		resetVariables();
-		clauses.add(parseFact(child));
-	    } else if (childName.equals(tagNames.NEG)) {
-		clauses.addAll(parseNegFact(child));
-	    } else if (childName.equals(tagNames.IMPLIES)) {
-		resetVariables();
-		clauses.addAll(parseImplies(child));
-	    } else if (childName.equals(tagNames.AND)) {
-		parseRuleMLRoot(child);
-	    }
-	}
+        Elements children = rmlRoot.getChildElements();
+        for (int i = 0; i < children.size(); i++) {
+            Element child = skipRoleTag(children.get(i));
+            String childName = child.getLocalName();
+            if (childName.equals(tagNames.ATOM)) {
+                resetVariables();
+                clauses.add(parseFact(child));
+            } else if (childName.equals(tagNames.NEG)) {
+                clauses.addAll(parseNegFact(child));
+            } else if (childName.equals(tagNames.IMPLIES)) {
+                resetVariables();
+                clauses.addAll(parseImplies(child));
+            } else if (childName.equals(tagNames.AND)) {
+                parseRuleMLRoot(child);
+            }
+        }
     }
 
     /**
@@ -216,15 +216,15 @@ public class RuleMLDocumentParser {
      *            Element to skip <Reify> elements in
      */
     private void removeReifyElements(Element element) {
-	Elements children = element.getChildElements();
-	for (int i = 0; i < children.size(); i++) {
-	    Element child = children.get(i);
-	    if (child.getLocalName().equals(tagNames.REIFY)) {
-		element.removeChild(child);
-	    } else {
-		removeReifyElements(child);
-	    }
-	}
+        Elements children = element.getChildElements();
+        for (int i = 0; i < children.size(); i++) {
+            Element child = children.get(i);
+            if (child.getLocalName().equals(tagNames.REIFY)) {
+                element.removeChild(child);
+            } else {
+                removeReifyElements(child);
+            }
+        }
     }
 
     /**
@@ -240,35 +240,35 @@ public class RuleMLDocumentParser {
      *             Thrown if there is a serious error parsing the assertion.
      */
     private Term parseAssert(Element ass) throws ParseException {
-	Elements children = ass.getChildElements();
+        Elements children = ass.getChildElements();
 
-	Element firstChild = skipRoleTag(children.get(0));
+        Element firstChild = skipRoleTag(children.get(0));
 
-	if (firstChild.getLocalName().equals(tagNames.ATOM)) {
-	    DefiniteClause dc = parseFact(firstChild);
-	    Vector<Term> v = new Vector<Term>();
-	    for (int i = 0; i < dc.atoms.length; i++) {
-		v.add(dc.atoms[i]);
-	    }
-	    Term t = new Term(SymbolTable.IASSERT, SymbolTable.INOROLE,
-		    Types.IOBJECT, v);
-	    t.setAtom(true);
-	    return t;
-	} else if (firstChild.getLocalName().equals(tagNames.IMPLIES)) {
-	    Vector<DefiniteClause> v2 = parseImplies(firstChild);
-	    DefiniteClause dc = (DefiniteClause) v2.get(0);
-	    Vector<Term> v = new Vector<Term>();
-	    for (int i = 0; i < dc.atoms.length; i++) {
-		v.add(dc.atoms[i]);
-	    }
-	    Term t = new Term(SymbolTable.IASSERT, SymbolTable.INOROLE,
-		    Types.IOBJECT, v);
-	    t.setAtom(true);
-	    return t;
-	} else {
-	    throw new ParseException(
-		    "Assert element can only contain Atom (fact) or Implies elements.");
-	}
+        if (firstChild.getLocalName().equals(tagNames.ATOM)) {
+            DefiniteClause dc = parseFact(firstChild);
+            Vector<Term> v = new Vector<Term>();
+            for (int i = 0; i < dc.atoms.length; i++) {
+                v.add(dc.atoms[i]);
+            }
+            Term t = new Term(SymbolTable.IASSERT, SymbolTable.INOROLE,
+                    Types.IOBJECT, v);
+            t.setAtom(true);
+            return t;
+        } else if (firstChild.getLocalName().equals(tagNames.IMPLIES)) {
+            Vector<DefiniteClause> v2 = parseImplies(firstChild);
+            DefiniteClause dc = (DefiniteClause) v2.get(0);
+            Vector<Term> v = new Vector<Term>();
+            for (int i = 0; i < dc.atoms.length; i++) {
+                v.add(dc.atoms[i]);
+            }
+            Term t = new Term(SymbolTable.IASSERT, SymbolTable.INOROLE,
+                    Types.IOBJECT, v);
+            t.setAtom(true);
+            return t;
+        } else {
+            throw new ParseException(
+                    "Assert element can only contain Atom (fact) or Implies elements.");
+        }
     }
 
     /**
@@ -284,51 +284,51 @@ public class RuleMLDocumentParser {
      *             Thrown if there is a serious error parsing the negFact.
      */
     private Vector<DefiniteClause> parseNegFact(Element neg)
-	    throws ParseException {
-	resetVariables();
+            throws ParseException {
+        resetVariables();
 
-	Elements atoms = neg.getChildElements("Atom");
-	if (atoms.size() != 1) {
-	    logger.error("OO jDREW only supports classical negation over single atoms.");
-	    throw new ParseException(
-		    "OO jDREW only supports classical negation over single atoms.");
-	}
+        Elements atoms = neg.getChildElements("Atom");
+        if (atoms.size() != 1) {
+            logger.error("OO jDREW only supports classical negation over single atoms.");
+            throw new ParseException(
+                    "OO jDREW only supports classical negation over single atoms.");
+        }
 
-	Element firstAtom = skipRoleTag(atoms.get(0));
+        Element firstAtom = skipRoleTag(atoms.get(0));
 
-	Term atm = parseAtom(firstAtom, true, true);
+        Term atm = parseAtom(firstAtom, true, true);
 
-	Hashtable<Integer, Integer> types = this.buildTypeTable();
-	this.fixVarTypes(atm, types);
+        Hashtable<Integer, Integer> types = this.buildTypeTable();
+        this.fixVarTypes(atm, types);
 
-	Vector<Term> atms = new Vector<Term>();
-	atms.add(atm);
+        Vector<Term> atms = new Vector<Term>();
+        atms.add(atm);
 
-	DefiniteClause dc = new DefiniteClause(atms, variableNames);
+        DefiniteClause dc = new DefiniteClause(atms, variableNames);
 
-	Vector<DefiniteClause> v = new Vector<DefiniteClause>();
-	v.add(dc);
+        Vector<DefiniteClause> v = new Vector<DefiniteClause>();
+        v.add(dc);
 
-	// Add code to generate consistency check
+        // Add code to generate consistency check
 
-	// This should be redone to create the consistency check better
+        // This should be redone to create the consistency check better
 
-	String atmstr = dc.toPOSLString();
+        String atmstr = dc.toPOSLString();
 
-	String clause = "$inconsistent() :-";
-	clause += atmstr.substring(0, atmstr.length() - 1) + ",";
-	clause += "\"" + atmstr.substring(atmstr.indexOf("-") + 1);
+        String clause = "$inconsistent() :-";
+        clause += atmstr.substring(0, atmstr.length() - 1) + ",";
+        clause += "\"" + atmstr.substring(atmstr.indexOf("-") + 1);
 
-	System.err.println(clause);
+        System.err.println(clause);
 
-	POSLParser pp = new POSLParser();
-	try {
-	    v.add(pp.parseDefiniteClause(clause));
-	} catch (Exception e) {
-	    throw new ParseException("Error creating consistency check.");
-	}
+        POSLParser pp = new POSLParser();
+        try {
+            v.add(pp.parseDefiniteClause(clause));
+        } catch (Exception e) {
+            throw new ParseException("Error creating consistency check.");
+        }
 
-	return v;
+        return v;
     }
 
     /**
@@ -348,16 +348,16 @@ public class RuleMLDocumentParser {
      *             Thrown if there is a serious error parsing the fact.
      */
     private DefiniteClause parseFact(Element atom) throws ParseException {
-	Term atm = parseAtom(atom, true, false);
+        Term atm = parseAtom(atom, true, false);
 
-	Hashtable<Integer, Integer> types = this.buildTypeTable();
-	this.fixVarTypes(atm, types);
+        Hashtable<Integer, Integer> types = this.buildTypeTable();
+        this.fixVarTypes(atm, types);
 
-	Vector<Term> atoms = new Vector<Term>();
-	atoms.add(atm);
+        Vector<Term> atoms = new Vector<Term>();
+        atoms.add(atm);
 
-	DefiniteClause dc = new DefiniteClause(atoms, variableNames);
-	return dc;
+        DefiniteClause dc = new DefiniteClause(atoms, variableNames);
+        return dc;
     }
 
     /**
@@ -377,121 +377,121 @@ public class RuleMLDocumentParser {
      *             Thrown if there is a serious error parsing the implication.
      */
     private Vector<DefiniteClause> parseImplies(Element implies)
-	    throws ParseException {
+            throws ParseException {
 
-	Vector<DefiniteClause> newclauses = new Vector<DefiniteClause>();
+        Vector<DefiniteClause> newclauses = new Vector<DefiniteClause>();
 
-	// Implies must have two children (excluding OID elements)
-	Elements children = implies.getChildElements();
+        // Implies must have two children (excluding OID elements)
+        Elements children = implies.getChildElements();
 
-	// Set first and second child and skip OID element if exists.
-	Element firstChild = skipRoleTag(children.get(0));
-	Element secondChild = skipRoleTag(children.get(1));
-	if (firstChild.getLocalName().equals(tagNames.OID)) {
-	    firstChild = skipRoleTag(children.get(1));
-	    secondChild = skipRoleTag(children.get(2));
-	}
+        // Set first and second child and skip OID element if exists.
+        Element firstChild = skipRoleTag(children.get(0));
+        Element secondChild = skipRoleTag(children.get(1));
+        if (firstChild.getLocalName().equals(tagNames.OID)) {
+            firstChild = skipRoleTag(children.get(1));
+            secondChild = skipRoleTag(children.get(2));
+        }
 
-	String firstChildName = firstChild.getLocalName();
-	Element premise, conclusion;
-	// Check if implies starts with premise element
-	if (firstChildName.equals(tagNames.PREMISE)) {
-	    premise = firstChild.getChildElements().get(0);
-	    conclusion = secondChild.getChildElements().get(0);
-	}
-	// If implies starts with conclusion element
-	else if (firstChildName.equals(tagNames.CONCLUSION)) {
-	    premise = secondChild.getChildElements().get(0);
-	    conclusion = firstChild.getChildElements().get(0);
-	}
-	// No premise or conclusion tag available
-	else {
-	    // Use canonical order for stripe-skipped syntax
-	    premise = firstChild;
-	    conclusion = secondChild;
-	}
+        String firstChildName = firstChild.getLocalName();
+        Element premise, conclusion;
+        // Check if implies starts with premise element
+        if (firstChildName.equals(tagNames.PREMISE)) {
+            premise = firstChild.getChildElements().get(0);
+            conclusion = secondChild.getChildElements().get(0);
+        }
+        // If implies starts with conclusion element
+        else if (firstChildName.equals(tagNames.CONCLUSION)) {
+            premise = secondChild.getChildElements().get(0);
+            conclusion = firstChild.getChildElements().get(0);
+        }
+        // No premise or conclusion tag available
+        else {
+            // Use canonical order for stripe-skipped syntax
+            premise = firstChild;
+            conclusion = secondChild;
+        }
 
-	premise = skipRoleTag(premise);
-	conclusion = skipRoleTag(conclusion);
+        premise = skipRoleTag(premise);
+        conclusion = skipRoleTag(conclusion);
 
-	Vector<Term> subterms = new Vector<Term>();
-	if (conclusion.getLocalName().equals(tagNames.ATOM)) {
-	    subterms.add(parseAtom(conclusion, true, false));
-	} else if (conclusion.getLocalName().equals(tagNames.NEG)) {
-	    Elements headatms = conclusion.getChildElements(tagNames.ATOM);
-	    if (headatms.size() != 1)
-		throw new ParseException("Neg should have one ATOM element");
+        Vector<Term> subterms = new Vector<Term>();
+        if (conclusion.getLocalName().equals(tagNames.ATOM)) {
+            subterms.add(parseAtom(conclusion, true, false));
+        } else if (conclusion.getLocalName().equals(tagNames.NEG)) {
+            Elements headatms = conclusion.getChildElements(tagNames.ATOM);
+            if (headatms.size() != 1)
+                throw new ParseException("Neg should have one ATOM element");
 
-	    Term atom = parseAtom(headatms.get(0), true, true);
-	    subterms.add(atom);
+            Term atom = parseAtom(headatms.get(0), true, true);
+            subterms.add(atom);
 
-	    String atomstr = atom.toPOSLString(true);
+            String atomstr = atom.toPOSLString(true);
 
-	    String clause = "$Sinconsistent() :-";
-	    clause += atomstr + ", \"" + atomstr.substring(6) + ".";
+            String clause = "$Sinconsistent() :-";
+            clause += atomstr + ", \"" + atomstr.substring(6) + ".";
 
-	    System.err.println(clause);
+            System.err.println(clause);
 
-	    POSLParser pp = new POSLParser();
-	    try {
-		DefiniteClause dc2 = pp.parseDefiniteClause(clause);
-		if (dc2 != null)
-		    newclauses.add(dc2);
-	    } catch (Exception e) {
-		throw new ParseException(
-			"Error creating inconsistency check rule.");
-	    }
-	} else {
-	    throw new ParseException(
-		    "Second element of Implies should always be an Atom or Neg element.");
-	}
+            POSLParser pp = new POSLParser();
+            try {
+                DefiniteClause dc2 = pp.parseDefiniteClause(clause);
+                if (dc2 != null)
+                    newclauses.add(dc2);
+            } catch (Exception e) {
+                throw new ParseException(
+                        "Error creating inconsistency check rule.");
+            }
+        } else {
+            throw new ParseException(
+                    "Second element of Implies should always be an Atom or Neg element.");
+        }
 
-	String premiseName = premise.getLocalName();
+        String premiseName = premise.getLocalName();
 
-	if (premiseName.equals(tagNames.ATOM)) {
-	    subterms.add(parseAtom(premise, false, false));
-	} else if (premiseName.equals(tagNames.NAF)) {
-	    subterms.add(parseNaf(premise));
-	} else if (premiseName.equals(tagNames.ASSERT)) {
-	    subterms.add(parseAssert(premise));
-	} else if (premiseName.equals(tagNames.NEG)) {
-	    subterms.add(parseAtom(premise, false, true));
-	} else if (premiseName.equals(tagNames.AND)) {
-	    children = premise.getChildElements();
-	    for (int i = 0; i < children.size(); i++) {
-		Element el = skipRoleTag(children.get(i));
-		if (el.getLocalName().equals(tagNames.ATOM)) {
-		    subterms.add(parseAtom(el, false, false));
-		} else if (el.getLocalName().equals(tagNames.NAF)) {
-		    subterms.add(parseNaf(el));
-		} else if (el.getLocalName().equals(tagNames.ASSERT)) {
-		    subterms.add(parseAssert(el));
-		} else if (el.getLocalName().equals(tagNames.NEG)) {
-		    subterms.add(parseAtom(el, false, true));
-		} else {
-		    throw new ParseException(
-			    "Implies And element should only contain Atom and Naf elements.");
-		}
-	    }
-	} else {
-	    throw new ParseException(
-		    "First element of Implies should be an Atom, Naf or And element.");
-	}
+        if (premiseName.equals(tagNames.ATOM)) {
+            subterms.add(parseAtom(premise, false, false));
+        } else if (premiseName.equals(tagNames.NAF)) {
+            subterms.add(parseNaf(premise));
+        } else if (premiseName.equals(tagNames.ASSERT)) {
+            subterms.add(parseAssert(premise));
+        } else if (premiseName.equals(tagNames.NEG)) {
+            subterms.add(parseAtom(premise, false, true));
+        } else if (premiseName.equals(tagNames.AND)) {
+            children = premise.getChildElements();
+            for (int i = 0; i < children.size(); i++) {
+                Element el = skipRoleTag(children.get(i));
+                if (el.getLocalName().equals(tagNames.ATOM)) {
+                    subterms.add(parseAtom(el, false, false));
+                } else if (el.getLocalName().equals(tagNames.NAF)) {
+                    subterms.add(parseNaf(el));
+                } else if (el.getLocalName().equals(tagNames.ASSERT)) {
+                    subterms.add(parseAssert(el));
+                } else if (el.getLocalName().equals(tagNames.NEG)) {
+                    subterms.add(parseAtom(el, false, true));
+                } else {
+                    throw new ParseException(
+                            "Implies And element should only contain Atom and Naf elements.");
+                }
+            }
+        } else {
+            throw new ParseException(
+                    "First element of Implies should be an Atom, Naf or And element.");
+        }
 
-	logger.debug("Building Types");
-	Hashtable<Integer, Integer> types = this.buildTypeTable();
-	logger.debug("Built Types");
-	Iterator<Term> it = subterms.iterator();
-	int i = 0;
-	while (it.hasNext()) {
-	    Term t = (Term) it.next();
-	    this.fixVarTypes(t, types);
-	    logger.debug("Fixed atom : " + i++);
-	}
+        logger.debug("Building Types");
+        Hashtable<Integer, Integer> types = this.buildTypeTable();
+        logger.debug("Built Types");
+        Iterator<Term> it = subterms.iterator();
+        int i = 0;
+        while (it.hasNext()) {
+            Term t = (Term) it.next();
+            this.fixVarTypes(t, types);
+            logger.debug("Fixed atom : " + i++);
+        }
 
-	DefiniteClause dc = new DefiniteClause(subterms, variableNames);
-	newclauses.add(0, dc);
-	return newclauses;
+        DefiniteClause dc = new DefiniteClause(subterms, variableNames);
+        newclauses.add(0, dc);
+        return newclauses;
     }
 
     /**
@@ -508,11 +508,11 @@ public class RuleMLDocumentParser {
      */
 
     private Term parseOid(Element oid) throws ParseException {
-	Element element = oid.getChildElements().get(0);
-	Term term = parseDefaultElement(element);
-	term.role = SymbolTable.IOID;
+        Element element = oid.getChildElements().get(0);
+        Term term = parseDefaultElement(element);
+        term.role = SymbolTable.IOID;
 
-	return term;
+        return term;
     }
 
     /**
@@ -529,7 +529,7 @@ public class RuleMLDocumentParser {
      */
 
     private Term parseInd(Element ind) throws ParseException {
-	return parseSimpleElement(ind);
+        return parseSimpleElement(ind);
     }
 
     /**
@@ -552,10 +552,10 @@ public class RuleMLDocumentParser {
     // Term Data has no role so it will probally not change
 
     private Term parseData(Element data) throws ParseException {
-	Term term = parseSimpleElement(data);
-	term.setData(true);
+        Term term = parseSimpleElement(data);
+        term.setData(true);
 
-	return term;
+        return term;
     }
 
     /**
@@ -567,7 +567,7 @@ public class RuleMLDocumentParser {
      * @return String Symbol name as a unique anonymous identifier
      */
     private String generateAnonymousIdentifier() {
-	return "$ANON" + anonid++;
+        return "$ANON" + anonid++;
     }
 
     /**
@@ -584,31 +584,31 @@ public class RuleMLDocumentParser {
      */
 
     private Term parseVar(Element var) throws ParseException {
-	String symbolName = var.getValue().trim();
+        String symbolName = var.getValue().trim();
 
-	if (symbolName.isEmpty()) {
-	    symbolName = generateAnonymousIdentifier();
-	}
+        if (symbolName.isEmpty()) {
+            symbolName = generateAnonymousIdentifier();
+        }
 
-	int sym = this.internVariable(symbolName);
-	int typeid = parseTypeAttribute(var);
+        int sym = this.internVariable(symbolName);
+        int typeid = parseTypeAttribute(var);
 
-	logger.debug("Parsing variable: symbol = " + sym + " type = " + typeid);
+        logger.debug("Parsing variable: symbol = " + sym + " type = " + typeid);
 
-	Vector<Integer> v;
+        Vector<Integer> v;
 
-	if (this.varClasses.containsKey(sym)) {
-	    v = varClasses.get(sym);
-	} else {
-	    v = new Vector<Integer>();
-	    varClasses.put(sym, v);
-	}
+        if (this.varClasses.containsKey(sym)) {
+            v = varClasses.get(sym);
+        } else {
+            v = new Vector<Integer>();
+            varClasses.put(sym, v);
+        }
 
-	v.add(typeid);
+        v.add(typeid);
 
-	logger.debug("Added Type Information");
+        logger.debug("Added Type Information");
 
-	return new Term(sym, SymbolTable.INOROLE, typeid);
+        return new Term(sym, SymbolTable.INOROLE, typeid);
     }
 
     /**
@@ -624,11 +624,11 @@ public class RuleMLDocumentParser {
      *             Thrown if there is an error parsing the plex.
      */
     private Term parsePlex(Element plex) throws ParseException {
-	Vector<Term> subterms = parseDefaultElements(plex);
+        Vector<Term> subterms = parseDefaultElements(plex);
 
-	Term t = new Term(SymbolTable.IPLEX, SymbolTable.INOROLE,
-		Types.IOBJECT, subterms);
-	return t;
+        Term t = new Term(SymbolTable.IPLEX, SymbolTable.INOROLE,
+                Types.IOBJECT, subterms);
+        return t;
     }
 
     /**
@@ -644,43 +644,43 @@ public class RuleMLDocumentParser {
      *             Thrown if there is an error parsing the Expr.
      */
     private Term parseExpression(Element expr) throws ParseException {
-	Elements children = expr.getChildElements();
-	Element op = children.get(0);
+        Elements children = expr.getChildElements();
+        Element op = children.get(0);
 
-	boolean foundOp = false;
+        boolean foundOp = false;
 
-	if (op.getLocalName().equals(tagNames.OP)) {
-	    foundOp = true;
-	}
+        if (op.getLocalName().equals(tagNames.OP)) {
+            foundOp = true;
+        }
 
-	Element fun = null;
-	if (foundOp) {
-	    Elements funTag = op.getChildElements();
-	    fun = funTag.get(0);
+        Element fun = null;
+        if (foundOp) {
+            Elements funTag = op.getChildElements();
+            fun = funTag.get(0);
 
-	    // Remove <op> element including its child element <Fun>, so
-	    // it will not be parsed twice
-	    expr.removeChild(op);
-	}
+            // Remove <op> element including its child element <Fun>, so
+            // it will not be parsed twice
+            expr.removeChild(op);
+        }
 
-	if (!foundOp) {
-	    fun = children.get(0);
+        if (!foundOp) {
+            fun = children.get(0);
 
-	    // Remove <Fun> element so that it will not be parsed twice
-	    expr.removeChild(fun);
-	}
+            // Remove <Fun> element so that it will not be parsed twice
+            expr.removeChild(fun);
+        }
 
-	if (!fun.getLocalName().equals(tagNames.FUN)) {
-	    throw new ParseException(
-		    "First child of op in an Expr must be a Fun element.");
-	}
+        if (!fun.getLocalName().equals(tagNames.FUN)) {
+            throw new ParseException(
+                    "First child of op in an Expr must be a Fun element.");
+        }
 
-	int symbol = SymbolTable.internSymbol(fun.getValue().trim());
-	int typeid = parseTypeAttribute(expr);
+        int symbol = SymbolTable.internSymbol(fun.getValue().trim());
+        int typeid = parseTypeAttribute(expr);
 
-	Vector<Term> subterms = parseDefaultElements(expr);
-	Term t = new Term(symbol, SymbolTable.INOROLE, typeid, subterms);
-	return t;
+        Vector<Term> subterms = parseDefaultElements(expr);
+        Term t = new Term(symbol, SymbolTable.INOROLE, typeid, subterms);
+        return t;
     }
 
     /**
@@ -704,79 +704,79 @@ public class RuleMLDocumentParser {
      */
 
     private Term parseAtom(Element atom, boolean head, boolean neg)
-	    throws ParseException {
+            throws ParseException {
 
-	boolean foundoid = false;
+        boolean foundoid = false;
 
-	Elements children = atom.getChildElements();
+        Elements children = atom.getChildElements();
 
-	// checking for op tag before the rel
-	Element op = getFirstChildElement(atom, tagNames.OP);
+        // checking for op tag before the rel
+        Element op = getFirstChildElement(atom, tagNames.OP);
 
-	Element rel = null;
+        Element rel = null;
 
-	if (op != null) {
-	    Elements relTag = op.getChildElements();
-	    rel = relTag.get(0);
-	} else {
-	    rel = getFirstChildElement(atom, tagNames.REL);
-	}
+        if (op != null) {
+            Elements relTag = op.getChildElements();
+            rel = relTag.get(0);
+        } else {
+            rel = getFirstChildElement(atom, tagNames.REL);
+        }
 
-	if (rel == null) {
-	    throw new ParseException(
-		    "In an <Atom>, first child of <op> must be a <Rel>.");
-	}
+        if (rel == null) {
+            throw new ParseException(
+                    "In an <Atom>, first child of <op> must be a <Rel>.");
+        }
 
-	String relname = rel.getValue().trim();
-	if (neg) {
-	    relname = "$neg-" + relname;
-	}
+        String relname = rel.getValue().trim();
+        if (neg) {
+            relname = "$neg-" + relname;
+        }
 
-	int symbol = SymbolTable.internSymbol(relname);
+        int symbol = SymbolTable.internSymbol(relname);
 
-	Vector<Term> subterms = new Vector<Term>();
-	int startIndex = getFirstChildElementIndex(children, 0) + 1;
-	for (int i = startIndex; i < children.size(); i++) {
-	    Element element = children.get(i);
-	    Term term = null;
-	    if (element.getLocalName().equals(tagNames.OID)) {
-		if (foundoid) {
-		    throw new ParseException(
-			    "<Atom> must contain at most one <oid>.");
-		}
-		term = parseOid(element);
-		foundoid = true;
-	    } else {
-		// Hack: remove <arg index="..."> element and assume
-		// that elements are in canonical order
-		element = skipRoleTag(element);
-		term = parseDefaultElement(element);
-	    }
-	    subterms.add(term);
-	}
+        Vector<Term> subterms = new Vector<Term>();
+        int startIndex = getFirstChildElementIndex(children, 0) + 1;
+        for (int i = startIndex; i < children.size(); i++) {
+            Element element = children.get(i);
+            Term term = null;
+            if (element.getLocalName().equals(tagNames.OID)) {
+                if (foundoid) {
+                    throw new ParseException(
+                            "<Atom> must contain at most one <oid>.");
+                }
+                term = parseOid(element);
+                foundoid = true;
+            } else {
+                // Hack: remove <arg index="..."> element and assume
+                // that elements are in canonical order
+                element = skipRoleTag(element);
+                term = parseDefaultElement(element);
+            }
+            subterms.add(term);
+        }
 
-	// Generate a fake OID if the atom does not have one.
-	// This is a requirement put in place by the reasoner.
-	if (!foundoid) {
-	    if (head) {
-		String symname = "$gensym" + SymbolTable.genid++;
-		int symid = SymbolTable.internSymbol(symname);
-		Term t2 = new Term(symid, SymbolTable.IOID, Types.IOBJECT);
-		subterms.add(t2);
-	    } else {
-		String varname = generateAnonymousIdentifier();
-		int symid = this.internVariable(varname);
-		Vector<Integer> types = new Vector<Integer>();
-		types.add(Types.IOBJECT);
-		this.varClasses.put(symid, types);
-		Term t2 = new Term(symid, SymbolTable.IOID, Types.IOBJECT);
-		subterms.add(t2);
-	    }
-	}
+        // Generate a fake OID if the atom does not have one.
+        // This is a requirement put in place by the reasoner.
+        if (!foundoid) {
+            if (head) {
+                String symname = "$gensym" + SymbolTable.genid++;
+                int symid = SymbolTable.internSymbol(symname);
+                Term t2 = new Term(symid, SymbolTable.IOID, Types.IOBJECT);
+                subterms.add(t2);
+            } else {
+                String varname = generateAnonymousIdentifier();
+                int symid = this.internVariable(varname);
+                Vector<Integer> types = new Vector<Integer>();
+                types.add(Types.IOBJECT);
+                this.varClasses.put(symid, types);
+                Term t2 = new Term(symid, SymbolTable.IOID, Types.IOBJECT);
+                subterms.add(t2);
+            }
+        }
 
-	Term t = new Term(symbol, SymbolTable.INOROLE, Types.IOBJECT, subterms);
-	t.setAtom(true);
-	return t;
+        Term t = new Term(symbol, SymbolTable.INOROLE, Types.IOBJECT, subterms);
+        t.setAtom(true);
+        return t;
     }
 
     /**
@@ -793,33 +793,33 @@ public class RuleMLDocumentParser {
      */
 
     private Term parseSlot(Element slot) throws ParseException {
-	Elements children = slot.getChildElements();
+        Elements children = slot.getChildElements();
 
-	Element firstChildName = children.get(0);
-	boolean dataSlot = false;
-	if (firstChildName.getLocalName().equals(tagNames.DATA)) {
-	    dataSlot = true;
-	}
+        Element firstChildName = children.get(0);
+        boolean dataSlot = false;
+        if (firstChildName.getLocalName().equals(tagNames.DATA)) {
+            dataSlot = true;
+        }
 
-	if (!firstChildName.getLocalName().equals(tagNames.IND)
-		&& !firstChildName.getLocalName().equals(tagNames.DATA)) {
-	    throw new ParseException(
-		    "In a <slot> only <Ind> and <Data> are allowed.");
-	}
-	// Getting the Role from the symbol Table, it will assign one if it
-	// does not already exist
-	int role = SymbolTable.internRole(firstChildName.getValue().trim());
+        if (!firstChildName.getLocalName().equals(tagNames.IND)
+                && !firstChildName.getLocalName().equals(tagNames.DATA)) {
+            throw new ParseException(
+                    "In a <slot> only <Ind> and <Data> are allowed.");
+        }
+        // Getting the Role from the symbol Table, it will assign one if it
+        // does not already exist
+        int role = SymbolTable.internRole(firstChildName.getValue().trim());
 
-	Element element = children.get(1);
-	Term term = parseDefaultElement(element);
+        Element element = children.get(1);
+        Term term = parseDefaultElement(element);
 
-	term.setRole(role);
+        term.setRole(role);
 
-	if (dataSlot) {
-	    term.setDataSlot(true);
-	}
+        if (dataSlot) {
+            term.setDataSlot(true);
+        }
 
-	return term;
+        return term;
     }
 
     /**
@@ -835,16 +835,16 @@ public class RuleMLDocumentParser {
      *             Thrown if there is an error parsing the resl.
      */
     private Term parseResl(Element resl) throws ParseException {
-	Elements children = resl.getChildElements();
-	Element firstChild = skipRoleTag(children.get(0));
+        Elements children = resl.getChildElements();
+        Element firstChild = skipRoleTag(children.get(0));
 
-	Term t = parseDefaultElement(firstChild);
+        Term t = parseDefaultElement(firstChild);
 
-	// HACK: only change symbol, if term is no <Plex>
-	if (t.getSymbol() != SymbolTable.IPLEX) {
-	    t.setRole(SymbolTable.IREST);
-	}
-	return t;
+        // HACK: only change symbol, if term is no <Plex>
+        if (t.getSymbol() != SymbolTable.IPLEX) {
+            t.setRole(SymbolTable.IREST);
+        }
+        return t;
     }
 
     /**
@@ -860,9 +860,9 @@ public class RuleMLDocumentParser {
      *             Thrown if there is an error parsing the repo.
      */
     private Term parseRepo(Element repo) throws ParseException {
-	Term t = parseResl(repo);
-	t.setRole(SymbolTable.IPREST);
-	return t;
+        Term t = parseResl(repo);
+        t.setRole(SymbolTable.IPREST);
+        return t;
     }
 
     /**
@@ -880,33 +880,33 @@ public class RuleMLDocumentParser {
      */
 
     private Term parseNaf(Element naf) throws ParseException {
-	Elements children = naf.getChildElements();
-	Element el = skipRoleTag(children.get(0));
+        Elements children = naf.getChildElements();
+        Element el = skipRoleTag(children.get(0));
 
-	Vector<Term> subterms = new Vector<Term>();
-	if (el.getLocalName().equals(tagNames.ATOM)) {
-	    subterms.add(parseAtom(el, false, false));
-	} else if (el.getLocalName().equals(tagNames.AND)) {
-	    children = el.getChildElements();
-	    for (int i = 0; i < children.size(); i++) {
-		Element el2 = children.get(i);
-		if (!el2.getLocalName().equals(tagNames.ATOM)) {
-		    throw new ParseException(
-			    "And child of Naf element should only contain Atom elements.");
-		}
+        Vector<Term> subterms = new Vector<Term>();
+        if (el.getLocalName().equals(tagNames.ATOM)) {
+            subterms.add(parseAtom(el, false, false));
+        } else if (el.getLocalName().equals(tagNames.AND)) {
+            children = el.getChildElements();
+            for (int i = 0; i < children.size(); i++) {
+                Element el2 = children.get(i);
+                if (!el2.getLocalName().equals(tagNames.ATOM)) {
+                    throw new ParseException(
+                            "And child of Naf element should only contain Atom elements.");
+                }
 
-		subterms.add(parseAtom(el2, false, false));
-	    }
-	} else {
-	    throw new ParseException(
-		    "Naf element should only contain Atom or And child element.");
-	}
+                subterms.add(parseAtom(el2, false, false));
+            }
+        } else {
+            throw new ParseException(
+                    "Naf element should only contain Atom or And child element.");
+        }
 
-	Term t = new Term(SymbolTable.INAF, SymbolTable.INOROLE, Types.IOBJECT,
-		subterms);
+        Term t = new Term(SymbolTable.INAF, SymbolTable.INOROLE, Types.IOBJECT,
+                subterms);
 
-	t.setAtom(true);
-	return t;
+        t.setAtom(true);
+        return t;
     }
 
     /**
@@ -923,23 +923,23 @@ public class RuleMLDocumentParser {
      *             Thrown if there is an error parsing the Skolem.
      */
     private Term parseSkolem(Element sko) throws ParseException {
-	String skoname = sko.getValue().trim();
+        String skoname = sko.getValue().trim();
 
-	if (skoname.isEmpty()) {
-	    return new Term(SymbolTable.internSymbol("$gensym"
-		    + SymbolTable.genid++), SymbolTable.INOROLE, Types.ITHING);
-	} else {
-	    if (this.skolemMap.containsKey(skoname)) {
-		String sym = skolemMap.get(skoname);
-		return new Term(SymbolTable.internSymbol(sym),
-			SymbolTable.INOROLE, Types.ITHING);
-	    } else {
-		String sym = "$gensym" + (SymbolTable.genid++) + "$" + skoname;
-		skolemMap.put(skoname, sym);
-		return new Term(SymbolTable.internSymbol(sym),
-			SymbolTable.INOROLE, Types.ITHING);
-	    }
-	}
+        if (skoname.isEmpty()) {
+            return new Term(SymbolTable.internSymbol("$gensym"
+                    + SymbolTable.genid++), SymbolTable.INOROLE, Types.ITHING);
+        } else {
+            if (this.skolemMap.containsKey(skoname)) {
+                String sym = skolemMap.get(skoname);
+                return new Term(SymbolTable.internSymbol(sym),
+                        SymbolTable.INOROLE, Types.ITHING);
+            } else {
+                String sym = "$gensym" + (SymbolTable.genid++) + "$" + skoname;
+                skolemMap.put(skoname, sym);
+                return new Term(SymbolTable.internSymbol(sym),
+                        SymbolTable.INOROLE, Types.ITHING);
+            }
+        }
     }
 
     /**
@@ -955,15 +955,15 @@ public class RuleMLDocumentParser {
      * @return The integer identifier for this variable
      */
     private int internVariable(String varName) {
-	int idx;
+        int idx;
 
-	idx = variableNames.indexOf(varName);
-	if (idx == -1) {
-	    idx = variableNames.size();
-	    variableNames.add(varName);
-	}
+        idx = variableNames.indexOf(varName);
+        if (idx == -1) {
+            idx = variableNames.size();
+            variableNames.add(varName);
+        }
 
-	return -(idx + 1);
+        return -(idx + 1);
     }
 
     /**
@@ -978,18 +978,18 @@ public class RuleMLDocumentParser {
      *            in the clause.
      */
     private void fixVarTypes(Term complexTerm, Hashtable<Integer, Integer> types) {
-	logger.debug("Fixing term: " + complexTerm.toPOSLString(true));
-	for (int i = 0; i < complexTerm.subTerms.length; i++) {
-	    if (complexTerm.subTerms[i].isExpr()) {
-		fixVarTypes(complexTerm.subTerms[i], types);
-	    } else if (complexTerm.subTerms[i].getSymbol() < 0) {
-		Integer sym = complexTerm.subTerms[i].getSymbol();
-		logger.debug("Fixing symbol = " + sym);
-		Integer type = (Integer) types.get(sym);
-		logger.debug("Type = " + type);
-		complexTerm.subTerms[i].type = type.intValue();
-	    }
-	}
+        logger.debug("Fixing term: " + complexTerm.toPOSLString(true));
+        for (int i = 0; i < complexTerm.subTerms.length; i++) {
+            if (complexTerm.subTerms[i].isExpr()) {
+                fixVarTypes(complexTerm.subTerms[i], types);
+            } else if (complexTerm.subTerms[i].getSymbol() < 0) {
+                Integer sym = complexTerm.subTerms[i].getSymbol();
+                logger.debug("Fixing symbol = " + sym);
+                Integer type = (Integer) types.get(sym);
+                logger.debug("Type = " + type);
+                complexTerm.subTerms[i].type = type.intValue();
+            }
+        }
     }
 
     /**
@@ -1005,21 +1005,21 @@ public class RuleMLDocumentParser {
      *             never occur.
      */
     private Hashtable<Integer, Integer> buildTypeTable() throws ParseException {
-	Hashtable<Integer, Integer> ht = new Hashtable<Integer, Integer>();
-	Enumeration<Integer> e = varClasses.keys();
+        Hashtable<Integer, Integer> ht = new Hashtable<Integer, Integer>();
+        Enumeration<Integer> e = varClasses.keys();
 
-	while (e.hasMoreElements()) {
-	    int key = e.nextElement();
-	    Vector<Integer> value = varClasses.get(key);
-	    int[] types = new int[value.size()];
-	    for (int i = 0; i < types.length; i++) {
-		types[i] = ((Integer) value.get(i)).intValue();
-	    }
+        while (e.hasMoreElements()) {
+            int key = e.nextElement();
+            Vector<Integer> value = varClasses.get(key);
+            int[] types = new int[value.size()];
+            for (int i = 0; i < types.length; i++) {
+                types[i] = ((Integer) value.get(i)).intValue();
+            }
 
-	    int type = Types.greatestLowerBound(types);
-	    ht.put(key, type);
-	}
-	return ht;
+            int type = Types.greatestLowerBound(types);
+            ht.put(key, type);
+        }
+        return ht;
     }
 
     /**
@@ -1037,33 +1037,33 @@ public class RuleMLDocumentParser {
      *             Thrown if this method is not able to handle element.
      */
     private Term parseDefaultElement(Element element) throws ParseException {
-	String elementName = element.getLocalName();
-	Term result = null;
+        String elementName = element.getLocalName();
+        Term result = null;
 
-	if (elementName.equals(tagNames.PLEX)) {
-	    result = parsePlex(element);
-	} else if (elementName.equals(tagNames.EXPR)) {
-	    result = parseExpression(element);
-	} else if (elementName.equals(tagNames.IND)) {
-	    result = parseInd(element);
-	} else if (elementName.equals(tagNames.DATA)) {
-	    result = parseData(element);
-	} else if (elementName.equals(tagNames.SKOLEM)) {
-	    result = parseSkolem(element);
-	} else if (elementName.equals(tagNames.VAR)) {
-	    result = parseVar(element);
-	} else if (elementName.equals(tagNames.SLOT)) {
-	    result = parseSlot(element);
-	} else if (elementName.equals(tagNames.RESL)) {
-	    result = parseResl(element);
-	} else if (elementName.equals(tagNames.REPO)) {
-	    result = parseRepo(element);
-	} else {
-	    throw new ParseException(String.format(
-		    "Element (%s) not supported!", elementName));
-	}
+        if (elementName.equals(tagNames.PLEX)) {
+            result = parsePlex(element);
+        } else if (elementName.equals(tagNames.EXPR)) {
+            result = parseExpression(element);
+        } else if (elementName.equals(tagNames.IND)) {
+            result = parseInd(element);
+        } else if (elementName.equals(tagNames.DATA)) {
+            result = parseData(element);
+        } else if (elementName.equals(tagNames.SKOLEM)) {
+            result = parseSkolem(element);
+        } else if (elementName.equals(tagNames.VAR)) {
+            result = parseVar(element);
+        } else if (elementName.equals(tagNames.SLOT)) {
+            result = parseSlot(element);
+        } else if (elementName.equals(tagNames.RESL)) {
+            result = parseResl(element);
+        } else if (elementName.equals(tagNames.REPO)) {
+            result = parseRepo(element);
+        } else {
+            throw new ParseException(String.format(
+                    "Element (%s) not supported!", elementName));
+        }
 
-	return result;
+        return result;
     }
 
     /**
@@ -1078,34 +1078,34 @@ public class RuleMLDocumentParser {
      * @return The inner element without role tag encapsulation
      */
     private Element skipRoleTag(Element element) {
-	Element result = element;
-	String elementName = element.getLocalName();
+        Element result = element;
+        String elementName = element.getLocalName();
 
-	boolean hasRoleTag = false;
-	if (elementName.equals(tagNames.ARG)) {
-	    hasRoleTag = true;
-	} else if (elementName.equals(tagNames.FORMULA)) {
-	    hasRoleTag = true;
-	} else if (elementName.equals(tagNames.ACT)) {
-	    hasRoleTag = true;
-	} else if (elementName.equals(tagNames.DECLARE)) {
-	    hasRoleTag = true;
-	} else if (elementName.equals(tagNames.STRONG)) {
-	    hasRoleTag = true;
-	} else if (elementName.equals(tagNames.WEAK)) {
-	    hasRoleTag = true;
-	} else if (elementName.equals(tagNames.TORSO)) {
-	    hasRoleTag = true;
-	} else if (elementName.equals(tagNames.DEGREE)) {
-	    hasRoleTag = true;
-	}
+        boolean hasRoleTag = false;
+        if (elementName.equals(tagNames.ARG)) {
+            hasRoleTag = true;
+        } else if (elementName.equals(tagNames.FORMULA)) {
+            hasRoleTag = true;
+        } else if (elementName.equals(tagNames.ACT)) {
+            hasRoleTag = true;
+        } else if (elementName.equals(tagNames.DECLARE)) {
+            hasRoleTag = true;
+        } else if (elementName.equals(tagNames.STRONG)) {
+            hasRoleTag = true;
+        } else if (elementName.equals(tagNames.WEAK)) {
+            hasRoleTag = true;
+        } else if (elementName.equals(tagNames.TORSO)) {
+            hasRoleTag = true;
+        } else if (elementName.equals(tagNames.DEGREE)) {
+            hasRoleTag = true;
+        }
 
-	if (hasRoleTag) {
-	    logger.debug(String.format("%s element skipped", elementName));
-	    result = element.getChildElements().get(0);
-	}
+        if (hasRoleTag) {
+            logger.debug(String.format("%s element skipped", elementName));
+            result = element.getChildElements().get(0);
+        }
 
-	return result;
+        return result;
     }
 
     /**
@@ -1123,17 +1123,17 @@ public class RuleMLDocumentParser {
      *             one of element's children.
      */
     private Vector<Term> parseDefaultElements(Element element)
-	    throws ParseException {
-	Elements children = element.getChildElements();
-	Vector<Term> subterms = new Vector<Term>();
+            throws ParseException {
+        Elements children = element.getChildElements();
+        Vector<Term> subterms = new Vector<Term>();
 
-	for (int i = 0; i < children.size(); i++) {
-	    Element child = children.get(i);
-	    Term term = parseDefaultElement(child);
-	    subterms.add(term);
-	}
+        for (int i = 0; i < children.size(); i++) {
+            Element child = children.get(i);
+            Term term = parseDefaultElement(child);
+            subterms.add(term);
+        }
 
-	return subterms;
+        return subterms;
     }
 
     /**
@@ -1148,14 +1148,14 @@ public class RuleMLDocumentParser {
      * @return The first Element which is labeled with childName
      */
     private Element getFirstChildElement(Element element, String childName) {
-	Elements children = element.getChildElements();
-	for (int i = 0; i < children.size(); i++) {
-	    Element child = children.get(i);
-	    if (child.getLocalName().equals(childName)) {
-		return child;
-	    }
-	}
-	return null;
+        Elements children = element.getChildElements();
+        for (int i = 0; i < children.size(); i++) {
+            Element child = children.get(i);
+            if (child.getLocalName().equals(childName)) {
+                return child;
+            }
+        }
+        return null;
     }
 
     /**
@@ -1171,14 +1171,14 @@ public class RuleMLDocumentParser {
      *         exist, returns -1.
      */
     private int getFirstChildElementIndex(Elements elements, int startIndex) {
-	for (int i = startIndex; i < elements.size(); i++) {
-	    Element child = skipRoleTag(elements.get(i));
+        for (int i = startIndex; i < elements.size(); i++) {
+            Element child = skipRoleTag(elements.get(i));
 
-	    if (!child.getLocalName().equals(tagNames.OID)) {
-		return i;
-	    }
-	}
-	return -1;
+            if (!child.getLocalName().equals(tagNames.OID)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
@@ -1194,19 +1194,19 @@ public class RuleMLDocumentParser {
      *             invalid.
      */
     private int parseTypeAttribute(Element element) throws ParseException {
-	Attribute type = element.getAttribute(tagNames.TYPE);
+        Attribute type = element.getAttribute(tagNames.TYPE);
 
-	int typeid = Types.IOBJECT;
+        int typeid = Types.IOBJECT;
 
-	if (type != null) {
-	    typeid = Types.typeID(type.getValue().trim());
-	    if (typeid == -1) {
-		throw new ParseException("Type " + type.getValue().trim()
-			+ " is not defined.");
-	    }
-	}
+        if (type != null) {
+            typeid = Types.typeID(type.getValue().trim());
+            if (typeid == -1) {
+                throw new ParseException("Type " + type.getValue().trim()
+                        + " is not defined.");
+            }
+        }
 
-	return typeid;
+        return typeid;
     }
 
     /**
@@ -1224,24 +1224,24 @@ public class RuleMLDocumentParser {
      *             is invalid.
      */
     private Term parseSimpleElement(Element element) throws ParseException {
-	String symbolName = element.getValue().trim();
+        String symbolName = element.getValue().trim();
 
-	if (symbolName.isEmpty()) {
-	    symbolName = generateAnonymousIdentifier();
-	}
+        if (symbolName.isEmpty()) {
+            symbolName = generateAnonymousIdentifier();
+        }
 
-	int sym = SymbolTable.internSymbol(symbolName);
-	int typeid = parseTypeAttribute(element);
+        int sym = SymbolTable.internSymbol(symbolName);
+        int typeid = parseTypeAttribute(element);
 
-	return new Term(sym, SymbolTable.INOROLE, typeid);
+        return new Term(sym, SymbolTable.INOROLE, typeid);
     }
 
     /**
      * Reset the internal variable name and variable type lookup tables.
      */
     private void resetVariables() {
-	this.variableNames = new Vector<String>();
-	this.varClasses = new Hashtable<Integer, Vector<Integer>>();
+        this.variableNames = new Vector<String>();
+        this.varClasses = new Hashtable<Integer, Vector<Integer>>();
     }
 
     /**
@@ -1251,6 +1251,6 @@ public class RuleMLDocumentParser {
      *            The logging level
      */
     public void setLogLevel(Level logLevel) {
-	logger.setLevel(logLevel);
+        logger.setLevel(logLevel);
     }
 }

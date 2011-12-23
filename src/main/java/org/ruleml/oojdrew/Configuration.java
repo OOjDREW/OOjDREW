@@ -16,6 +16,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 package org.ruleml.oojdrew;
+
 import java.util.prefs.PreferenceChangeListener;
 
 import org.apache.log4j.Level;
@@ -39,7 +40,7 @@ public interface Configuration {
 
     public RuleMLFormat getSelectedRuleMLFormat();
     public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat);
-    
+
     public Level getLogLevel();
     public void setLogLevel(Level logLevel);
 

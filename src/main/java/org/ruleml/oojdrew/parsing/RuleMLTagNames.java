@@ -20,7 +20,7 @@ package org.ruleml.oojdrew.parsing;
 import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 
 public class RuleMLTagNames {
-    
+
     // "Root" tags
     public final String RULEML = "RuleML";
     public final String RULEBASE = "Rulebase";
@@ -39,13 +39,13 @@ public class RuleMLTagNames {
     public final String PLEX = "Plex";
     public final String SKOLEM = "Skolem";
     public final String DATA = "Data";
-    
+
     public final String OID = "oid";
     public final String TYPE = "type";
     public final String SLOT = "slot";
     public final String RESL = "resl";
     public final String REPO = "repo";
-    
+
     // Supported attribute values
     public final String UNIVERSAL = "universal";
 
@@ -56,10 +56,10 @@ public class RuleMLTagNames {
     public final String FUN;
     public final String MAPCLOSURE;
     public final String OP;
-    
+
     // Unsupported tags
     public final String EQUAL = "Equal";
-    
+
     // Skipped tags (only children will be parsed)
     public final String REIFY = "Reify";
     public final String RIGHT = "right";
@@ -74,31 +74,30 @@ public class RuleMLTagNames {
     public final String DEGREE = "degree";
 
     public RuleMLTagNames(RuleMLFormat rmlFormat) {
-	
-	// Initialize RuleML premise and conclusion tags
-	if (rmlFormat == RuleMLFormat.RuleML100) {
-	    // RuleML version 1.0
-	    PREMISE = "if";
-	    CONCLUSION = "then";
-	} else {
-	    // RuleML versions < 1.0
-	    PREMISE = "body";
-	    CONCLUSION = "head";
-	}
+        // Initialize RuleML premise and conclusion tags
+        if (rmlFormat == RuleMLFormat.RuleML100) {
+            // RuleML version 1.0
+            PREMISE = "if";
+            CONCLUSION = "then";
+        } else {
+            // RuleML versions < 1.0
+            PREMISE = "body";
+            CONCLUSION = "head";
+        }
 
-	// Initialize further tags
-	switch (rmlFormat) {
-	    case RuleML88:
-		EXPR = "Cterm";
-		FUN = "Ctor";
-		MAPCLOSURE = "innerclose";
-		OP = "opr";
-		break;
-	    default: // RuleML 0.91 (+Query) and 1.0
-		EXPR = "Expr";
-		FUN = "Fun";
-		MAPCLOSURE = "mapClosure";
-		OP = "op";
-	}
+        // Initialize further tags
+        switch (rmlFormat) {
+        case RuleML88:
+            EXPR = "Cterm";
+            FUN = "Ctor";
+            MAPCLOSURE = "innerclose";
+            OP = "opr";
+            break;
+        default: // RuleML 0.91 (+Query) and 1.0
+            EXPR = "Expr";
+            FUN = "Fun";
+            MAPCLOSURE = "mapClosure";
+            OP = "op";
+        }
     }
 }

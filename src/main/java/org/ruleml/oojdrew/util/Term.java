@@ -29,24 +29,29 @@ import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 import org.ruleml.oojdrew.parsing.RuleMLTagNames;
 
 /**
- * An object that represents a logic term (Ind, Var, Cterm Plex, Atom). 
- * For a simple term (ind or variable) the subTerms array is 
- * set to null, for non-simple terms (atoms, complex terms, plexs)
- * the subTerms array contains the parameters for that term.
- *
- * <p>Title: OO jDREW</p>
- *
- * <p>Description: A deductive reasoning engine for Object-Oriented Knowledge
- * in OO RuleML</p>
- *
- * <p>Copyright: Copyright (c) 2005</p>
- *
+ * An object that represents a logic term (Ind, Var, Cterm Plex, Atom). For a
+ * simple term (ind or variable) the subTerms array is set to null, for
+ * non-simple terms (atoms, complex terms, plexs) the subTerms array contains
+ * the parameters for that term.
+ * 
+ * <p>
+ * Title: OO jDREW
+ * </p>
+ * 
+ * <p>
+ * Description: A deductive reasoning engine for Object-Oriented Knowledge in OO
+ * RuleML
+ * </p>
+ * 
+ * <p>
+ * Copyright: Copyright (c) 2005
+ * </p>
+ * 
  * @author Marcel Ball
  * @version 0.89
  */
 public class Term implements Comparable {
-	
- 
+
     /**
      * This is a regular expression to test against to see if a symbol needs to
      * be quoted when producing POSL format output.
@@ -54,12 +59,12 @@ public class Term implements Comparable {
     public static final String regex = "^(-)?[a-zA-Z0-9\\$][a-zA-Z0-9_\\$\\.]*$";
 
     /**
-     * The symbol code to be used for this term, for
-     * a variable this is a negative number - and the variable name is stored
-     * in the variableNames array of the DefiniteClause object, for a ind this
-     * is a positive number and the symbol text is stored in the SymbolTable.
+     * The symbol code to be used for this term, for a variable this is a
+     * negative number - and the variable name is stored in the variableNames
+     * array of the DefiniteClause object, for a ind this is a positive number
+     * and the symbol text is stored in the SymbolTable.
      */
-     
+
     public int symbol;
 
     /**
@@ -143,9 +148,9 @@ public class Term implements Comparable {
      *            RDFSParser object into the Types system.
      */
     public Term(int symbol, int role, int type) {
-	this.symbol = symbol;
-	this.role = role;
-	this.type = type;
+        this.symbol = symbol;
+        this.role = role;
+        this.type = type;
     }
 
     /**
@@ -204,18 +209,18 @@ public class Term implements Comparable {
      *            this atom, expr or plex that is being created.
      */
     public Term(int symbol, int role, int type, Term[] subTerms) {
-	this(symbol, role, type);
-	Vector st = this.sort(subTerms);
-	this.subTerms = new Term[st.size()];
-	for (int i = 0; i < st.size(); i++) {
-	    this.subTerms[i] = (Term) st.get(i);
-	    if (this.subTerms[i].getRole() == SymbolTable.IREST) {
-		rest = i;
-	    }
-	    if (this.subTerms[i].getRole() == SymbolTable.IPREST) {
-		prest = i;
-	    }
-	}
+        this(symbol, role, type);
+        Vector st = this.sort(subTerms);
+        this.subTerms = new Term[st.size()];
+        for (int i = 0; i < st.size(); i++) {
+            this.subTerms[i] = (Term) st.get(i);
+            if (this.subTerms[i].getRole() == SymbolTable.IREST) {
+                rest = i;
+            }
+            if (this.subTerms[i].getRole() == SymbolTable.IPREST) {
+                prest = i;
+            }
+        }
     }
 
     /**
@@ -305,16 +310,16 @@ public class Term implements Comparable {
 
     /**
      * Gets the symbol for this term. If it is a complex term this gives the
-     * symbol for the predicate/constructor. If it is a variable then the
-     * symbol is prefixed with a ?.
-     *
+     * symbol for the predicate/constructor. If it is a variable then the symbol
+     * is prefixed with a ?.
+     * 
      * @return The symbol for this term.
      */
     public String getSymbolString() {
         if (symbol > 0) {
             return SymbolTable.symbol(symbol);
         } else {
-            return "?Var" + ( -(symbol + 1));
+            return "?Var" + (-(symbol + 1));
         }
     }
 
@@ -323,7 +328,7 @@ public class Term implements Comparable {
      * will be equal to the IREST member of the associated SymbolTable. If this
      * is a positional argument it will be equal to the INOROLE member of the
      * associated SymbolTable.
-     *
+     * 
      * @return The role code for this term.
      */
     public int getRole() {
@@ -354,7 +359,7 @@ public class Term implements Comparable {
     /**
      * Gets the type code for this term. For an untyped term this will be equal
      * to the IOBJECT member of the TypeHierarchy associated with the clause.
-     *
+     * 
      * @return The type code for this term.
      */
     public int getType() {
@@ -374,7 +379,7 @@ public class Term implements Comparable {
     /**
      * Gets the value of the side member variable - this is used by the
      * unification process to keep track of terms.
-     *
+     * 
      * @return The current value of the side member.
      */
     public int getSide() {
@@ -453,7 +458,7 @@ public class Term implements Comparable {
      *            The value that the atom member should be set to.
      */
     public void setAtom(boolean atom) {
-	this.atom = atom;
+        this.atom = atom;
     }
 
     /**
@@ -464,18 +469,18 @@ public class Term implements Comparable {
      *            The value that the isData member should be set to.
      */
     public void setData(boolean data) {
-	isData = data;
+        isData = data;
     }
-    
+
     /**
      * Gets the isData vaule
      * 
      * @return The value of the isData member
      */
     public boolean getData() {
-	return isData;
+        return isData;
     }
-    
+
     /**
      * Sets the isDataSlot flag to the passed value, if isDataSlot variable is
      * set to true then it is a data element if not it is a Ind inside the slot.
@@ -484,7 +489,7 @@ public class Term implements Comparable {
      *            The value that the isDataSlot member should be set to.
      */
     public void setDataSlot(boolean data) {
-	dataSlot = data;
+        dataSlot = data;
     }
 
     /**
@@ -493,9 +498,9 @@ public class Term implements Comparable {
      * @return The value that the isDataSlot member
      */
     public boolean getDataSlot() {
-	return dataSlot;
+        return dataSlot;
     }
-		
+
     /**
      * Returns a string representation of this term. The format of this string
      * is determined by the value of the PRPRINT static variable in the
@@ -515,7 +520,7 @@ public class Term implements Comparable {
         if (Config.PRPRINT) {
             return this.toPOSLString(true);
         } else {
-        	
+
             return this.toRuleMLString(rmlFormat);
         }
     }
@@ -539,9 +544,9 @@ public class Term implements Comparable {
         if (Config.PRPRINT) {
             return this.toPOSLString(varNames, true);
         } else {
-        	
+
             return this.toRuleMLString(varNames, rmlFormat);
-        
+
         }
     }
 
@@ -557,9 +562,8 @@ public class Term implements Comparable {
     public String toPOSLString(boolean head) {
         String s = "";
 
-        if (this.role != SymbolTable.INOROLE &&
-            this.role != SymbolTable.IREST &&
-            this.role != SymbolTable.IPREST) {
+        if (this.role != SymbolTable.INOROLE && this.role != SymbolTable.IREST
+                && this.role != SymbolTable.IPREST) {
             String rs = SymbolTable.role(this.role);
             if (!rs.matches(regex)) {
                 rs = "\"" + rs + "\"";
@@ -568,26 +572,25 @@ public class Term implements Comparable {
         }
 
         if (this.symbol < 0) {
-            s += "?Var" + ( -(symbol + 1));
+            s += "?Var" + (-(symbol + 1));
         } else {
-            if (this.symbol != SymbolTable.INAF &&
-                this.symbol != SymbolTable.IPLEX &&
-                this.symbol != SymbolTable.IASSERT) {
+            if (this.symbol != SymbolTable.INAF
+                    && this.symbol != SymbolTable.IPLEX
+                    && this.symbol != SymbolTable.IASSERT) {
                 String sym = SymbolTable.symbol(this.symbol);
 
-                if(sym.startsWith("$gensym") && !org.ruleml.oojdrew.Config.PRINTGENSYMS){
+                if (sym.startsWith("$gensym")
+                        && !org.ruleml.oojdrew.Config.PRINTGENSYMS) {
                     int idx = sym.indexOf("$", 7);
-                    if(idx > -1){
+                    if (idx > -1) {
                         String skoname = sym.substring(idx + 1);
-                        if(!sym.matches(regex)){
+                        if (!sym.matches(regex)) {
                             skoname = "\"" + skoname + "\"";
                         }
                         sym = "_" + skoname;
-                    }
-                    else
+                    } else
                         sym = "_";
-                }
-                else if (!sym.matches(regex)) {
+                } else if (!sym.matches(regex)) {
                     sym = "\"" + sym + "\"";
                 }
                 s += sym;
@@ -632,14 +635,17 @@ public class Term implements Comparable {
                 if (this.subTerms[i].role == SymbolTable.IREST) {
                     s += " !"; // handle printout if term is a slotted rest term
                 } else if (this.subTerms[i].role == SymbolTable.IPREST) {
-                    s += " |"; // handle printout if term is a positional rest term
+                    s += " |"; // handle printout if term is a positional rest
+                               // term
                 }
 
-                if(this.subTerms[i].role == SymbolTable.IOID && !org.ruleml.oojdrew.Config.PRINTGENOIDS && head){
-                    if(this.subTerms[i].getSymbolString().startsWith("$gensym"))
+                if (this.subTerms[i].role == SymbolTable.IOID
+                        && !org.ruleml.oojdrew.Config.PRINTGENOIDS && head) {
+                    if (this.subTerms[i].getSymbolString()
+                            .startsWith("$gensym"))
                         continue;
                 }
-              //get rid of blank oid here
+                // get rid of blank oid here
                 s += this.subTerms[i].toPOSLString(head);
                 if (this.subTerms[i].role == SymbolTable.IOID) {
                     s += "^ ";
@@ -647,9 +653,8 @@ public class Term implements Comparable {
 
                 if ((i + 1) < this.subTerms.length) {
 
-
-                    if (this.subTerms[i].role != SymbolTable.IOID &&
-                        this.subTerms[i + 1].role == SymbolTable.INOROLE) {
+                    if (this.subTerms[i].role != SymbolTable.IOID
+                            && this.subTerms[i + 1].role == SymbolTable.INOROLE) {
                         s += ", ";
                     } else if (this.subTerms[i + 1].role == SymbolTable.IREST) {
                     } else if (this.subTerms[i + 1].role == SymbolTable.IPREST) {
@@ -675,9 +680,9 @@ public class Term implements Comparable {
      * Returns a string representation of this term in POSL syntax.
      * 
      * @param varNames
-     *            A string array containing the variable names to use
-     *            when outputting the string. These are stored in the
-     *            DefiniteClause that the term is part of.
+     *            A string array containing the variable names to use when
+     *            outputting the string. These are stored in the DefiniteClause
+     *            that the term is part of.
      * 
      * @return The POSL syntax representation of the term.
      */
@@ -685,7 +690,7 @@ public class Term implements Comparable {
         return toPOSLString(varNames, false, true);
     }
 
-    public String toPOSLString(String[] varNames, boolean head){
+    public String toPOSLString(String[] varNames, boolean head) {
         return toPOSLString(varNames, false, head);
     }
 
@@ -712,10 +717,10 @@ public class Term implements Comparable {
         String s = "";
 
         if (!skiprole) {
-            if (this.role != SymbolTable.INOROLE &&
-                this.role != SymbolTable.IREST &&
-                this.role != SymbolTable.IPREST &&
-                this.role != SymbolTable.IOID) {
+            if (this.role != SymbolTable.INOROLE
+                    && this.role != SymbolTable.IREST
+                    && this.role != SymbolTable.IPREST
+                    && this.role != SymbolTable.IOID) {
                 String rs = SymbolTable.role(this.role);
                 if (!rs.matches(regex)) {
                     rs = "\"" + rs + "\"";
@@ -725,33 +730,33 @@ public class Term implements Comparable {
         }
 
         if (this.symbol < 0) {
-            if (varNames[ -(symbol + 1)].startsWith("$ANON") && !org.ruleml.oojdrew.Config.PRINTANONVARNAMES) {
+            if (varNames[-(symbol + 1)].startsWith("$ANON")
+                    && !org.ruleml.oojdrew.Config.PRINTANONVARNAMES) {
                 s += "?";
             } else {
-                s += "?" + varNames[ -(symbol + 1)];
+                s += "?" + varNames[-(symbol + 1)];
                 if (org.ruleml.oojdrew.Config.PRINTVARID) {
-                    s += "_" + ( -(symbol + 1));
+                    s += "_" + (-(symbol + 1));
                 }
             }
         } else {
-            if (this.symbol != SymbolTable.INAF &&
-                this.symbol != SymbolTable.IPLEX &&
-                this.symbol != SymbolTable.IASSERT) {
+            if (this.symbol != SymbolTable.INAF
+                    && this.symbol != SymbolTable.IPLEX
+                    && this.symbol != SymbolTable.IASSERT) {
                 String sym = SymbolTable.symbol(this.symbol);
 
-                if(sym.startsWith("$gensym") && !org.ruleml.oojdrew.Config.PRINTGENSYMS){
+                if (sym.startsWith("$gensym")
+                        && !org.ruleml.oojdrew.Config.PRINTGENSYMS) {
                     int idx = sym.indexOf("$", 7);
-                    if(idx > -1){
+                    if (idx > -1) {
                         String skoname = sym.substring(idx + 1);
-                        if(!sym.matches(regex)){
+                        if (!sym.matches(regex)) {
                             skoname = "\"" + skoname + "\"";
                         }
                         sym = "_" + skoname;
-                    }
-                    else
+                    } else
                         sym = "_";
-                }
-                else if (!sym.matches(regex)) {
+                } else if (!sym.matches(regex)) {
                     sym = "\"" + sym + "\"";
                 }
 
@@ -795,26 +800,33 @@ public class Term implements Comparable {
             s += sb;
             for (int i = 0; i < this.subTerms.length; i++) {
                 if (this.subTerms[i].role == SymbolTable.IREST) {
-                    s += "!"; // handle printout if first term is a slotted rest term
+                    s += "!"; // handle printout if first term is a slotted rest
+                              // term
                 } else if (this.subTerms[i].role == SymbolTable.IPREST) {
-                    s += "|"; // handle printout if first term is a positional rest term
+                    s += "|"; // handle printout if first term is a positional
+                              // rest term
                 }
 
-                if(this.subTerms[i].role == SymbolTable.IOID && !org.ruleml.oojdrew.Config.PRINTGENOIDS){
-                    if(this.subTerms[i].symbol > 0 && this.subTerms[i].getSymbolString().startsWith("$gensym") && head)
+                if (this.subTerms[i].role == SymbolTable.IOID
+                        && !org.ruleml.oojdrew.Config.PRINTGENOIDS) {
+                    if (this.subTerms[i].symbol > 0
+                            && this.subTerms[i].getSymbolString().startsWith(
+                                    "$gensym") && head)
                         continue;
-                    if(this.subTerms[i].symbol < 0 && varNames[-(this.subTerms[i].symbol + 1)].startsWith("$ANON") && !head)
+                    if (this.subTerms[i].symbol < 0
+                            && varNames[-(this.subTerms[i].symbol + 1)]
+                                    .startsWith("$ANON") && !head)
                         continue;
                 }
-                
+
                 s += this.subTerms[i].toPOSLString(varNames, head);
                 if (this.subTerms[i].role == SymbolTable.IOID) {
                     s += "^ ";
                 }
 
                 if ((i + 1) < this.subTerms.length) {
-                    if (this.subTerms[i].role != SymbolTable.IOID &&
-                        this.subTerms[i + 1].role == SymbolTable.INOROLE) {
+                    if (this.subTerms[i].role != SymbolTable.IOID
+                            && this.subTerms[i + 1].role == SymbolTable.INOROLE) {
                         s += ", ";
                     } else if (this.subTerms[i + 1].role == SymbolTable.IREST) {
                     } else if (this.subTerms[i + 1].role == SymbolTable.IPREST) {
@@ -836,16 +848,17 @@ public class Term implements Comparable {
         return s;
     }
 
-    //String solution to print instantiated facts
-    public String toPOSLStringAll(String[] varNames, boolean skiprole, boolean head) {
-        
-    	String s = "";
+    // String solution to print instantiated facts
+    public String toPOSLStringAll(String[] varNames, boolean skiprole,
+            boolean head) {
+
+        String s = "";
 
         if (!skiprole) {
-            if (this.role != SymbolTable.INOROLE &&
-                this.role != SymbolTable.IREST &&
-                this.role != SymbolTable.IPREST &&
-                this.role != SymbolTable.IOID) {
+            if (this.role != SymbolTable.INOROLE
+                    && this.role != SymbolTable.IREST
+                    && this.role != SymbolTable.IPREST
+                    && this.role != SymbolTable.IOID) {
                 String rs = SymbolTable.role(this.role);
                 if (!rs.matches(regex)) {
                     rs = "\"" + rs + "\"";
@@ -855,33 +868,33 @@ public class Term implements Comparable {
         }
 
         if (this.symbol < 0) {
-            if (varNames[ -(symbol + 1)].startsWith("$ANON") && !org.ruleml.oojdrew.Config.PRINTANONVARNAMES) {
+            if (varNames[-(symbol + 1)].startsWith("$ANON")
+                    && !org.ruleml.oojdrew.Config.PRINTANONVARNAMES) {
                 s += "?";
             } else {
-                s += "?" + varNames[ -(symbol + 1)];
+                s += "?" + varNames[-(symbol + 1)];
                 if (org.ruleml.oojdrew.Config.PRINTVARID) {
-                    s += "" + ( -(symbol + 1));
+                    s += "" + (-(symbol + 1));
                 }
             }
         } else {
-            if (this.symbol != SymbolTable.INAF &&
-                this.symbol != SymbolTable.IPLEX &&
-                this.symbol != SymbolTable.IASSERT) {
+            if (this.symbol != SymbolTable.INAF
+                    && this.symbol != SymbolTable.IPLEX
+                    && this.symbol != SymbolTable.IASSERT) {
                 String sym = SymbolTable.symbol(this.symbol);
 
-                if(sym.startsWith("$gensym") && !org.ruleml.oojdrew.Config.PRINTGENSYMS){
+                if (sym.startsWith("$gensym")
+                        && !org.ruleml.oojdrew.Config.PRINTGENSYMS) {
                     int idx = sym.indexOf("$", 7);
-                    if(idx > -1){
+                    if (idx > -1) {
                         String skoname = sym.substring(idx + 1);
-                        if(!sym.matches(regex)){
+                        if (!sym.matches(regex)) {
                             skoname = "\"" + skoname + "\"";
                         }
                         sym = "" + skoname;
-                    }
-                    else
+                    } else
                         sym = "";
-                }
-                else if (!sym.matches(regex)) {
+                } else if (!sym.matches(regex)) {
                     sym = "\"" + sym + "\"";
                 }
 
@@ -925,36 +938,43 @@ public class Term implements Comparable {
             s += sb;
             for (int i = 0; i < this.subTerms.length; i++) {
                 if (this.subTerms[i].role == SymbolTable.IREST) {
-                    s += "!"; // handle printout if first term is a slotted rest term
+                    s += "!"; // handle printout if first term is a slotted rest
+                              // term
                 } else if (this.subTerms[i].role == SymbolTable.IPREST) {
-                    s += "|"; // handle printout if first term is a positional rest term
+                    s += "|"; // handle printout if first term is a positional
+                              // rest term
                 }
-                
-                if(this.subTerms[i].role == SymbolTable.IOID && !org.ruleml.oojdrew.Config.PRINTGENOIDS){
-                    if(this.subTerms[i].symbol > 0 && this.subTerms[i].getSymbolString().startsWith("$gensym") && head)
+
+                if (this.subTerms[i].role == SymbolTable.IOID
+                        && !org.ruleml.oojdrew.Config.PRINTGENOIDS) {
+                    if (this.subTerms[i].symbol > 0
+                            && this.subTerms[i].getSymbolString().startsWith(
+                                    "$gensym") && head)
                         continue;
-                    if(this.subTerms[i].symbol < 0 && varNames[-(this.subTerms[i].symbol + 1)].startsWith("$ANON") && !head)
+                    if (this.subTerms[i].symbol < 0
+                            && varNames[-(this.subTerms[i].symbol + 1)]
+                                    .startsWith("$ANON") && !head)
                         continue;
                 }
-                
-                //get rid of blank oid here
-                
+
+                // get rid of blank oid here
+
                 String s2 = "";
-                
+
                 s2 = this.subTerms[i].toPOSLString(varNames, head);
-                
-                if(s2.compareTo("_") != 0){
-                
-                	s += s2;
-                }                
-                
+
+                if (s2.compareTo("_") != 0) {
+
+                    s += s2;
+                }
+
                 if (this.subTerms[i].role == SymbolTable.IOID) {
-                  //  s += "^ ";
+                    // s += "^ ";
                 }
 
                 if ((i + 1) < this.subTerms.length) {
-                    if (this.subTerms[i].role != SymbolTable.IOID &&
-                        this.subTerms[i + 1].role == SymbolTable.INOROLE) {
+                    if (this.subTerms[i].role != SymbolTable.IOID
+                            && this.subTerms[i + 1].role == SymbolTable.INOROLE) {
                         s += ", ";
                     } else if (this.subTerms[i + 1].role == SymbolTable.IREST) {
                     } else if (this.subTerms[i + 1].role == SymbolTable.IPREST) {
@@ -976,7 +996,6 @@ public class Term implements Comparable {
         return s;
     }
 
-    
     /**
      * Produces an OO RuleML XML syntax representation of this term, stored in a
      * string.
@@ -989,16 +1008,16 @@ public class Term implements Comparable {
      * 
      * @return The OO RuleML syntax representation of this, stored as a
      *         "pretty printed" string.
-     */     
+     */
     public String toRuleMLString(RuleMLFormat rmlFormat) {
-    	
+
         Element rml = this.toRuleML(true, rmlFormat);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         nu.xom.Serializer sl = new nu.xom.Serializer(os);
         sl.setIndent(3);
         sl.setLineSeparator("\n");
         try {
-        	Document doc = new Document(rml);
+            Document doc = new Document(rml);
             sl.write(doc);
         } catch (java.io.IOException e) {
             System.err.println(e.getMessage());
@@ -1022,14 +1041,14 @@ public class Term implements Comparable {
      *         term.
      */
     public String toRuleMLString(String[] varNames, RuleMLFormat version) {
-    	
+
         Element rml = this.toRuleML(varNames, true, version);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         nu.xom.Serializer sl = new nu.xom.Serializer(os);
         sl.setIndent(3);
         sl.setLineSeparator("\n");
         try {
-        	Document doc = new Document(rml);
+            Document doc = new Document(rml);
             sl.write(doc);
         } catch (java.io.IOException e) {
             System.err.println(e.getMessage());
@@ -1053,134 +1072,134 @@ public class Term implements Comparable {
      */
 
     public Element toRuleML(boolean head, RuleMLFormat rmlFormat) {
-    	   	  
-	RuleMLTagNames rmlTagNames = new RuleMLTagNames(rmlFormat);
 
-	Element el = null;
-	boolean dst = false;
+        RuleMLTagNames rmlTagNames = new RuleMLTagNames(rmlFormat);
 
-	if (this.isExpr()) {
-	    if (this.isAtom() && this.symbol == SymbolTable.INAF) {
-		el = new Element(rmlTagNames.NAF);
-	    } else if (this.isAtom() && this.symbol == SymbolTable.IASSERT) {
-		el = new Element(rmlTagNames.ASSERT);
-		if (this.subTerms.length == 1) {
-		    el.insertChild(subTerms[0].toRuleML(true, rmlFormat), 0);
-		} else {
-		    Element el2 = new Element(rmlTagNames.IMPLIES);
-		    if (this.subTerms.length > 2) {
-			Element el3 = new Element(rmlTagNames.AND);
-			for (int i = 1; i < this.subTerms.length; i++) {
-			    el3.appendChild(this.subTerms[i].toRuleML(false,
-				    rmlFormat));
-			}
-			el2.appendChild(el3);
-		    } else {
-			el2.appendChild(this.subTerms[1].toRuleML(false,
-				rmlFormat));
-		    }
-		    el2.appendChild(this.subTerms[0].toRuleML(true, rmlFormat));
-		    el.appendChild(el2);
+        Element el = null;
+        boolean dst = false;
 
-		}
-		dst = true;
-	    } else if (this.isAtom()) {
-		el = new Element(rmlTagNames.ATOM);
+        if (this.isExpr()) {
+            if (this.isAtom() && this.symbol == SymbolTable.INAF) {
+                el = new Element(rmlTagNames.NAF);
+            } else if (this.isAtom() && this.symbol == SymbolTable.IASSERT) {
+                el = new Element(rmlTagNames.ASSERT);
+                if (this.subTerms.length == 1) {
+                    el.insertChild(subTerms[0].toRuleML(true, rmlFormat), 0);
+                } else {
+                    Element el2 = new Element(rmlTagNames.IMPLIES);
+                    if (this.subTerms.length > 2) {
+                        Element el3 = new Element(rmlTagNames.AND);
+                        for (int i = 1; i < this.subTerms.length; i++) {
+                            el3.appendChild(this.subTerms[i].toRuleML(false,
+                                    rmlFormat));
+                        }
+                        el2.appendChild(el3);
+                    } else {
+                        el2.appendChild(this.subTerms[1].toRuleML(false,
+                                rmlFormat));
+                    }
+                    el2.appendChild(this.subTerms[0].toRuleML(true, rmlFormat));
+                    el.appendChild(el2);
 
-		Element rel = new Element(rmlTagNames.REL);
-		el.insertChild(rel, el.getChildCount());
+                }
+                dst = true;
+            } else if (this.isAtom()) {
+                el = new Element(rmlTagNames.ATOM);
 
-		rel.insertChild(SymbolTable.symbol(this.symbol), 0);
-	    } else if (this.symbol == SymbolTable.IPLEX) {
-		el = new Element(rmlTagNames.PLEX);
-	    } else {
-		el = new Element(rmlTagNames.EXPR);
+                Element rel = new Element(rmlTagNames.REL);
+                el.insertChild(rel, el.getChildCount());
 
-		Element ctor = new Element(rmlTagNames.FUN);
-		el.insertChild(ctor, el.getChildCount());
-		ctor.insertChild(SymbolTable.symbol(this.symbol), 0);
-	    }
+                rel.insertChild(SymbolTable.symbol(this.symbol), 0);
+            } else if (this.symbol == SymbolTable.IPLEX) {
+                el = new Element(rmlTagNames.PLEX);
+            } else {
+                el = new Element(rmlTagNames.EXPR);
 
-	    for (int i = 0; i < this.subTerms.length && !dst; i++) {
-		el.insertChild(this.subTerms[i].toRuleML(head, rmlFormat),
-			el.getChildCount());
-	    }
-	} else {
-	    if (this.role == SymbolTable.IOID
-		    && !org.ruleml.oojdrew.Config.PRINTGENOIDS && head) {
-		if (this.symbol > 0
-			&& this.getSymbolString().startsWith("$gensym"))
-		    return null;
-	    }
+                Element ctor = new Element(rmlTagNames.FUN);
+                el.insertChild(ctor, el.getChildCount());
+                ctor.insertChild(SymbolTable.symbol(this.symbol), 0);
+            }
 
-	    if (this.symbol < 0) {
-		el = new Element(rmlTagNames.VAR);
-		el.insertChild(rmlTagNames.VAR + (-(symbol + 1)), 0);
-	    } else {
-		String sym = SymbolTable.symbol(this.symbol);
-		if (sym.startsWith("$gensym")
-			&& !org.ruleml.oojdrew.Config.PRINTGENSYMS) {
-		    el = new Element(rmlTagNames.SKOLEM);
-		    int idx = sym.indexOf("$", 7);
-		    if (idx > -1) {
-			String skoname = sym.substring(idx + 1);
-			el.appendChild(skoname);
-		    }
-		} else {
+            for (int i = 0; i < this.subTerms.length && !dst; i++) {
+                el.insertChild(this.subTerms[i].toRuleML(head, rmlFormat),
+                        el.getChildCount());
+            }
+        } else {
+            if (this.role == SymbolTable.IOID
+                    && !org.ruleml.oojdrew.Config.PRINTGENOIDS && head) {
+                if (this.symbol > 0
+                        && this.getSymbolString().startsWith("$gensym"))
+                    return null;
+            }
 
-		    if (isData) {
-			el = new Element(rmlTagNames.DATA);
-			el.insertChild(sym, 0);
-		    }
+            if (this.symbol < 0) {
+                el = new Element(rmlTagNames.VAR);
+                el.insertChild(rmlTagNames.VAR + (-(symbol + 1)), 0);
+            } else {
+                String sym = SymbolTable.symbol(this.symbol);
+                if (sym.startsWith("$gensym")
+                        && !org.ruleml.oojdrew.Config.PRINTGENSYMS) {
+                    el = new Element(rmlTagNames.SKOLEM);
+                    int idx = sym.indexOf("$", 7);
+                    if (idx > -1) {
+                        String skoname = sym.substring(idx + 1);
+                        el.appendChild(skoname);
+                    }
+                } else {
 
-		    if (!isData) {
-			el = new Element(rmlTagNames.IND);
-			el.insertChild(sym, 0);
-		    }
+                    if (isData) {
+                        el = new Element(rmlTagNames.DATA);
+                        el.insertChild(sym, 0);
+                    }
 
-		}
-	    }
-	}
+                    if (!isData) {
+                        el = new Element(rmlTagNames.IND);
+                        el.insertChild(sym, 0);
+                    }
 
-	if (this.type != Types.IOBJECT) {
-	    Attribute a = new Attribute(rmlTagNames.TYPE,
-		    Types.typeName(this.type));
-	    el.addAttribute(a);
-	}
+                }
+            }
+        }
 
-	if (this.role == SymbolTable.IREST) {
-	    Element e2 = new Element(rmlTagNames.RESL);
-	    e2.insertChild(el, 0);
-	    return e2;
-	} else if (this.role == SymbolTable.IPREST) {
-	    Element e2 = new Element(rmlTagNames.REPO);
-	    e2.insertChild(el, 0);
-	    return e2;
-	} else if (this.role == SymbolTable.IOID) {
-	    Element e2 = new Element(rmlTagNames.OID);
-	    e2.insertChild(el, 0);
-	    return e2;
-	} else if (this.role == SymbolTable.INOROLE) {
-	    return el;
-	} else {
-	    Element e2 = new Element(rmlTagNames.SLOT);
-	    Element e3 = null;
+        if (this.type != Types.IOBJECT) {
+            Attribute a = new Attribute(rmlTagNames.TYPE,
+                    Types.typeName(this.type));
+            el.addAttribute(a);
+        }
 
-	    // If isData is true then change it here
-	    if (!dataSlot) {
-		e3 = new Element(rmlTagNames.IND);
-		e3.appendChild(SymbolTable.role(this.role));
-	    }
+        if (this.role == SymbolTable.IREST) {
+            Element e2 = new Element(rmlTagNames.RESL);
+            e2.insertChild(el, 0);
+            return e2;
+        } else if (this.role == SymbolTable.IPREST) {
+            Element e2 = new Element(rmlTagNames.REPO);
+            e2.insertChild(el, 0);
+            return e2;
+        } else if (this.role == SymbolTable.IOID) {
+            Element e2 = new Element(rmlTagNames.OID);
+            e2.insertChild(el, 0);
+            return e2;
+        } else if (this.role == SymbolTable.INOROLE) {
+            return el;
+        } else {
+            Element e2 = new Element(rmlTagNames.SLOT);
+            Element e3 = null;
 
-	    if (dataSlot) {
-		e3 = new Element(rmlTagNames.DATA);
-		e3.appendChild(SymbolTable.role(this.role));
-	    }
+            // If isData is true then change it here
+            if (!dataSlot) {
+                e3 = new Element(rmlTagNames.IND);
+                e3.appendChild(SymbolTable.role(this.role));
+            }
 
-	    e2.appendChild(e3);
-	    e2.appendChild(el);
-	    return e2;
-	}
+            if (dataSlot) {
+                e3 = new Element(rmlTagNames.DATA);
+                e3.appendChild(SymbolTable.role(this.role));
+            }
+
+            e2.appendChild(e3);
+            e2.appendChild(el);
+            return e2;
+        }
     }
 
     /**
@@ -1197,150 +1216,149 @@ public class Term implements Comparable {
      * @return The OO RuleML syntax representation of this, as an Element value.
      */
     public Element toRuleML(String[] varNames, boolean head,
-	    RuleMLFormat rmlFormat) {
+            RuleMLFormat rmlFormat) {
 
-	RuleMLTagNames rmlTagNames = new RuleMLTagNames(rmlFormat);
-	
-	// Printing the Clauses in RuleML Format
+        RuleMLTagNames rmlTagNames = new RuleMLTagNames(rmlFormat);
 
-	    Element el = null;
-	    boolean dst = false;
-	    if (this.isExpr()) {
-		if (this.isAtom() && this.symbol == SymbolTable.INAF) {
-		    el = new Element(rmlTagNames.NAF);
-		} else if (this.isAtom() && this.symbol == SymbolTable.IASSERT) {
-		    el = new Element(rmlTagNames.ASSERT);
-		    if (this.subTerms.length == 1) {
-			el.insertChild(
-				subTerms[0].toRuleML(varNames, true, rmlFormat),
-				0);
-		    } else {
-			Element el2 = new Element(rmlTagNames.IMPLIES);
-			if (this.subTerms.length > 2) {
-			    Element el3 = new Element(rmlTagNames.AND);
-			    for (int i = 1; i < this.subTerms.length; i++) {
-				el3.appendChild(this.subTerms[i].toRuleML(
-					varNames, false, rmlFormat));
-			    }
-			    el2.appendChild(el3);
-			} else {
-			    el2.appendChild(this.subTerms[1].toRuleML(varNames,
-				    false, rmlFormat));
-			}
-			el2.appendChild(this.subTerms[0].toRuleML(varNames,
-				true, rmlFormat));
-			el.appendChild(el2);
+        // Printing the Clauses in RuleML Format
 
-		    }
-		    dst = true;
-		}
+        Element el = null;
+        boolean dst = false;
+        if (this.isExpr()) {
+            if (this.isAtom() && this.symbol == SymbolTable.INAF) {
+                el = new Element(rmlTagNames.NAF);
+            } else if (this.isAtom() && this.symbol == SymbolTable.IASSERT) {
+                el = new Element(rmlTagNames.ASSERT);
+                if (this.subTerms.length == 1) {
+                    el.insertChild(
+                            subTerms[0].toRuleML(varNames, true, rmlFormat), 0);
+                } else {
+                    Element el2 = new Element(rmlTagNames.IMPLIES);
+                    if (this.subTerms.length > 2) {
+                        Element el3 = new Element(rmlTagNames.AND);
+                        for (int i = 1; i < this.subTerms.length; i++) {
+                            el3.appendChild(this.subTerms[i].toRuleML(varNames,
+                                    false, rmlFormat));
+                        }
+                        el2.appendChild(el3);
+                    } else {
+                        el2.appendChild(this.subTerms[1].toRuleML(varNames,
+                                false, rmlFormat));
+                    }
+                    el2.appendChild(this.subTerms[0].toRuleML(varNames, true,
+                            rmlFormat));
+                    el.appendChild(el2);
 
-		else if (this.isAtom()) {
-		    el = new Element(rmlTagNames.ATOM);
-		    
-		    Element rel = new Element(rmlTagNames.REL);
-		    el.insertChild(rel, el.getChildCount());
+                }
+                dst = true;
+            }
 
-		    rel.insertChild(SymbolTable.symbol(this.symbol), 0);
-		} else if (this.symbol == SymbolTable.IPLEX) {
-		    el = new Element(rmlTagNames.PLEX);
-		} else {
-		    el = new Element(rmlTagNames.EXPR);
+            else if (this.isAtom()) {
+                el = new Element(rmlTagNames.ATOM);
 
-		    Element ctor = new Element(rmlTagNames.FUN);
-		    el.insertChild(ctor, el.getChildCount());
-		    ctor.insertChild(SymbolTable.symbol(this.symbol), 0);
-		}
+                Element rel = new Element(rmlTagNames.REL);
+                el.insertChild(rel, el.getChildCount());
 
-		for (int i = 0; i < this.subTerms.length && !dst; i++) {
-		    Element tmp = this.subTerms[i].toRuleML(varNames, head,
-			    rmlFormat);
-		    if (tmp != null)
-			el.insertChild(tmp, el.getChildCount());
-		}
-	    } else {
-		if (this.role == SymbolTable.IOID
-			&& !org.ruleml.oojdrew.Config.PRINTGENOIDS) {
-		    if (this.symbol > 0
-			    && this.getSymbolString().startsWith("$gensym")
-			    && head)
-			return null;
-		    else if (this.symbol < 0
-			    && varNames[-(this.symbol + 1)].startsWith("$ANON")
-			    && !head)
-			return null;
-		}
-		if (this.symbol < 0) {
-		    el = new Element(rmlTagNames.VAR);
-		    if (!varNames[-(symbol + 1)].startsWith("$ANON")
-			    || org.ruleml.oojdrew.Config.PRINTANONVARNAMES) {
-			String vname = varNames[-(symbol + 1)];
-			if (org.ruleml.oojdrew.Config.PRINTVARID)
-			    vname += -(symbol + 1);
-			el.insertChild(vname, 0);
-		    }
-		} else {
-		    String sym = SymbolTable.symbol(this.symbol);
-		    if (sym.startsWith("$gensym")
-			    && !org.ruleml.oojdrew.Config.PRINTGENSYMS) {
-			el = new Element(rmlTagNames.SKOLEM);
-			int idx = sym.indexOf("$", 7);
-			if (idx > -1) {
-			    String skoname = sym.substring(idx + 1);
-			    el.appendChild(skoname);
-			}
-		    } else {
+                rel.insertChild(SymbolTable.symbol(this.symbol), 0);
+            } else if (this.symbol == SymbolTable.IPLEX) {
+                el = new Element(rmlTagNames.PLEX);
+            } else {
+                el = new Element(rmlTagNames.EXPR);
 
-			if (!isData) {
-			    el = new Element(rmlTagNames.IND);
-			    el.insertChild(sym, 0);
-			}
-			if (isData) {
-			    el = new Element(rmlTagNames.DATA);
-			    el.insertChild(sym, 0);
-			}
-		    }
-		}
-	    }
+                Element ctor = new Element(rmlTagNames.FUN);
+                el.insertChild(ctor, el.getChildCount());
+                ctor.insertChild(SymbolTable.symbol(this.symbol), 0);
+            }
 
-	    if (this.type != Types.IOBJECT) {
-		Attribute a = new Attribute(rmlTagNames.TYPE, Types.typeName(this.type));
-		el.addAttribute(a);
-	    }
+            for (int i = 0; i < this.subTerms.length && !dst; i++) {
+                Element tmp = this.subTerms[i].toRuleML(varNames, head,
+                        rmlFormat);
+                if (tmp != null)
+                    el.insertChild(tmp, el.getChildCount());
+            }
+        } else {
+            if (this.role == SymbolTable.IOID
+                    && !org.ruleml.oojdrew.Config.PRINTGENOIDS) {
+                if (this.symbol > 0
+                        && this.getSymbolString().startsWith("$gensym") && head)
+                    return null;
+                else if (this.symbol < 0
+                        && varNames[-(this.symbol + 1)].startsWith("$ANON")
+                        && !head)
+                    return null;
+            }
+            if (this.symbol < 0) {
+                el = new Element(rmlTagNames.VAR);
+                if (!varNames[-(symbol + 1)].startsWith("$ANON")
+                        || org.ruleml.oojdrew.Config.PRINTANONVARNAMES) {
+                    String vname = varNames[-(symbol + 1)];
+                    if (org.ruleml.oojdrew.Config.PRINTVARID)
+                        vname += -(symbol + 1);
+                    el.insertChild(vname, 0);
+                }
+            } else {
+                String sym = SymbolTable.symbol(this.symbol);
+                if (sym.startsWith("$gensym")
+                        && !org.ruleml.oojdrew.Config.PRINTGENSYMS) {
+                    el = new Element(rmlTagNames.SKOLEM);
+                    int idx = sym.indexOf("$", 7);
+                    if (idx > -1) {
+                        String skoname = sym.substring(idx + 1);
+                        el.appendChild(skoname);
+                    }
+                } else {
 
-	    if (this.role == SymbolTable.IREST) {
-		Element e2 = new Element(rmlTagNames.RESL);
-		e2.insertChild(el, 0);
-		return e2;
-	    } else if (this.role == SymbolTable.IPREST) {
-		Element e2 = new Element(rmlTagNames.REPO);
-		e2.insertChild(el, 0);
-		return e2;
-	    } else if (this.role == SymbolTable.IOID) {
-		Element e2 = new Element(rmlTagNames.OID);
-		e2.insertChild(el, 0);
-		return e2;
-	    } else if (this.role == SymbolTable.INOROLE) {
-		return el;
-	    } else {
+                    if (!isData) {
+                        el = new Element(rmlTagNames.IND);
+                        el.insertChild(sym, 0);
+                    }
+                    if (isData) {
+                        el = new Element(rmlTagNames.DATA);
+                        el.insertChild(sym, 0);
+                    }
+                }
+            }
+        }
 
-		Element e2 = new Element(rmlTagNames.SLOT);
+        if (this.type != Types.IOBJECT) {
+            Attribute a = new Attribute(rmlTagNames.TYPE,
+                    Types.typeName(this.type));
+            el.addAttribute(a);
+        }
 
-		Element e3 = null;
+        if (this.role == SymbolTable.IREST) {
+            Element e2 = new Element(rmlTagNames.RESL);
+            e2.insertChild(el, 0);
+            return e2;
+        } else if (this.role == SymbolTable.IPREST) {
+            Element e2 = new Element(rmlTagNames.REPO);
+            e2.insertChild(el, 0);
+            return e2;
+        } else if (this.role == SymbolTable.IOID) {
+            Element e2 = new Element(rmlTagNames.OID);
+            e2.insertChild(el, 0);
+            return e2;
+        } else if (this.role == SymbolTable.INOROLE) {
+            return el;
+        } else {
 
-		if (!dataSlot) {
-		    e3 = new Element(rmlTagNames.IND);
-		    e3.appendChild(SymbolTable.role(this.role));
-		}
-		if (dataSlot) {
-		    e3 = new Element(rmlTagNames.DATA);
-		    e3.appendChild(SymbolTable.role(this.role));
-		}
+            Element e2 = new Element(rmlTagNames.SLOT);
 
-		e2.appendChild(e3);
-		e2.appendChild(el);
-		return e2;
-	    }
+            Element e3 = null;
+
+            if (!dataSlot) {
+                e3 = new Element(rmlTagNames.IND);
+                e3.appendChild(SymbolTable.role(this.role));
+            }
+            if (dataSlot) {
+                e3 = new Element(rmlTagNames.DATA);
+                e3.appendChild(SymbolTable.role(this.role));
+            }
+
+            e2.appendChild(e3);
+            e2.appendChild(el);
+            return e2;
+        }
     }
 
     /**
@@ -1359,20 +1377,20 @@ public class Term implements Comparable {
             Term t = new Term(this.symbol, this.role, this.type, sterms);
             t.atom = this.atom;
             t.side = this.side;
-            
-            if(isData){
-            	t.setData(true);
+
+            if (isData) {
+                t.setData(true);
             }
-            
+
             return t;
         } else {
             Term t = new Term(this.symbol, this.role, this.type);
             t.side = this.side;
-            
-            if(isData){
-            	t.setData(true);
+
+            if (isData) {
+                t.setData(true);
             }
-            
+
             return t;
         }
     }
@@ -1396,19 +1414,19 @@ public class Term implements Comparable {
             Term t = new Term(this.symbol, this.role, this.type, sterms);
             t.atom = this.atom;
             t.side = pside;
-            //if isData
-            if(isData){
-            	t.setData(true);
-            }  
+            // if isData
+            if (isData) {
+                t.setData(true);
+            }
             return t;
         } else {
             Term t = new Term(this.symbol, this.role, this.type);
             t.side = pside;
-            //if isData
-            if(isData){
-            	t.setData(true);
+            // if isData
+            if (isData) {
+                t.setData(true);
             }
-      
+
             return t;
         }
     }
@@ -1417,8 +1435,8 @@ public class Term implements Comparable {
      * Sorts a Vector of term objects by the role code.
      * 
      * @param toSort
-     *            A Vector containing only Term objects - to be sorted by
-     *            the role name code.
+     *            A Vector containing only Term objects - to be sorted by the
+     *            role name code.
      * 
      * @return Vector A Vector containing the sorted terms.
      */
@@ -1476,7 +1494,7 @@ public class Term implements Comparable {
         }
 
         Term o = (Term) toCompare;
-        if (this.symbol < o.symbol) {   
+        if (this.symbol < o.symbol) {
             return 1;
         } else if (this.symbol > o.symbol) {
             return -1;

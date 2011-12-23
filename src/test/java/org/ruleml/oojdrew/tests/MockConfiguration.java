@@ -32,61 +32,61 @@ public class MockConfiguration implements Configuration {
     private Level logLevel;
 
     public boolean getValidateRuleMLEnabled() {
-	return ruleMLCompatibilityModeEnabled;
+        return ruleMLCompatibilityModeEnabled;
     }
 
     public void setValidateRuleMLEnabled(boolean enabled) {
-	ruleMLCompatibilityModeEnabled = enabled;
+        ruleMLCompatibilityModeEnabled = enabled;
     }
 
     public int getTextAreaFontSize() {
-	throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     public void setTextAreaFontSize(int newSize) {
-	throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     public void addPreferenceChangeListener(PreferenceChangeListener listener) {
     }
 
     public int getUIFontSize() {
-	return uiFontSize;
+        return uiFontSize;
     }
 
     public void setUIFontSize(int newSize) {
-	uiFontSize = newSize;
+        uiFontSize = newSize;
     }
 
     public void setLookAndFeel(String lafClassName) {
-	lookAndFeelClassName = lafClassName;
+        lookAndFeelClassName = lafClassName;
     }
 
     public String getSelectedLookAndFeel() {
-	return lookAndFeelClassName;
+        return lookAndFeelClassName;
     }
 
     public RuleMLFormat getSelectedRuleMLFormat() {
-	return rmlFormat;
+        return rmlFormat;
     }
 
     public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat) {
-	this.rmlFormat = rmlFormat;
+        this.rmlFormat = rmlFormat;
     }
 
     public boolean getLinkFontSizes() {
-	return linkFontSizes;
+        return linkFontSizes;
     }
 
     public void setLinkFontSizes(boolean linkFontSizes) {
-	this.linkFontSizes = linkFontSizes;
+        this.linkFontSizes = linkFontSizes;
     }
 
     public Level getLogLevel() {
-	return logLevel;
+        return logLevel;
     }
 
     public void setLogLevel(Level logLevel) {
-	this.logLevel = logLevel;
+        this.logLevel = logLevel;
     }
 }
