@@ -20,7 +20,7 @@ package org.ruleml.oojdrew;
 import java.util.prefs.PreferenceChangeListener;
 
 import org.apache.log4j.Level;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
+import org.ruleml.oojdrew.parsing.RuleMLFormat;
 
 public interface Configuration {
     public boolean getValidateRuleMLEnabled();

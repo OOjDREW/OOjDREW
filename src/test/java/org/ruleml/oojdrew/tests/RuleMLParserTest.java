@@ -20,8 +20,8 @@ package org.ruleml.oojdrew.tests;
 import junit.framework.TestCase;
 
 import org.ruleml.oojdrew.Configuration;
+import org.ruleml.oojdrew.parsing.RuleMLFormat;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 
 public class RuleMLParserTest extends TestCase {
     private Configuration config;

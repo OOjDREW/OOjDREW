@@ -57,7 +57,7 @@ import org.ruleml.oojdrew.Builtins.StringUpperCaseBuiltin;
 import org.ruleml.oojdrew.Builtins.SubstringBuiltin;
 import org.ruleml.oojdrew.Builtins.SubtractBuiltin;
 import org.ruleml.oojdrew.Builtins.TanBuiltin;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
+import org.ruleml.oojdrew.parsing.RuleMLFormat;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.Term;
 

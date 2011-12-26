@@ -21,7 +21,7 @@ import java.util.prefs.PreferenceChangeListener;
 
 import org.apache.log4j.Level;
 import org.ruleml.oojdrew.Configuration;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
+import org.ruleml.oojdrew.parsing.RuleMLFormat;
 
 public class MockConfiguration implements Configuration {
     private boolean ruleMLCompatibilityModeEnabled;

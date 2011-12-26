@@ -25,7 +25,7 @@ import nu.xom.Document;
 import nu.xom.Element;
 
 import org.ruleml.oojdrew.Config;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
+import org.ruleml.oojdrew.parsing.RuleMLFormat;
 import org.ruleml.oojdrew.parsing.RuleMLTagNames;
 
 /**

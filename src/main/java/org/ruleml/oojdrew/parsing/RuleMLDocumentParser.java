@@ -29,7 +29,6 @@ import nu.xom.Elements;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.SymbolTable;
 import org.ruleml.oojdrew.util.Term;

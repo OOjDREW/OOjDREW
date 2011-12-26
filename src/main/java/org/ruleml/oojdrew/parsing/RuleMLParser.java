@@ -30,7 +30,6 @@ import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Nodes;
 import nu.xom.ParsingException;
-import nu.xom.ValidityException;
 
 import org.apache.log4j.Level;
 import org.ruleml.oojdrew.Configuration;
@@ -73,48 +72,6 @@ public class RuleMLParser implements PreferenceChangeListener {
     private RuleMLFormat ruleMLFormat;
 
     private Level logLevel;
-
-    /**
-     * This is used to indicate what back-end parser to use. Currently only
-     * RuleML 0.88 (+ rests) and RuleML 0.91 is supported; so only the RULEML88
-     * = 1 value is defined as well as RULEML91 = 2. As new back-end parsers are
-     * added then extra defines can be added.
-     */
-    public static enum RuleMLFormat {
-        RuleML88("RuleML 0.88"), RuleML91("RuleML 0.91"), RuleML100(
-                "RuleML 1.0");
-
-        private String versionName;
-
-        RuleMLFormat(String versionName) {
-            this.versionName = versionName;
-        }
-
-        public String getVersionName() {
-            return this.versionName;
-        }
-
-        public static RuleMLFormat fromString(String versionName) {
-            if (versionName != null) {
-                for (RuleMLFormat rmlFormat : RuleMLFormat.values()) {
-                    if (versionName.equalsIgnoreCase(rmlFormat.versionName)) {
-                        return rmlFormat;
-                    }
-                }
-            }
-            return null;
-        }
-
-        public static String[] getVersionNames() {
-            String[] versionNames = new String[values().length];
-            int i = 0;
-            for (RuleMLFormat rmlFormat : values()) {
-                versionNames[i] = rmlFormat.versionName;
-                i++;
-            }
-            return versionNames;
-        }
-    }
 
     /**
      * Constructs a new parser object.

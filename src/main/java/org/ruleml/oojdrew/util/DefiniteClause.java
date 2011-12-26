@@ -23,8 +23,8 @@ import java.util.Vector;
 import nu.xom.Document;
 import nu.xom.Element;
 
+import org.ruleml.oojdrew.parsing.RuleMLFormat;
 import org.ruleml.oojdrew.parsing.RuleMLTagNames;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
 
 /**
  * <p>

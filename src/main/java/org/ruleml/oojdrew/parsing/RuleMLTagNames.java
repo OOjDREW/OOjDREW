@@ -17,8 +17,6 @@
 
 package org.ruleml.oojdrew.parsing;
 
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
-
 public class RuleMLTagNames {
 
     // "Root" tags

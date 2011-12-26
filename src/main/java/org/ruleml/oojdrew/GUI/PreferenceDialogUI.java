@@ -46,11 +46,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.apache.log4j.Level;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
+import org.ruleml.oojdrew.parsing.RuleMLFormat;
 
 public class PreferenceDialogUI extends JDialog {
 

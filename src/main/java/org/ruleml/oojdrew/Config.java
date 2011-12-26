@@ -23,7 +23,7 @@ import java.util.prefs.Preferences;
 import javax.swing.UIManager;
 
 import org.apache.log4j.Level;
-import org.ruleml.oojdrew.parsing.RuleMLParser.RuleMLFormat;
+import org.ruleml.oojdrew.parsing.RuleMLFormat;
 
 /**
  * <p>
