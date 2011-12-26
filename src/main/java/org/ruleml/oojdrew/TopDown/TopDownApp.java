@@ -17,17 +17,9 @@
 
 package org.ruleml.oojdrew.TopDown;
 
+import java.awt.Component;
 import java.awt.EventQueue;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -36,7 +28,6 @@ import java.util.Vector;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -71,6 +62,7 @@ import org.ruleml.oojdrew.util.SubsumesStructure;
 import org.ruleml.oojdrew.util.SymbolTable;
 import org.ruleml.oojdrew.util.Term;
 import org.ruleml.oojdrew.util.Types;
+import org.ruleml.oojdrew.util.Util;
 
 public class TopDownApp implements UISettingsController,
         PreferenceChangeListener {
@@ -226,45 +218,32 @@ public class TopDownApp implements UISettingsController,
         return 0 == JOptionPane.showConfirmDialog(null, "Append content?",
                 "Append or replace?", JOptionPane.YES_NO_OPTION);
     }
+    
+    private void setTextOfCurrentEditingTab(String text, boolean append) {
+        if (text == null) {
+            return;
+        }
+        
+        if (append) {
+            ui.appendToCurrentEditingTab(text);
+        } else {
+            ui.setTextForCurrentEditingTab(text);
+        }
+    }
 
     public void openFile() {
         boolean append = showOpenForAppendDialog();
+        Component parent = ui.getFrmOoJdrew();
 
-        JFileChooser fileChooser = new JFileChooser();
-        int result = fileChooser.showOpenDialog(ui.getFrmOoJdrew());
-
-        if (result != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
-
-        String fileContents;
-
+        String fileContent;
         try {
-            File file = fileChooser.getSelectedFile();
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-            StringBuilder stringBuilder = new StringBuilder();
-            String lineSeparator = System.getProperty("line.separator");
-            String currentLine;
-
-            while ((currentLine = bufferedReader.readLine()) != null) {
-                stringBuilder.append(currentLine);
-                stringBuilder.append(lineSeparator);
-            }
-
-            fileContents = stringBuilder.toString();
-            bufferedReader.close();
+            fileContent = Util.selectAndReadFile(parent);
         } catch (IOException e) {
             defaultExceptionHandler(e);
             return;
         }
 
-        if (append) {
-            ui.appendToCurrentEditingTab(fileContents);
-        } else {
-            ui.setTextForCurrentEditingTab(fileContents);
-        }
+        setTextOfCurrentEditingTab(fileContent, append);
     }
 
     /**
@@ -274,87 +253,27 @@ public class TopDownApp implements UISettingsController,
         boolean append = showOpenForAppendDialog();
         String uri = JOptionPane.showInputDialog("Please enter an URI");
 
-        if (uri == null) {
-            return;
-        }
-
-        // Set connection timeout [ms] for HTTP connection
-        int connectionTimeoutMillis = 3000;
-
-        StringBuffer buffer = new StringBuffer();
-        try {
-            // Create new HTTP connection with given timeout
-            URL url = new URL(uri);
-            URLConnection urlConnection = url.openConnection();
-            urlConnection.setConnectTimeout(connectionTimeoutMillis);
-
-            // Open input stream for reading
-            InputStream inputStream = urlConnection.getInputStream();
-            BufferedReader streamReader = new BufferedReader(
-                    new InputStreamReader(inputStream));
-
-            // Read input stream to string buffer
-            String inputLine;
-            String newLine = System.getProperty("line.separator");
-            while ((inputLine = streamReader.readLine()) != null) {
-                buffer.append(inputLine);
-                buffer.append(newLine);
+        if (uri != null) {
+            String pageContent;
+            try {
+                pageContent = Util.readFromURIWithTimeout(uri, 3000);
+            } catch (IOException e) {
+                defaultExceptionHandler(e);
+                return;
             }
-
-            // Close streams
-            streamReader.close();
-        } catch (Exception e) {
-            defaultExceptionHandler(e);
-            return;
-        }
-
-        if (append) {
-            ui.appendToCurrentEditingTab(buffer.toString());
-        } else {
-            ui.setTextForCurrentEditingTab(buffer.toString());
+            
+            setTextOfCurrentEditingTab(pageContent, append);
         }
     }
 
     public void saveFileAs() {
-        JFileChooser fileChooser = new JFileChooser() {
-            @Override
-            public void approveSelection() {
-                File f = getSelectedFile();
-                if (f.exists() && getDialogType() == SAVE_DIALOG) {
-                    int result = JOptionPane.showConfirmDialog(this,
-                            "File already exists, overwrite?", "Existing file",
-                            JOptionPane.YES_NO_OPTION);
-                    switch (result) {
-                    case JOptionPane.YES_OPTION:
-                        super.approveSelection();
-                        return;
-                    case JOptionPane.NO_OPTION:
-                        return;
-                    }
-                }
-                super.approveSelection();
-            }
-        };
-
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        int result = fileChooser.showSaveDialog(ui.getFrmOoJdrew());
-
-        if (result != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
+        String content = ui.getTextForCurrentEditingTab();
+        Component parent = ui.getFrmOoJdrew();
 
         try {
-            File file = fileChooser.getSelectedFile();
-            FileWriter fileWriter = new FileWriter(file);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
-            String textToWrite = ui.getTextForCurrentEditingTab();
-
-            bufferedWriter.write(textToWrite);
-            bufferedWriter.close();
+            Util.selectAndSaveToFile(content, parent);
         } catch (IOException e) {
             defaultExceptionHandler(e);
-            return;
         }
     }
 
