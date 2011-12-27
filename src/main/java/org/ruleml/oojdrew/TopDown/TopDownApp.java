@@ -17,15 +17,12 @@
 
 package org.ruleml.oojdrew.TopDown;
 
-import java.awt.Component;
 import java.awt.EventQueue;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
 import javax.swing.JOptionPane;
@@ -41,6 +38,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.ruleml.oojdrew.Config;
 import org.ruleml.oojdrew.Configuration;
+import org.ruleml.oojdrew.GUI.AbstractUIApp;
 import org.ruleml.oojdrew.GUI.DebugConsole;
 import org.ruleml.oojdrew.GUI.PreferenceDialogUI;
 import org.ruleml.oojdrew.GUI.PreferenceManager;
@@ -50,7 +48,6 @@ import org.ruleml.oojdrew.GUI.UISettingsController;
 import org.ruleml.oojdrew.parsing.InputFormat;
 import org.ruleml.oojdrew.parsing.POSLParser;
 import org.ruleml.oojdrew.parsing.RDFSParser;
-import org.ruleml.oojdrew.parsing.RuleMLFormat;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
 import org.ruleml.oojdrew.parsing.SubsumesParser;
 import org.ruleml.oojdrew.parsing.TypeQueryParserPOSL;
@@ -59,25 +56,10 @@ import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.LUBGLBStructure;
 import org.ruleml.oojdrew.util.QueryTypes;
 import org.ruleml.oojdrew.util.SubsumesStructure;
-import org.ruleml.oojdrew.util.SymbolTable;
 import org.ruleml.oojdrew.util.Term;
-import org.ruleml.oojdrew.util.Types;
-import org.ruleml.oojdrew.util.Util;
 
-public class TopDownApp implements UISettingsController,
+public class TopDownApp extends AbstractUIApp implements UISettingsController,
         PreferenceChangeListener {
-
-    private Configuration config;
-    private TopDownUI ui;
-    private PreferenceDialogUI preferenceDialogUI;
-    private DebugConsole debugConsole;
-    private PreferenceManager preferenceManager;
-    private Logger logger;
-    private RDFSParser rdfsParser;
-    private POSLParser poslParser;
-    private RuleMLParser rmlParser;
-    private SubsumesParser subsumesParser;
-    private BackwardReasoner backwardReasoner;
 
     // TODO: Rewrite all code that uses the following variables
     // These variables were copied from the old UI
@@ -111,7 +93,7 @@ public class TopDownApp implements UISettingsController,
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 logger.debug("Entering event loop");
-                ui.setFrameVisible(true);
+                getUI().setFrameVisible(true);
             }
         });
     }
@@ -152,231 +134,44 @@ public class TopDownApp implements UISettingsController,
     }
 
     private TopDownApp(Configuration config,
-            PreferenceManager preferenceManager, TopDownUI ui,
+            PreferenceManager preferenceManager, TopDownUI topDownUI,
             PreferenceDialogUI preferenceDialogUI, DebugConsole debugConsole,
             RDFSParser rdfsParser, POSLParser poslParser,
             RuleMLParser rmlParser, SubsumesParser subsumesParser,
             BackwardReasoner backwardReasoner) {
-        this.config = config;
-        this.preferenceManager = preferenceManager;
-        this.ui = ui;
-        this.preferenceDialogUI = preferenceDialogUI;
-        this.debugConsole = debugConsole;
-        this.logger = Logger.getLogger(this.getClass());
-        this.rdfsParser = rdfsParser;
-        this.poslParser = poslParser;
-        this.rmlParser = rmlParser;
-        this.subsumesParser = subsumesParser;
-        this.backwardReasoner = backwardReasoner;
 
-        ui.setController(this);
+        super(config, preferenceManager, topDownUI, preferenceDialogUI,
+                debugConsole, rdfsParser, poslParser, rmlParser,
+                subsumesParser, backwardReasoner);
+
+        getUI().setController(this);
         preferenceDialogUI.setSettingsController(this);
         config.addPreferenceChangeListener(this);
         preferenceChange(null);
     }
 
-    public void syncUIWithSettings() {
-        preferenceDialogUI.setSpinnerTextAreaFontSizeValue(config
-                .getTextAreaFontSize());
-        preferenceDialogUI.setSpinnerUIFontSizeValue(config.getUIFontSize());
-        preferenceDialogUI.setLinkFontSizes(config.getLinkFontSizes());
-        preferenceDialogUI.setLookAndFeel(config.getSelectedLookAndFeel());
-        preferenceDialogUI.setRuleMLFormat(config.getSelectedRuleMLFormat());
-        preferenceDialogUI.setLoggingLevel(config.getLogLevel());
-
-        ui.setChckbxmntmValidateRulemlSelected(config
-                .getValidateRuleMLEnabled());
+    private TopDownUI getUI() {
+        return (TopDownUI) super.ui;
     }
 
-    public void applySettingsFromUI() {
-        config.setTextAreaFontSize(preferenceDialogUI
-                .getSpinnerTextAreaFontSizeValue());
-        config.setUIFontSize(preferenceDialogUI.getSpinnerUIFontSizeValue());
-        config.setLinkFontSizes(preferenceDialogUI.getLinkFontSizes());
-        config.setLookAndFeel(preferenceDialogUI.getSelectedLookAndFeel());
-        config.setSelectedRuleMLFormat(preferenceDialogUI.getRuleMLFormat());
-        config.setLogLevel(preferenceDialogUI.getLoggingLevel());
-
-        config.setValidateRuleMLEnabled(ui
-                .getChckbxmntmValidateRulemlSelected());
+    private BackwardReasoner getReasoner() {
+        return (BackwardReasoner) super.reasoner;
     }
 
-    public void showDebugConsole() {
-        debugConsole.setVisible(true);
-    }
-
-    public void showPreferenceDialog() {
-        preferenceDialogUI.setVisible(true);
-    }
-
-    public void preferenceChange(PreferenceChangeEvent evt) {
-        ui.updateUI();
-        preferenceDialogUI.updateUI();
-    }
-
-    private boolean showOpenForAppendDialog() {
-        return 0 == JOptionPane.showConfirmDialog(null, "Append content?",
-                "Append or replace?", JOptionPane.YES_NO_OPTION);
-    }
-    
-    private void setTextOfCurrentEditingTab(String text, boolean append) {
-        if (text == null) {
-            return;
-        }
-        
-        if (append) {
-            ui.appendToCurrentEditingTab(text);
-        } else {
-            ui.setTextForCurrentEditingTab(text);
-        }
-    }
-
-    public void openFile() {
-        boolean append = showOpenForAppendDialog();
-        Component parent = ui.getFrmOoJdrew();
-
-        String fileContent;
-        try {
-            fileContent = Util.selectAndReadFile(parent);
-        } catch (IOException e) {
-            defaultExceptionHandler(e);
-            return;
-        }
-
-        setTextOfCurrentEditingTab(fileContent, append);
-    }
-
-    /**
-     * Shows open URI dialog and reads from URL to editing tab
-     */
-    public void openURI() {
-        boolean append = showOpenForAppendDialog();
-        String uri = JOptionPane.showInputDialog("Please enter an URI");
-
-        if (uri != null) {
-            String pageContent;
-            try {
-                pageContent = Util.readFromURIWithTimeout(uri, 3000);
-            } catch (IOException e) {
-                defaultExceptionHandler(e);
-                return;
-            }
-            
-            setTextOfCurrentEditingTab(pageContent, append);
-        }
-    }
-
-    public void saveFileAs() {
-        String content = ui.getTextForCurrentEditingTab();
-        Component parent = ui.getFrmOoJdrew();
-
-        try {
-            Util.selectAndSaveToFile(content, parent);
-        } catch (IOException e) {
-            defaultExceptionHandler(e);
-        }
-    }
-
-    public void parseTypeInformation() {
-        String typeInformation = ui.getTypeDefinitionTextAreaText();
-        InputFormat format = ui.getTypeInformationInputFormat();
-
-        // Reset the type system
-        Types.reset();
-
-        if (format == InputFormat.InputFormatRFDS) {
-            parseRDFSTypes(typeInformation);
-        } else {
-            parsePOSLTypes(typeInformation);
-        }
-
-        // Type information may have changed, time to parse the knowledge base
-        // again.
-        parseKnowledgeBase();
-    }
-
-    private void parseRDFSTypes(String typeInformation) {
-        try {
-            RDFSParser.parseRDFSString(typeInformation);
-        } catch (Exception e) {
-            defaultExceptionHandler(e);
-            return;
-        }
-    }
-
-    private void parsePOSLTypes(String typeInformation) {
-        try {
-            subsumesParser.parseSubsumes(typeInformation);
-        } catch (Exception e) {
-            defaultExceptionHandler(e);
-            return;
-        }
+    private void setReasoner(BackwardReasoner reasoner) {
+        super.reasoner = reasoner;
     }
 
     public void parseKnowledgeBase() {
-        SymbolTable.reset();
-        ui.setBtnNextSolutionEnabled(false);
+        getUI().setBtnNextSolutionEnabled(false);
 
-        InputFormat knowledgeBaseFormat = ui.getKnowledgeBaseInputFormat();
-        String knowledgeBase = ui.getKnowledgeBaseTextAreaText();
-        backwardReasoner.clearClauses();
-
-        if (knowledgeBase.isEmpty()) {
-            return;
-        }
-
-        if (knowledgeBaseFormat == InputFormat.InputFormatRuleML) {
-            parseRuleMLKnowledeBase(knowledgeBase);
-        } else {
-            parsePOSLKnowledgeBase(knowledgeBase);
-        }
-
-    }
-
-    private void parseRuleMLKnowledeBase(String knowledgeBase) {
-        rmlParser.clear();
-
-        try {
-            rmlParser.parseRuleMLString(RuleMLFormat.RuleML100, knowledgeBase);
-        } catch (Exception e) {
-            defaultExceptionHandler(e);
-            return;
-        }
-
-        backwardReasoner.loadClauses(rmlParser.iterator());
-    }
-
-    private void parsePOSLKnowledgeBase(String knowledgeBase) {
-        poslParser.reset();
-
-        try {
-            poslParser.parseDefiniteClauses(knowledgeBase);
-        } catch (Exception e) {
-            defaultExceptionHandler(e);
-            return;
-        }
-
-        backwardReasoner.loadClauses(poslParser.iterator());
-    }
-
-    private void defaultExceptionHandler(Exception e) {
-        String msg = String.format("Unknown error occured (%s)", e.getClass()
-                .getName());
-        if (e.getMessage() != null) {
-            msg = e.getMessage();
-        } else if (e.getCause() != null && e.getCause().getMessage() != null) {
-            msg = e.getCause().getMessage();
-        }
-
-        JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), msg, "Error",
-                JOptionPane.ERROR_MESSAGE);
-        logger.error(msg);
+        super.parseKnowledgeBase();
     }
 
     public void issueQuery() {
-        String query = ui.getQueryTextAreaText();
-        InputFormat format = ui.getQueryInputFormat();
-        boolean typeQuery = ui.getTypeQueryCheckboxSelected();
+        String query = getUI().getQueryTextAreaText();
+        InputFormat format = getUI().getQueryInputFormat();
+        boolean typeQuery = getUI().getTypeQueryCheckboxSelected();
 
         if (format == InputFormat.InputFormatRuleML) {
             if (typeQuery) {
@@ -420,24 +215,25 @@ public class TopDownApp implements UISettingsController,
     private void processQuery(DefiniteClause dc) {
         // TODO: Find a way to use the existing backwardReasoner (for the sake
         // of dependency injection)
-        backwardReasoner = new BackwardReasoner(backwardReasoner.clauses,
-                backwardReasoner.oids);
+        setReasoner(new BackwardReasoner(getReasoner().clauses,
+                getReasoner().oids));
 
-        queryResultIterator = backwardReasoner
+        queryResultIterator = getReasoner()
                 .iterativeDepthFirstSolutionIterator(dc);
-        ui.setBtnNextSolutionEnabled(true);
+        getUI().setBtnNextSolutionEnabled(true);
 
         if (!queryResultIterator.hasNext()) {
             javax.swing.tree.DefaultMutableTreeNode root = new DefaultMutableTreeNode(
                     "unknown");
             javax.swing.tree.DefaultTreeModel dtm = new DefaultTreeModel(root);
 
-            ui.setSolutionTreeModel(dtm);
-            ui.setBtnNextSolutionEnabled(false);
+            getUI().setSolutionTreeModel(dtm);
+            getUI().setBtnNextSolutionEnabled(false);
 
-            ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                    new Object[][] { { null, null } }, new String[] {
-                            "Variable", "Binding" }));
+            getUI().setVariableBindingsTableModel(
+                    new javax.swing.table.DefaultTableModel(new Object[][] { {
+                            null, null } }, new String[] { "Variable",
+                            "Binding" }));
 
         } else {
             BackwardReasoner.GoalList gl = (BackwardReasoner.GoalList) queryResultIterator
@@ -445,14 +241,14 @@ public class TopDownApp implements UISettingsController,
 
             Hashtable varbind = gl.varBindings;
 
-            javax.swing.tree.DefaultMutableTreeNode root = backwardReasoner
+            javax.swing.tree.DefaultMutableTreeNode root = getReasoner()
                     .toTree();
 
             root.setAllowsChildren(true);
 
             javax.swing.tree.DefaultTreeModel dtm = new DefaultTreeModel(root);
 
-            ui.setSolutionTreeModel(dtm);
+            getUI().setSolutionTreeModel(dtm);
 
             int i = 0;
             Object[][] rowdata = new Object[varbind.size()][2];
@@ -469,12 +265,12 @@ public class TopDownApp implements UISettingsController,
             }
             String[] colnames = new String[] { "Variable", "Binding" };
 
-            ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                    rowdata, colnames));
+            getUI().setVariableBindingsTableModel(
+                    new javax.swing.table.DefaultTableModel(rowdata, colnames));
         }
 
         if (!queryResultIterator.hasNext()) {
-            ui.setBtnNextSolutionEnabled(false);
+            getUI().setBtnNextSolutionEnabled(false);
         }
     }
 
@@ -483,7 +279,7 @@ public class TopDownApp implements UISettingsController,
     // cleaner fashion.
 
     public void nextSolution() {
-        boolean typeQuery = ui.getTypeQueryCheckboxSelected();
+        boolean typeQuery = getUI().getTypeQueryCheckboxSelected();
 
         if (typeQuery) {
             nextSolutionForTypeQuery();
@@ -497,13 +293,12 @@ public class TopDownApp implements UISettingsController,
                 .next();
         // System.out.println(gl.toString());
         Hashtable varbind = gl.varBindings;
-        javax.swing.tree.DefaultMutableTreeNode root = backwardReasoner
-                .toTree();
+        javax.swing.tree.DefaultMutableTreeNode root = getReasoner().toTree();
         javax.swing.tree.DefaultTreeModel dtm = new DefaultTreeModel(root);
 
         // logger.debug("Getting next solution: ");
 
-        ui.setSolutionTreeModel(dtm);
+        getUI().setSolutionTreeModel(dtm);
 
         int i = 0;
         Object[][] rowdata = new Object[varbind.size()][2];
@@ -519,11 +314,11 @@ public class TopDownApp implements UISettingsController,
         }
         String[] colnames = new String[] { "Variable", "Binding" };
 
-        ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                rowdata, colnames));
+        getUI().setVariableBindingsTableModel(
+                new javax.swing.table.DefaultTableModel(rowdata, colnames));
 
         if (!queryResultIterator.hasNext()) {
-            ui.setBtnNextSolutionEnabled(false);
+            getUI().setBtnNextSolutionEnabled(false);
         }
     }
 
@@ -541,8 +336,8 @@ public class TopDownApp implements UISettingsController,
 
             String[] colnames = new String[] { "Variable", "Binding" };
 
-            ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                    rowdata, colnames));
+            getUI().setVariableBindingsTableModel(
+                    new javax.swing.table.DefaultTableModel(rowdata, colnames));
         }
         // Ind Var
         if (t1Var == false && t2Var == true) {
@@ -554,8 +349,8 @@ public class TopDownApp implements UISettingsController,
 
             String[] colnames = new String[] { "Variable", "Binding" };
 
-            ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                    rowdata, colnames));
+            getUI().setVariableBindingsTableModel(
+                    new javax.swing.table.DefaultTableModel(rowdata, colnames));
         }
         // Var Var
         if (t1Var == true && t2Var == true) {
@@ -570,12 +365,12 @@ public class TopDownApp implements UISettingsController,
 
             String[] colnames = new String[] { "Variable", "Binding" };
 
-            ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                    rowdata, colnames));
+            getUI().setVariableBindingsTableModel(
+                    new javax.swing.table.DefaultTableModel(rowdata, colnames));
         }
 
         if (!typeQueryResultIterator.hasNext()) {
-            ui.setBtnNextSolutionEnabled(false);
+            getUI().setBtnNextSolutionEnabled(false);
         }
     }
 
@@ -586,10 +381,10 @@ public class TopDownApp implements UISettingsController,
         Object[][] resetRow = new Object[2][2];
         String[] resetCol = new String[] { "Variable", "Binding" };
 
-        ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                resetRow, resetCol));
+        getUI().setVariableBindingsTableModel(
+                new javax.swing.table.DefaultTableModel(resetRow, resetCol));
 
-        ui.setBtnNextSolutionEnabled(false);
+        getUI().setBtnNextSolutionEnabled(false);
 
         // It is an iterator that is used to map all the solutions to bindings
         typeQueryResultIterator = null;
@@ -608,7 +403,7 @@ public class TopDownApp implements UISettingsController,
             term1VarName = "";
             term2VarName = "";
 
-            ui.setSolutionTextAreaText("");
+            getUI().setSolutionTextAreaText("");
             TypeQueryParserRuleML rmlTParser = new TypeQueryParserRuleML(query);
             Elements elements = rmlTParser.parseForPredicate();
 
@@ -621,9 +416,11 @@ public class TopDownApp implements UISettingsController,
 
                 // rel rel
                 if (!subPlus.getSuperVar() && !subPlus.getSubVar()) {
-                    ui.setSolutionTextAreaText(""
-                            + typeQuery.isSuperClass(subPlus.getSuperName(),
-                                    subPlus.getSubName()));
+                    getUI().setSolutionTextAreaText(
+                            ""
+                                    + typeQuery.isSuperClass(
+                                            subPlus.getSuperName(),
+                                            subPlus.getSubName()));
                     // var rel get all super classes
                 } else if (subPlus.getSuperVar() && !subPlus.getSubVar()) {
                     t1Var = true;
@@ -636,8 +433,9 @@ public class TopDownApp implements UISettingsController,
                     rowdata[0][0] = "?" + subPlus.getSuperName();
                     rowdata[0][1] = superClasses[0];
                     String[] colnames = new String[] { "Variable", "Binding" };
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
 
                     Vector<String> nextVector = new Vector<String>();
                     for (int i = 1; i < superClasses.length; i++)
@@ -646,7 +444,7 @@ public class TopDownApp implements UISettingsController,
                     typeQueryResultIterator = nextVector.iterator();
 
                     if (typeQueryResultIterator.hasNext()) {
-                        ui.setBtnNextSolutionEnabled(true);
+                        getUI().setBtnNextSolutionEnabled(true);
                     }
 
                     // rel var get all sub classes
@@ -666,8 +464,9 @@ public class TopDownApp implements UISettingsController,
 
                     String[] colnames = new String[] { "Variable", "Binding" };
 
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
 
                     Vector nextVector = new Vector();
                     for (int i = 1; i < subClasses.length; i++)
@@ -676,7 +475,7 @@ public class TopDownApp implements UISettingsController,
                     typeQueryResultIterator = nextVector.iterator();
 
                     if (typeQueryResultIterator.hasNext()) {
-                        ui.setBtnNextSolutionEnabled(true);
+                        getUI().setBtnNextSolutionEnabled(true);
                     }
 
                     // var var get all relations
@@ -688,7 +487,7 @@ public class TopDownApp implements UISettingsController,
 
                     if (subPlus.getSuperName().equalsIgnoreCase(
                             subPlus.getSubName())) {
-                        JOptionPane.showMessageDialog(ui.getFrmOoJdrew(),
+                        JOptionPane.showMessageDialog(getUI().getFrmOoJdrew(),
                                 "Duplicate variable names not allowed",
                                 "Error", JOptionPane.ERROR_MESSAGE);
                         return;
@@ -707,7 +506,7 @@ public class TopDownApp implements UISettingsController,
                         sol = sol + "subsumes(" + vit1.next().toString() + ","
                                 + vit1.next().toString() + ")." + "\n";
                     }
-                    ui.setSolutionTextAreaText(sol);
+                    getUI().setSolutionTextAreaText(sol);
                     // Debug
 
                     typeQueryResultIterator = v1.iterator();
@@ -722,11 +521,12 @@ public class TopDownApp implements UISettingsController,
 
                     String[] colnames = new String[] { "Variable", "Binding" };
 
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
 
                     if (typeQueryResultIterator.hasNext()) {
-                        ui.setBtnNextSolutionEnabled(true);
+                        getUI().setBtnNextSolutionEnabled(true);
                     }
 
                 }
@@ -735,9 +535,11 @@ public class TopDownApp implements UISettingsController,
                 sub = rmlTParser.parseElementsSubsumesAndSubsumesPlus(elements);
                 // rel rel
                 if (!sub.getSuperVar() && !sub.getSubVar()) {
-                    ui.setSolutionTextAreaText(""
-                            + typeQuery.isDirectSuperClass(sub.getSuperName(),
-                                    sub.getSubName()));
+                    getUI().setSolutionTextAreaText(
+                            ""
+                                    + typeQuery.isDirectSuperClass(
+                                            sub.getSuperName(),
+                                            sub.getSubName()));
                     // var rel
                 } else if (sub.getSuperVar() && !sub.getSubVar()) {
                     t1Var = true;
@@ -756,8 +558,9 @@ public class TopDownApp implements UISettingsController,
 
                     String[] colnames = new String[] { "Variable", "Binding" };
 
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
                     Vector nextVector = new Vector();
                     for (int i = 1; i < superClasses.length; i++)
                         nextVector.add(superClasses[i]);
@@ -765,7 +568,7 @@ public class TopDownApp implements UISettingsController,
                     typeQueryResultIterator = nextVector.iterator();
 
                     if (typeQueryResultIterator.hasNext()) {
-                        ui.setBtnNextSolutionEnabled(true);
+                        getUI().setBtnNextSolutionEnabled(true);
                     }
 
                     // rel var
@@ -786,15 +589,16 @@ public class TopDownApp implements UISettingsController,
 
                     String[] colnames = new String[] { "Variable", "Binding" };
 
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
                     Vector nextVector = new Vector();
                     for (int i = 1; i < subClasses.length; i++)
                         nextVector.add(subClasses[i]);
 
                     typeQueryResultIterator = nextVector.iterator();
                     if (typeQueryResultIterator.hasNext()) {
-                        ui.setBtnNextSolutionEnabled(true);
+                        getUI().setBtnNextSolutionEnabled(true);
                     }
                     // var var
                 } else if (sub.getSuperVar() && sub.getSubVar()) {
@@ -804,7 +608,7 @@ public class TopDownApp implements UISettingsController,
                     term1VarName = sub.getSuperName();
 
                     if (sub.getSuperName().equalsIgnoreCase(sub.getSubName())) {
-                        JOptionPane.showMessageDialog(ui.getFrmOoJdrew(),
+                        JOptionPane.showMessageDialog(getUI().getFrmOoJdrew(),
                                 "Duplicate variable names not allowed",
                                 "Error", JOptionPane.ERROR_MESSAGE);
                         return;
@@ -824,7 +628,7 @@ public class TopDownApp implements UISettingsController,
                         sol = sol + "subsumes(" + vit1.next().toString() + ","
                                 + vit1.next().toString() + ")." + "\n";
                     }
-                    ui.setSolutionTextAreaText(sol);
+                    getUI().setSolutionTextAreaText(sol);
                     // Debug
 
                     typeQueryResultIterator = v1.iterator();
@@ -839,11 +643,12 @@ public class TopDownApp implements UISettingsController,
 
                     String[] colnames = new String[] { "Variable", "Binding" };
 
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
 
                     if (typeQueryResultIterator.hasNext()) {
-                        ui.setBtnNextSolutionEnabled(true);
+                        getUI().setBtnNextSolutionEnabled(true);
                     }
 
                 }
@@ -871,16 +676,18 @@ public class TopDownApp implements UISettingsController,
 
                     String[] colnames = new String[] { "Variable", "Binding" };
 
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
 
                 } else if (!lub.getResultVar()) {
 
                     Object[][] rowdata = new Object[2][2];
                     String[] colnames = new String[] { "Variable", "Binding" };
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
-                    ui.setSolutionTextAreaText("");
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
+                    getUI().setSolutionTextAreaText("");
 
                     ArrayList<String> terms = lub.getTerms();
 
@@ -891,7 +698,7 @@ public class TopDownApp implements UISettingsController,
 
                     String leastUpperBound = typeQuery
                             .leastUpperBound(lubArray);
-                    ui.setSolutionTextAreaText(leastUpperBound);
+                    getUI().setSolutionTextAreaText(leastUpperBound);
                 }
             } else if (predicate.equalsIgnoreCase(TypeQueryParserRuleML.GLB)) {
 
@@ -916,16 +723,18 @@ public class TopDownApp implements UISettingsController,
 
                     String[] colnames = new String[] { "Variable", "Binding" };
 
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
 
                 } else if (!glb.getResultVar()) {
 
                     Object[][] rowdata = new Object[2][2];
                     String[] colnames = new String[] { "Variable", "Binding" };
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
-                    ui.setSolutionTextAreaText("");
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
+                    getUI().setSolutionTextAreaText("");
 
                     ArrayList<String> terms = glb.getTerms();
 
@@ -937,14 +746,15 @@ public class TopDownApp implements UISettingsController,
 
                     String greatestLowerBound = typeQuery
                             .greatestLowerBound(glbArray);
-                    ui.setSolutionTextAreaText(greatestLowerBound);
+                    getUI().setSolutionTextAreaText(greatestLowerBound);
                 }
 
             }
 
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), ex.getMessage(),
-                    "Type Query Parser Exeception", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(getUI().getFrmOoJdrew(),
+                    ex.getMessage(), "Type Query Parser Exeception",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -955,10 +765,10 @@ public class TopDownApp implements UISettingsController,
         Object[][] resetRow = new Object[2][2];
         String[] resetCol = new String[] { "Variable", "Binding" };
 
-        ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                resetRow, resetCol));
+        getUI().setVariableBindingsTableModel(
+                new javax.swing.table.DefaultTableModel(resetRow, resetCol));
 
-        ui.setBtnNextSolutionEnabled(false);
+        getUI().setBtnNextSolutionEnabled(false);
 
         // It is an iterator that is used to map all the solutions to bindings
         typeQueryResultIterator = null;
@@ -975,7 +785,7 @@ public class TopDownApp implements UISettingsController,
             t2Var = false;
             term1VarName = "";
             term2VarName = "";
-            ui.setSolutionTextAreaText("");
+            getUI().setSolutionTextAreaText("");
 
             TypeQueryParserPOSL poslTParser = new TypeQueryParserPOSL(query);
             Term[] queryTerms = poslTParser.parseForPredicate();
@@ -988,9 +798,11 @@ public class TopDownApp implements UISettingsController,
 
                 // rel rel
                 if (!subPlus.getSuperVar() && !subPlus.getSubVar()) {
-                    ui.setSolutionTextAreaText(""
-                            + typeQuery.isSuperClass(subPlus.getSuperName(),
-                                    subPlus.getSubName()));
+                    getUI().setSolutionTextAreaText(
+                            ""
+                                    + typeQuery.isSuperClass(
+                                            subPlus.getSuperName(),
+                                            subPlus.getSubName()));
                     // var rel get all super classes
                 } else if (subPlus.getSuperVar() && !subPlus.getSubVar()) {
                     t1Var = true;
@@ -1003,8 +815,9 @@ public class TopDownApp implements UISettingsController,
                     rowdata[0][0] = "?" + subPlus.getSuperName();
                     rowdata[0][1] = superClasses[0];
                     String[] colnames = new String[] { "Variable", "Binding" };
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
 
                     Vector<String> nextVector = new Vector<String>();
                     for (int i = 1; i < superClasses.length; i++)
@@ -1013,7 +826,7 @@ public class TopDownApp implements UISettingsController,
                     typeQueryResultIterator = nextVector.iterator();
 
                     if (typeQueryResultIterator.hasNext()) {
-                        ui.setBtnNextSolutionEnabled(true);
+                        getUI().setBtnNextSolutionEnabled(true);
                     }
 
                     // rel var get all sub classes
@@ -1033,8 +846,9 @@ public class TopDownApp implements UISettingsController,
 
                     String[] colnames = new String[] { "Variable", "Binding" };
 
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
                     Vector nextVector = new Vector();
                     for (int i = 1; i < subClasses.length; i++)
                         nextVector.add(subClasses[i]);
@@ -1042,7 +856,7 @@ public class TopDownApp implements UISettingsController,
                     typeQueryResultIterator = nextVector.iterator();
 
                     if (typeQueryResultIterator.hasNext()) {
-                        ui.setBtnNextSolutionEnabled(true);
+                        getUI().setBtnNextSolutionEnabled(true);
                     }
 
                     // var var get all relations
@@ -1054,7 +868,7 @@ public class TopDownApp implements UISettingsController,
 
                     if (subPlus.getSuperName().equalsIgnoreCase(
                             subPlus.getSubName())) {
-                        JOptionPane.showMessageDialog(ui.getFrmOoJdrew(),
+                        JOptionPane.showMessageDialog(getUI().getFrmOoJdrew(),
                                 "Duplicate variable names not allowed",
                                 "Error", JOptionPane.ERROR_MESSAGE);
                         return;
@@ -1073,7 +887,7 @@ public class TopDownApp implements UISettingsController,
                         sol = sol + "subsumes(" + vit1.next().toString() + ","
                                 + vit1.next().toString() + ")." + "\n";
                     }
-                    ui.setSolutionTextAreaText(sol);
+                    getUI().setSolutionTextAreaText(sol);
                     // Debug
 
                     typeQueryResultIterator = v1.iterator();
@@ -1088,11 +902,12 @@ public class TopDownApp implements UISettingsController,
 
                     String[] colnames = new String[] { "Variable", "Binding" };
 
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
 
                     if (typeQueryResultIterator.hasNext()) {
-                        ui.setBtnNextSolutionEnabled(true);
+                        getUI().setBtnNextSolutionEnabled(true);
                     }
 
                 }
@@ -1102,9 +917,11 @@ public class TopDownApp implements UISettingsController,
                         .parseElementsSubsumesAndSubsumesPlus(queryTerms);
                 // rel rel
                 if (!sub.getSuperVar() && !sub.getSubVar()) {
-                    ui.setSolutionTextAreaText(""
-                            + typeQuery.isDirectSuperClass(sub.getSuperName(),
-                                    sub.getSubName()));
+                    getUI().setSolutionTextAreaText(
+                            ""
+                                    + typeQuery.isDirectSuperClass(
+                                            sub.getSuperName(),
+                                            sub.getSubName()));
                     // var rel
                 } else if (sub.getSuperVar() && !sub.getSubVar()) {
                     t1Var = true;
@@ -1123,8 +940,9 @@ public class TopDownApp implements UISettingsController,
 
                     String[] colnames = new String[] { "Variable", "Binding" };
 
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
                     Vector nextVector = new Vector();
                     for (int i = 1; i < superClasses.length; i++)
                         nextVector.add(superClasses[i]);
@@ -1132,7 +950,7 @@ public class TopDownApp implements UISettingsController,
                     typeQueryResultIterator = nextVector.iterator();
 
                     if (typeQueryResultIterator.hasNext()) {
-                        ui.setBtnNextSolutionEnabled(true);
+                        getUI().setBtnNextSolutionEnabled(true);
                     }
 
                     // rel var
@@ -1153,15 +971,16 @@ public class TopDownApp implements UISettingsController,
 
                     String[] colnames = new String[] { "Variable", "Binding" };
 
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
                     Vector nextVector = new Vector();
                     for (int i = 1; i < subClasses.length; i++)
                         nextVector.add(subClasses[i]);
 
                     typeQueryResultIterator = nextVector.iterator();
                     if (typeQueryResultIterator.hasNext()) {
-                        ui.setBtnNextSolutionEnabled(true);
+                        getUI().setBtnNextSolutionEnabled(true);
                     }
                     // var var
                 } else if (sub.getSuperVar() && sub.getSubVar()) {
@@ -1171,7 +990,7 @@ public class TopDownApp implements UISettingsController,
                     term1VarName = sub.getSuperName();
 
                     if (sub.getSuperName().equalsIgnoreCase(sub.getSubName())) {
-                        JOptionPane.showMessageDialog(ui.getFrmOoJdrew(),
+                        JOptionPane.showMessageDialog(getUI().getFrmOoJdrew(),
                                 "Duplicate variable names not allowed",
                                 "Error", JOptionPane.ERROR_MESSAGE);
                         return;
@@ -1191,7 +1010,7 @@ public class TopDownApp implements UISettingsController,
                         sol = sol + "subsumes(" + vit1.next().toString() + ","
                                 + vit1.next().toString() + ")." + "\n";
                     }
-                    ui.setSolutionTextAreaText(sol);
+                    getUI().setSolutionTextAreaText(sol);
                     // Debug
 
                     typeQueryResultIterator = v1.iterator();
@@ -1206,11 +1025,12 @@ public class TopDownApp implements UISettingsController,
 
                     String[] colnames = new String[] { "Variable", "Binding" };
 
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
 
                     if (typeQueryResultIterator.hasNext()) {
-                        ui.setBtnNextSolutionEnabled(true);
+                        getUI().setBtnNextSolutionEnabled(true);
                     }
                 }
             }// subsumes
@@ -1237,16 +1057,18 @@ public class TopDownApp implements UISettingsController,
 
                     String[] colnames = new String[] { "Variable", "Binding" };
 
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
 
                 } else if (!lub.getResultVar()) {
 
                     Object[][] rowdata = new Object[2][2];
                     String[] colnames = new String[] { "Variable", "Binding" };
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
-                    ui.setSolutionTextAreaText("");
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
+                    getUI().setSolutionTextAreaText("");
 
                     ArrayList<String> terms = lub.getTerms();
 
@@ -1257,7 +1079,7 @@ public class TopDownApp implements UISettingsController,
 
                     String leastUpperBound = typeQuery
                             .leastUpperBound(lubArray);
-                    ui.setSolutionTextAreaText(leastUpperBound);
+                    getUI().setSolutionTextAreaText(leastUpperBound);
                 }
             }// LUB
             else if (predicate.equalsIgnoreCase(TypeQueryParserRuleML.GLB)) {
@@ -1283,16 +1105,18 @@ public class TopDownApp implements UISettingsController,
 
                     String[] colnames = new String[] { "Variable", "Binding" };
 
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
 
                 } else if (!glb.getResultVar()) {
 
                     Object[][] rowdata = new Object[2][2];
                     String[] colnames = new String[] { "Variable", "Binding" };
-                    ui.setVariableBindingsTableModel(new javax.swing.table.DefaultTableModel(
-                            rowdata, colnames));
-                    ui.setSolutionTextAreaText("");
+                    getUI().setVariableBindingsTableModel(
+                            new javax.swing.table.DefaultTableModel(rowdata,
+                                    colnames));
+                    getUI().setSolutionTextAreaText("");
 
                     ArrayList<String> terms = glb.getTerms();
 
@@ -1304,13 +1128,14 @@ public class TopDownApp implements UISettingsController,
 
                     String greatestLowerBound = typeQuery
                             .greatestLowerBound(glbArray);
-                    ui.setSolutionTextAreaText(greatestLowerBound);
+                    getUI().setSolutionTextAreaText(greatestLowerBound);
                 }
             }// GLB
 
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), ex.getMessage(),
-                    "Type Query Parser Exeception", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(getUI().getFrmOoJdrew(),
+                    ex.getMessage(), "Type Query Parser Exeception",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }
