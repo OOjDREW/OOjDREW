@@ -25,6 +25,7 @@ import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.ruleml.oojdrew.Reasoner;
 import org.ruleml.oojdrew.Builtins.AbsBuiltin;
 import org.ruleml.oojdrew.Builtins.AddBuiltin;
 import org.ruleml.oojdrew.Builtins.Builtin;
@@ -79,7 +80,7 @@ import org.ruleml.oojdrew.util.Term;
  * @version 0.89
  */
 
-public class BackwardReasoner {
+public class BackwardReasoner implements Reasoner {
 
     /**
      *
