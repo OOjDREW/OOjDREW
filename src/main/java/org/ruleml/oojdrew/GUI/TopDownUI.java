@@ -55,14 +55,13 @@ import javax.swing.tree.TreeModel;
 import org.ruleml.oojdrew.TopDown.TopDownApp;
 import org.ruleml.oojdrew.parsing.InputFormat;
 
-public class TopDownUI {
+public class TopDownUI implements UI {
 
-	private JFrame frmOoJdrew;
+	private final JFrame frmOoJdrew = new JFrame();
 	private final ButtonGroup typeDefinitionButtonGroup = new ButtonGroup();
 	private final ButtonGroup knowledgeBaseButtonGroup = new ButtonGroup();
-	private JTable variableBindingsTable;
 	private final ButtonGroup queryButtonGroup = new ButtonGroup();
-	private TopDownApp controller;
+	private JTable variableBindingsTable;
 	private UndoRedoTextArea typeDefinitionTextArea;
 	private UndoRedoTextArea knowledgeBaseTextArea;
 	private UndoRedoTextArea queryTextArea;
@@ -80,6 +79,9 @@ public class TopDownUI {
 	private JTree solutionTree;
 	private UndoRedoTextArea solutionTextArea;
 	private JScrollPane solutionTreeScrollPane;
+	
+	// UI controller class
+	private TopDownApp controller;
 
 	/**
 	 * Launch the application.
@@ -108,8 +110,7 @@ public class TopDownUI {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {		
-		frmOoJdrew = new JFrame();
+	private void initialize() {
 		frmOoJdrew.setTitle("OO jDREW");
 		frmOoJdrew.setBounds(100, 100, 700, 650);
 		frmOoJdrew.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -242,7 +243,7 @@ public class TopDownUI {
 					.addContainerGap())
 		);
 		
-		typeDefinitionTextArea = new UndoRedoTextArea(new String());
+		typeDefinitionTextArea = new UndoRedoTextArea("");
 		typeDefinitionScrollPane.setViewportView(typeDefinitionTextArea);
 		typeDefinitonTab.setLayout(gl_typeDefinitonTab);
 		
@@ -297,7 +298,7 @@ public class TopDownUI {
 					.addContainerGap())
 		);
 		
-		knowledgeBaseTextArea = new UndoRedoTextArea(new String());
+		knowledgeBaseTextArea = new UndoRedoTextArea("");
 
 		knowledgeBaseScrollPane.setViewportView(knowledgeBaseTextArea);
 		knowledgeBaseTab.setLayout(gl_knowledgeBaseTab);
@@ -393,7 +394,7 @@ public class TopDownUI {
 					.addContainerGap())
 		);
 		
-		queryTextArea = new UndoRedoTextArea(new String());
+		queryTextArea = new UndoRedoTextArea("");
 		queryScrollPane.setViewportView(queryTextArea);
 		queryTopPanel.setLayout(gl_queryTopPanel);
 		
@@ -417,7 +418,7 @@ public class TopDownUI {
 			new DefaultMutableTreeNode("unknown") {
 			}
 		));		
-		solutionTextArea = new UndoRedoTextArea(new String());
+		solutionTextArea = new UndoRedoTextArea("");
 		solutionTextArea.setEditable(false);
 		solutionTreeScrollPane.setViewportView(solutionTree);
 		
@@ -446,10 +447,10 @@ public class TopDownUI {
 		frmOoJdrew.setVisible(visible);
 	}
 	
-	public void setController(TopDownApp newController)
+	public void setController(AbstractUIApp controller)
 	{
-		controller = newController;
-		controller.syncUIWithSettings();
+		this.controller = (TopDownApp) controller;
+		this.controller.syncUIWithSettings();
 	}
 
 	public void updateUI() {
