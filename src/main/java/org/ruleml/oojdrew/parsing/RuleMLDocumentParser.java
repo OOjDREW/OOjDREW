@@ -62,7 +62,7 @@ public class RuleMLDocumentParser {
     private Vector<String> variableNames;
 
     /**
-     * This is used for generating unique anonymous variable ids
+     * This is used for generating unique anonymous variable IDs
      */
     private int anonid = 1;
 
@@ -265,7 +265,7 @@ public class RuleMLDocumentParser {
             return t;
         } else {
             throw new ParseException(
-                    "Assert element can only contain Atom (fact) or Implies elements.");
+                    "<Assert> should only contain <Atom> (fact) or <Implies> elements.");
         }
     }
 
@@ -416,8 +416,9 @@ public class RuleMLDocumentParser {
             subterms.add(parseAtom(conclusion, true, false));
         } else if (conclusion.getLocalName().equals(tagNames.NEG)) {
             Elements headatms = conclusion.getChildElements(tagNames.ATOM);
-            if (headatms.size() != 1)
-                throw new ParseException("Neg should have one ATOM element");
+            if (headatms.size() != 1) {
+                throw new ParseException("<Neg> should only contain one <Atom>");
+            }
 
             Term atom = parseAtom(headatms.get(0), true, true);
             subterms.add(atom);
@@ -440,7 +441,7 @@ public class RuleMLDocumentParser {
             }
         } else {
             throw new ParseException(
-                    "Second element of Implies should always be an Atom or Neg element.");
+                    "Second child of <Implies> must be <Atom> or <Neg>.");
         }
 
         String premiseName = premise.getLocalName();
@@ -456,23 +457,25 @@ public class RuleMLDocumentParser {
         } else if (premiseName.equals(tagNames.AND)) {
             children = premise.getChildElements();
             for (int i = 0; i < children.size(); i++) {
-                Element el = skipRoleTag(children.get(i));
-                if (el.getLocalName().equals(tagNames.ATOM)) {
-                    subterms.add(parseAtom(el, false, false));
-                } else if (el.getLocalName().equals(tagNames.NAF)) {
-                    subterms.add(parseNaf(el));
-                } else if (el.getLocalName().equals(tagNames.ASSERT)) {
-                    subterms.add(parseAssert(el));
-                } else if (el.getLocalName().equals(tagNames.NEG)) {
-                    subterms.add(parseAtom(el, false, true));
+                Element element = skipRoleTag(children.get(i));
+                String elementName = element.getLocalName();
+                if (elementName.equals(tagNames.ATOM)) {
+                    subterms.add(parseAtom(element, false, false));
+                } else if (elementName.equals(tagNames.NAF)) {
+                    subterms.add(parseNaf(element));
+                } else if (elementName.equals(tagNames.ASSERT)) {
+                    subterms.add(parseAssert(element));
+                } else if (elementName.equals(tagNames.NEG)) {
+                    subterms.add(parseAtom(element, false, true));
                 } else {
-                    throw new ParseException(
-                            "Implies And element should only contain Atom and Naf elements.");
+                    throw new ParseException(String.format(
+                            "<%s> is not allowed as child of <And>",
+                            elementName));
                 }
             }
         } else {
             throw new ParseException(
-                    "First element of Implies should be an Atom, Naf or And element.");
+                    "First element of <Implies> must be <Atom>, <And> or <Naf>.");
         }
 
         logger.debug("Building Types");
@@ -668,8 +671,9 @@ public class RuleMLDocumentParser {
         }
 
         if (!fun.getLocalName().equals(tagNames.FUN)) {
-            throw new ParseException(
-                    "First child of op in an Expr must be a Fun element.");
+            throw new ParseException(String.format(
+                    "First child of <%s> in <%s> must be <%s>", tagNames.OP,
+                    tagNames.EXPR, tagNames.FUN));
         }
 
         int symbol = SymbolTable.internSymbol(fun.getValue().trim());
@@ -719,8 +723,9 @@ public class RuleMLDocumentParser {
         }
 
         if (rel == null) {
-            throw new ParseException(
-                    "In an <Atom>, first child of <op> must be a <Rel>.");
+            throw new ParseException(String.format(
+                    "In an <Atom>, first child of <%s> must be a <Rel>.",
+                    tagNames.OP));
         }
 
         String relname = rel.getValue().trim();
@@ -737,8 +742,9 @@ public class RuleMLDocumentParser {
             Term term = null;
             if (element.getLocalName().equals(tagNames.OID)) {
                 if (foundoid) {
-                    throw new ParseException(
-                            "<Atom> must contain at most one <oid>.");
+                    throw new ParseException(String.format(
+                            "<%s> must contain at most one <%s>.",
+                            tagNames.ATOM, tagNames.OID));
                 }
                 term = parseOid(element);
                 foundoid = true;
@@ -887,14 +893,14 @@ public class RuleMLDocumentParser {
                 Element el2 = children.get(i);
                 if (!el2.getLocalName().equals(tagNames.ATOM)) {
                     throw new ParseException(
-                            "And child of Naf element should only contain Atom elements.");
+                            "<And> as child of <Naf> should only contain <Atom> elements.");
                 }
 
                 subterms.add(parseAtom(el2, false, false));
             }
         } else {
             throw new ParseException(
-                    "Naf element should only contain Atom or And child element.");
+                    "<Naf> should only contain <Atom> or <And>.");
         }
 
         Term t = new Term(SymbolTable.INAF, SymbolTable.INOROLE, Types.IOBJECT,
