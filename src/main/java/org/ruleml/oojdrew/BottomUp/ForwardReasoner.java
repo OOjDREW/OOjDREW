@@ -58,6 +58,7 @@ import org.ruleml.oojdrew.Builtins.StringUpperCaseBuiltin;
 import org.ruleml.oojdrew.Builtins.SubstringBuiltin;
 import org.ruleml.oojdrew.Builtins.SubtractBuiltin;
 import org.ruleml.oojdrew.Builtins.TanBuiltin;
+import org.ruleml.oojdrew.parsing.InputFormat;
 import org.ruleml.oojdrew.parsing.RuleMLFormat;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.Term;
@@ -96,10 +97,6 @@ import ptolemy.graph.Node;
  * @version 0.89
  */
 public class ForwardReasoner implements Reasoner {
-
-    public static enum RuleDescriptionLanguage {
-        POSL, RuleML
-    }
 
     /**
      * This Hashtable stores all known facts that have already been processed.
@@ -334,7 +331,7 @@ public class ForwardReasoner implements Reasoner {
      * This method will return a string that will contain the new facts and old
      * facts in RuleML or POSL form
      */
-    public String printClauses(RuleDescriptionLanguage type,
+    public String printClauses(InputFormat type,
             RuleMLFormat version) {
 
         String out = "";
@@ -358,7 +355,7 @@ public class ForwardReasoner implements Reasoner {
 
         if (flip) {
 
-            if (type == RuleDescriptionLanguage.POSL) {
+            if (type == InputFormat.InputFormatPOSL) {
                 // System.out.println("\n%Old Facts: ");
                 out = out + "%Old Facts: \n";
                 Iterator iter2 = stringsPOSL.iterator();
@@ -369,7 +366,7 @@ public class ForwardReasoner implements Reasoner {
                 }
             }
 
-            if (type == RuleDescriptionLanguage.RuleML) {
+            if (type == InputFormat.InputFormatRuleML) {
                 out = out + "%Old Facts: \n";
                 Iterator iter2 = stringsRULEML.iterator();
                 while (iter2.hasNext()) {
@@ -392,7 +389,7 @@ public class ForwardReasoner implements Reasoner {
             Vector v = (Vector) oldFacts.get(key);
             it = v.iterator();
 
-            if (type == RuleDescriptionLanguage.POSL) {
+            if (type == InputFormat.InputFormatPOSL) {
 
                 while (it.hasNext()) {
                     DefiniteClause dc = (DefiniteClause) it.next();
@@ -414,7 +411,7 @@ public class ForwardReasoner implements Reasoner {
 
             }
 
-            if (type == RuleDescriptionLanguage.RuleML) {
+            if (type == InputFormat.InputFormatRuleML) {
 
                 while (it.hasNext()) {
                     DefiniteClause dc = (DefiniteClause) it.next();
@@ -1050,9 +1047,11 @@ public class ForwardReasoner implements Reasoner {
     }
 
     /**
-     * Clear previously clauses data structure
+     * Clear previously added reasoning results
      */
     public void clearClauses() {
+        oldFacts.clear();
         newFacts.clear();
+        rules.clear();
     }
 }

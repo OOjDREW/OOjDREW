@@ -17,7 +17,6 @@
 package org.ruleml.oojdrew.BottomUp;
 
 import java.awt.EventQueue;
-import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -26,10 +25,8 @@ import java.util.prefs.PreferenceChangeListener;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-import javax.swing.text.html.HTML.Tag;
 
 import nu.xom.Attribute;
-import nu.xom.Document;
 import nu.xom.Element;
 
 import org.apache.log4j.BasicConfigurator;
@@ -38,7 +35,6 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.ruleml.oojdrew.Config;
 import org.ruleml.oojdrew.Configuration;
-import org.ruleml.oojdrew.BottomUp.ForwardReasoner.RuleDescriptionLanguage;
 import org.ruleml.oojdrew.GUI.AbstractUIApp;
 import org.ruleml.oojdrew.GUI.BottomUpUI;
 import org.ruleml.oojdrew.GUI.DebugConsole;
@@ -55,6 +51,7 @@ import org.ruleml.oojdrew.parsing.RuleMLTagNames;
 import org.ruleml.oojdrew.parsing.SubsumesParser;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.SymbolTable;
+import org.ruleml.oojdrew.util.Util;
 
 public class BottomUpApp extends AbstractUIApp implements UISettingsController,
         PreferenceChangeListener {
@@ -143,14 +140,11 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
         return (ForwardReasoner) super.reasoner;
     }
 
-    private void setReasoner(ForwardReasoner reasoner) {
-        super.reasoner = reasoner;
-    }
-
     private boolean updateReasonerLoopCounter() {
         boolean successful = false;
         try {
-            getReasoner().setLoopCounter(getUI().getInputLoopCount());
+            String loopCounter = getUI().getInputLoopCount();
+            getReasoner().setLoopCounter(loopCounter);
             successful = true;
         } catch (Exception ex1) {
             JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), ex1.getMessage(),
@@ -197,25 +191,11 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
 
     @Override
     public void parseKnowledgeBase() {
-        if (updateReasonerLoopCounter()) {
-            // Applied from old BottomUpGUI
-            // TODO: Check if new instance is required and if loop counter
-            // should be set on new instance
-            setReasoner(new ForwardReasoner());
+        super.parseKnowledgeBase();
 
-            super.parseKnowledgeBase();
-
-            // Testing for stratification if user wants to.
-            if (getUI().getStratificationCheckEnabled()) {
-                checkStratificiation();
-            }
-        }
-    }
-
-    @Override
-    public void parseTypeInformation() {
-        if (updateReasonerLoopCounter()) {
-            super.parseTypeInformation();
+        // Testing for stratification if user wants to.
+        if (getUI().getStratificationCheckEnabled()) {
+            checkStratificiation();
         }
     }
 
@@ -224,21 +204,20 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
             return;
         }
 
+        InputFormat inputFormat = getUI().getKnowledgeBaseInputFormat();
         RuleMLFormat rmlFormat = config.getSelectedRuleMLFormat();
-        InputFormat inputFormat = ui.getKnowledgeBaseInputFormat();
-        getReasoner().printClauses(RuleDescriptionLanguage.POSL, rmlFormat);
+        boolean separateFacts = getUI().getSeparateFactsEnabled();
+        boolean printRules = getUI().getPrintRulesEnabled();
 
         // Run reasoner
         getReasoner().runForwardReasoner();
-
         System.out.println("Ran Reasoner");
 
         Hashtable oldFacts = getReasoner().getOldFacts();
-
         if (oldFacts.containsKey(SymbolTable.IINCONSISTENT)) {
             Vector v = (Vector) oldFacts.get(SymbolTable.IINCONSISTENT);
             if (v.size() > 0) {
-                // logger.warn("Knowledge base is inconsistent.");
+                logger.warn("Knowledge base is inconsistent.");
                 JOptionPane.showMessageDialog(ui.getFrmOoJdrew(),
                         "Knowledge base is inconsistent", "Consistency Check",
                         JOptionPane.WARNING_MESSAGE);
@@ -246,143 +225,90 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
         }
 
         Hashtable rules = getReasoner().getRules();
-        Enumeration enumOldFact = oldFacts.elements();
-
-        if (getUI().getSeparateFactsEnabled()) {
+        if (separateFacts) {
             StringBuilder stringBuilder = new StringBuilder();
-            if (inputFormat == InputFormat.InputFormatPOSL) {
-                String poslFacts = getReasoner().printClauses(
-                        RuleDescriptionLanguage.POSL, rmlFormat);
-                stringBuilder.append(poslFacts);
 
-                if (getUI().getPrintRulesEnabled()) {
-                    stringBuilder.append("\n % Rules : \n");
-                    enumOldFact = rules.elements();
-                    while (enumOldFact.hasMoreElements()) {
-                        Vector rulesv = (Vector) enumOldFact.nextElement();
-                        Iterator it = rulesv.iterator();
-                        while (it.hasNext()) {
-                            DefiniteClause dc = (DefiniteClause) it.next();
-                            stringBuilder.append(dc.toPOSLString() + "\n");
-                        }
-                    }
-                }
-                getUI().setOutputTextAreaText(stringBuilder.toString());
-            } else {
-                String ruleMLFacts = getReasoner().printClauses(
-                        RuleDescriptionLanguage.RuleML, rmlFormat);
-                stringBuilder.append(ruleMLFacts);
+            String facts = getReasoner().printClauses(inputFormat, rmlFormat);
+            stringBuilder.append(facts);
 
-                if (getUI().getPrintRulesEnabled()) {
-
-                    stringBuilder.append("\n% Rules : \n");
-                    enumOldFact = rules.elements();
-                    while (enumOldFact.hasMoreElements()) {
-                        Vector rulesv = (Vector) enumOldFact.nextElement();
-                        Iterator it = rulesv.iterator();
-                        while (it.hasNext()) {
-                            DefiniteClause dc = (DefiniteClause) it.next();
-                            stringBuilder.append(dc.toRuleMLString(rmlFormat)
-                                    + "\n");
-                        }
-                    }
-                }
-
-                getUI().setOutputTextAreaText(stringBuilder.toString());
+            if (printRules) {
+                stringBuilder.append("\n% Rules : \n");
+                appendString(inputFormat, rmlFormat, rules.elements(),
+                        stringBuilder);
             }
-            return;
-        }
-
-        if (inputFormat == InputFormat.InputFormatPOSL) {
-
+            getUI().setOutputTextAreaText(stringBuilder.toString());
+            
+        } else if (inputFormat == InputFormat.InputFormatPOSL) {
             StringBuilder stringBuilder = new StringBuilder();
 
             stringBuilder.append("% Derived Facts:\n\n");
-            enumOldFact = oldFacts.elements();
-            while (enumOldFact.hasMoreElements()) {
-                Vector facts = (Vector) enumOldFact.nextElement();
-                Iterator it = facts.iterator();
-                while (it.hasNext()) {
-                    DefiniteClause dc = (DefiniteClause) it.next();
-                    stringBuilder.append(dc.toPOSLString() + "\n");
-                }
-            }
+            appendString(inputFormat, rmlFormat, oldFacts.elements(),
+                    stringBuilder);
             // Add the option to print rules or not
-            if (getUI().getPrintRulesEnabled()) {
+            if (printRules) {
                 stringBuilder.append("\n % Rules : \n");
-                enumOldFact = rules.elements();
-                while (enumOldFact.hasMoreElements()) {
-                    Vector rulesv = (Vector) enumOldFact.nextElement();
-                    Iterator it = rulesv.iterator();
-                    while (it.hasNext()) {
-                        DefiniteClause dc = (DefiniteClause) it.next();
-                        stringBuilder.append(dc.toPOSLString() + "\n");
-                    }
-                }
+                appendString(inputFormat, rmlFormat, rules.elements(),
+                        stringBuilder);
             }
-
             getUI().setOutputTextAreaText(stringBuilder.toString());
-        }
-
-        else {
-            RuleMLTagNames rmlTagNames = new RuleMLTagNames(rmlFormat);
+            
+        } else {
+            RuleMLTagNames rmlTags = new RuleMLTagNames(rmlFormat);
             // Can add here to change the current parser so that
-            // you can exchange between ruleml 0.88 and 0.91
-            Element assertElement = new Element(rmlTagNames.ASSERT);
+            // you can exchange between RuleML versions
+            Element assertElement = new Element(rmlTags.ASSERT);
             Element assertChild = null;
             if (rmlFormat == RuleMLFormat.RuleML88) {
-                assertChild = new Element(rmlTagNames.AND);
+                assertChild = new Element(rmlTags.AND);
             } else {
-                assertChild = new Element(rmlTagNames.RULEBASE);
+                assertChild = new Element(rmlTags.RULEBASE);
             }
-            Attribute a = new Attribute(rmlTagNames.MAPCLOSURE,
-                    rmlTagNames.UNIVERSAL);
+            Attribute a = new Attribute(rmlTags.MAPCLOSURE, rmlTags.UNIVERSAL);
             assertChild.addAttribute(a);
             assertElement.appendChild(assertChild);
 
-            Enumeration e = oldFacts.elements();
-            while (e.hasMoreElements()) {
-                Vector facts = (Vector) e.nextElement();
-                Iterator it = facts.iterator();
-                while (it.hasNext()) {
-                    DefiniteClause dc = (DefiniteClause) it.next();
-
-                    if (dc.atoms[0].symbol == SymbolTable.IINCONSISTENT) {
-                        continue;
-                    }
-                    assertChild.appendChild(dc.toRuleML(rmlFormat));
-                }
-            }
+            appendRuleML(assertChild, oldFacts.elements(), rmlFormat);
             // Add the option to print rules or not
-            if (getUI().getPrintRulesEnabled()) {
-                e = rules.elements();
-                while (e.hasMoreElements()) {
-                    Vector rulesv = (Vector) e.nextElement();
-                    Iterator it = rulesv.iterator();
-                    while (it.hasNext()) {
-                        DefiniteClause dc = (DefiniteClause) it.next();
-                        if (dc.atoms[0].symbol == SymbolTable.IINCONSISTENT) {
-                            continue;
-                        }
-                        assertChild.appendChild(dc.toRuleML(rmlFormat));
-                    }
+            if (printRules) {
+                appendRuleML(assertChild, rules.elements(), rmlFormat);
+            }
+
+            String rmlString = Util.toRuleMLString(assertElement);
+            getUI().setOutputTextAreaText(rmlString);
+        }
+    }
+
+    private void appendString(InputFormat inputFormat, RuleMLFormat rmlFormat,
+            Enumeration enumeration, StringBuilder stringBuilder) {
+        while (enumeration.hasMoreElements()) {
+            Vector children = (Vector) enumeration.nextElement();
+            Iterator it = children.iterator();
+            while (it.hasNext()) {
+                DefiniteClause dc = (DefiniteClause) it.next();
+
+                if (inputFormat == InputFormat.InputFormatPOSL) {
+                    stringBuilder.append(dc.toPOSLString());
+                } else {
+                    stringBuilder.append(dc.toRuleMLString(rmlFormat));
                 }
+                stringBuilder.append("\n");
             }
+        }
+    }
 
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            nu.xom.Serializer sl = new nu.xom.Serializer(outputStream);
-            sl.setIndent(3);
-            sl.setLineSeparator("\n");
-            try {
-                Document doc = new Document(assertElement);
-                sl.write(doc);
-            } catch (java.io.IOException ex) {
-                // this.logger.error(ex.getMessage(), ex);
-                JOptionPane.showMessageDialog(ui.getFrmOoJdrew(),
-                        ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    private void appendRuleML(Element element, Enumeration enumeration,
+            RuleMLFormat rmlFormat) {
+        while (enumeration.hasMoreElements()) {
+            Vector children = (Vector) enumeration.nextElement();
+            Iterator it = children.iterator();
+            while (it.hasNext()) {
+                DefiniteClause dc = (DefiniteClause) it.next();
+
+                if (dc.atoms[0].symbol == SymbolTable.IINCONSISTENT) {
+                    continue;
+                }
+                element.appendChild(dc.toRuleML(rmlFormat));
             }
-
-            getUI().setOutputTextAreaText(outputStream.toString());
         }
     }
 }
