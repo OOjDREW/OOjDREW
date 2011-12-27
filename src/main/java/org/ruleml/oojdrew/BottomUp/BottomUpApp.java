@@ -26,6 +26,7 @@ import java.util.prefs.PreferenceChangeListener;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.text.html.HTML.Tag;
 
 import nu.xom.Attribute;
 import nu.xom.Document;
@@ -329,11 +330,10 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
             // you can exchange between ruleml 0.88 and 0.91
             Element assertElement = new Element(rmlTagNames.ASSERT);
             Element assertChild = null;
-            if (rmlFormat == RuleMLFormat.RuleML91) {
-                assertChild = new Element(rmlTagNames.RULEBASE);
-            }
             if (rmlFormat == RuleMLFormat.RuleML88) {
-                assertChild = new Element("And");
+                assertChild = new Element(rmlTagNames.AND);
+            } else {
+                assertChild = new Element(rmlTagNames.RULEBASE);
             }
             Attribute a = new Attribute(rmlTagNames.MAPCLOSURE,
                     rmlTagNames.UNIVERSAL);
