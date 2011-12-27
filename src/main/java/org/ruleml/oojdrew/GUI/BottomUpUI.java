@@ -44,15 +44,9 @@ import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.MaskFormatter;
-import javax.swing.text.NumberFormatter;
 
 import org.ruleml.oojdrew.BottomUp.BottomUpApp;
 import org.ruleml.oojdrew.parsing.InputFormat;
-import javax.swing.JToolBar;
-import javax.swing.JTextField;
-import java.awt.event.KeyAdapter;
-import java.text.NumberFormat;
 
 public class BottomUpUI implements UI {
 
@@ -63,6 +57,7 @@ public class BottomUpUI implements UI {
 	private UndoRedoTextArea knowledgeBaseTextArea;
     private UndoRedoTextArea outputTextArea;
     private JCheckBoxMenuItem chckbxmntmValidateRuleml;
+    private JCheckBoxMenuItem chckbxmntmTestForStratification;
     private JMenuItem mntmShowDebugConsole;
     private JPanel typeDefinitonTab;
     private JPanel knowledgeBaseTab;
@@ -70,7 +65,6 @@ public class BottomUpUI implements UI {
     private JRadioButton typeDefinitionFormatRDFS;
     private JRadioButton knowledgeBaseInputFormatRuleML;
     private JCheckBox chkBoxPrintRules;
-    private JCheckBox chkBoxTestForStratification;
     private JCheckBox chkBoxSeparateFacts;
     private JFormattedTextField tfInputLoopCounter;
     
@@ -106,7 +100,7 @@ public class BottomUpUI implements UI {
 	 */
 	private void initialize() {		
 		frmOoJdrew.setTitle("OO jDREW");
-        frmOoJdrew.setBounds(100, 100, 645, 700);
+        frmOoJdrew.setBounds(100, 100, 661, 700);
 		frmOoJdrew.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -170,6 +164,10 @@ public class BottomUpUI implements UI {
 				controller.showDebugConsole();
 			}
 		});
+		
+		chckbxmntmTestForStratification = new JCheckBoxMenuItem("Test for Stratification");
+		chckbxmntmTestForStratification.setToolTipText("Checks if the knowledgebase is stratifiable");
+		mnOptions.add(chckbxmntmTestForStratification);
 		mnOptions.add(mntmShowDebugConsole);
 		
 		JMenuItem mntmPreferences = new JMenuItem("Preferences...");
@@ -315,6 +313,12 @@ public class BottomUpUI implements UI {
 		    }
 		});
 		
+		JLabel lblNewLabel_1 = new JLabel("Max Loop Count:");
+		
+		tfInputLoopCounter = new JFormattedTextField(0);
+		
+		tfInputLoopCounter.setColumns(10);
+		
 		GroupLayout gl_outputTab = new GroupLayout(outputTab);
 		gl_outputTab.setHorizontalGroup(
 		    gl_outputTab.createParallelGroup(Alignment.LEADING)
@@ -327,8 +331,12 @@ public class BottomUpUI implements UI {
 		                    .addPreferredGap(ComponentPlacement.UNRELATED)
 		                    .addComponent(chkBoxPrintRules)
 		                    .addPreferredGap(ComponentPlacement.RELATED)
-		                    .addComponent(chkBoxSeparateFacts, GroupLayout.PREFERRED_SIZE, 129, GroupLayout.PREFERRED_SIZE)
-		                    .addPreferredGap(ComponentPlacement.RELATED, 310, Short.MAX_VALUE)
+		                    .addComponent(chkBoxSeparateFacts)
+		                    .addPreferredGap(ComponentPlacement.UNRELATED)
+		                    .addComponent(lblNewLabel_1)
+		                    .addPreferredGap(ComponentPlacement.RELATED)
+		                    .addComponent(tfInputLoopCounter, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+		                    .addPreferredGap(ComponentPlacement.RELATED, 203, Short.MAX_VALUE)
 		                    .addComponent(btnRunForwardReasoner)))
 		            .addContainerGap())
 		);
@@ -342,7 +350,9 @@ public class BottomUpUI implements UI {
 		                .addComponent(btnRunForwardReasoner)
 		                .addComponent(outputConfigurationLabel)
 		                .addComponent(chkBoxPrintRules)
-		                .addComponent(chkBoxSeparateFacts))
+		                .addComponent(chkBoxSeparateFacts)
+		                .addComponent(lblNewLabel_1)
+		                .addComponent(tfInputLoopCounter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 		            .addContainerGap())
 		);
 		outputTab.setLayout(gl_outputTab);
@@ -350,44 +360,6 @@ public class BottomUpUI implements UI {
 		outputTextArea.setEditable(false);
 
         outputScrollPane.setViewportView(outputTextArea);
-        
-        JPanel panel = new JPanel();
-        frmOoJdrew.getContentPane().add(panel, BorderLayout.SOUTH);
-        
-        chkBoxTestForStratification = new JCheckBox("Test For Stratification");
-        
-        JLabel lblConfiguration = new JLabel("Configuration:");
-        
-        JLabel lblNewLabel = new JLabel("Input Loop Counter:");
-        
-        tfInputLoopCounter = new JFormattedTextField(0);
-        
-        tfInputLoopCounter.setColumns(10);
-        GroupLayout gl_panel = new GroupLayout(panel);
-        gl_panel.setHorizontalGroup(
-            gl_panel.createParallelGroup(Alignment.LEADING)
-                .addGroup(gl_panel.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(lblConfiguration)
-                    .addPreferredGap(ComponentPlacement.UNRELATED)
-                    .addComponent(chkBoxTestForStratification)
-                    .addGap(18)
-                    .addComponent(lblNewLabel)
-                    .addPreferredGap(ComponentPlacement.UNRELATED)
-                    .addComponent(tfInputLoopCounter, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(353, Short.MAX_VALUE))
-        );
-        gl_panel.setVerticalGroup(
-            gl_panel.createParallelGroup(Alignment.LEADING)
-                .addGroup(gl_panel.createSequentialGroup()
-                    .addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(lblConfiguration)
-                        .addComponent(chkBoxTestForStratification)
-                        .addComponent(lblNewLabel)
-                        .addComponent(tfInputLoopCounter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        panel.setLayout(gl_panel);
 		
 		tabbedPane.setSelectedIndex(1);
 	}
@@ -572,7 +544,7 @@ public class BottomUpUI implements UI {
 	}
 
     public boolean getStratificationCheckEnabled() {
-        return chkBoxTestForStratification.isSelected();
+        return chckbxmntmTestForStratification.isSelected();
     }
     
     public boolean getSeparateFactsEnabled() {
