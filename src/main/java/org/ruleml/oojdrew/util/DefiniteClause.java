@@ -17,10 +17,8 @@
 
 package org.ruleml.oojdrew.util;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Vector;
 
-import nu.xom.Document;
 import nu.xom.Element;
 
 import org.ruleml.oojdrew.parsing.RuleMLFormat;
@@ -83,15 +81,15 @@ public class DefiniteClause {
      *            to be constructed.
      */
     public DefiniteClause(Vector atoms, Vector variableNames) {
-	this.atoms = new Term[atoms.size()];
-	for (int i = 0; i < this.atoms.length; i++) {
-	    this.atoms[i] = (Term) atoms.get(i);
-	}
+        this.atoms = new Term[atoms.size()];
+        for (int i = 0; i < this.atoms.length; i++) {
+            this.atoms[i] = (Term) atoms.get(i);
+        }
 
-	this.variableNames = new String[variableNames.size()];
-	for (int i = 0; i < this.variableNames.length; i++) {
-	    this.variableNames[i] = (String) variableNames.get(i);
-	}
+        this.variableNames = new String[variableNames.size()];
+        for (int i = 0; i < this.variableNames.length; i++) {
+            this.variableNames[i] = (String) variableNames.get(i);
+        }
     }
 
     /**
@@ -103,11 +101,11 @@ public class DefiniteClause {
      * @return The string representation of the clause.
      */
     public String toString() {
-	if (org.ruleml.oojdrew.Config.PRPRINT) {
-	    return toPOSLString();
-	} else {
-	    return toRuleMLString(RuleMLFormat.RuleML88);
-	}
+        if (org.ruleml.oojdrew.Config.PRPRINT) {
+            return toPOSLString();
+        } else {
+            return toRuleMLString(RuleMLFormat.RuleML88);
+        }
     }
 
     /**
@@ -123,11 +121,11 @@ public class DefiniteClause {
      * @return The string representation of the clause.
      */
     public String toString(RuleMLFormat version) {
-	if (org.ruleml.oojdrew.Config.PRPRINT) {
-	    return toPOSLString();
-	} else {
-	    return toRuleMLString(version);
-	}
+        if (org.ruleml.oojdrew.Config.PRPRINT) {
+            return toPOSLString();
+        } else {
+            return toRuleMLString(version);
+        }
     }
 
     /**
@@ -139,21 +137,20 @@ public class DefiniteClause {
      *         object.
      */
     public String toPOSLString() {
-	String s = "";
-	s += atoms[0].toPOSLString(variableNames, true);
+        String s = "";
+        s += atoms[0].toPOSLString(variableNames, true);
 
-	if (atoms.length > 1) {
-	    s += " :- ";
-	    for (int i = 1; i < atoms.length; i++) {
-		s += atoms[i].toPOSLString(variableNames, false) + ", ";
-	    }
+        if (atoms.length > 1) {
+            s += " :- ";
+            for (int i = 1; i < atoms.length; i++) {
+                s += atoms[i].toPOSLString(variableNames, false) + ", ";
+            }
 
-	    s = s.substring(0, s.length() - 2);
-	}
+            s = s.substring(0, s.length() - 2);
+        }
+        s += ".";
 
-	s += ".";
-
-	return s;
+        return s;
     }
 
     /**
@@ -172,18 +169,8 @@ public class DefiniteClause {
      * @return The RuleML representation stored in a Java String object.
      */
     public String toRuleMLString(RuleMLFormat rmlFormat) {
-	Element rml = this.toRuleML(rmlFormat);
-	ByteArrayOutputStream os = new ByteArrayOutputStream();
-	nu.xom.Serializer sl = new nu.xom.Serializer(os);
-	sl.setIndent(3);
-	sl.setLineSeparator("\n");
-	try {
-	    Document doc = new Document(rml);
-	    sl.write(doc);
-	} catch (java.io.IOException e) {
-	    System.err.println(e.getMessage());
-	}
-	return os.toString();
+        Element rmlElement = this.toRuleML(rmlFormat);
+        return Util.toRuleMLString(rmlElement);
     }
 
     /**
@@ -201,34 +188,31 @@ public class DefiniteClause {
      */
     public Element toRuleML(RuleMLFormat rmlFormat) {
 
-	RuleMLTagNames rmlTagNames = new RuleMLTagNames(rmlFormat);
+        RuleMLTagNames rmlTagNames = new RuleMLTagNames(rmlFormat);
 
-	Element element;
-	if (atoms.length == 1) {
-	    element = atoms[0].toRuleML(variableNames, true, rmlFormat);
-	} else {
-	    element = new Element(rmlTagNames.IMPLIES);
-	    if (atoms.length > 2) {
-		Element el2 = new Element(rmlTagNames.AND);
-		for (int i = 1; i < atoms.length; i++) {
+        Element element;
+        if (atoms.length == 1) {
+            element = atoms[0].toRuleML(variableNames, true, rmlFormat);
+        } else {
+            element = new Element(rmlTagNames.IMPLIES);
+            if (atoms.length > 2) {
+                Element el2 = new Element(rmlTagNames.AND);
+                for (int i = 1; i < atoms.length; i++) {
 
-		    el2.appendChild(atoms[i].toRuleML(variableNames, false,
-			    rmlFormat));
-		}
-		element.appendChild(el2);
-	    } else {
-		element.appendChild(atoms[1].toRuleML(variableNames, false,
-			rmlFormat));
-	    }
+                    el2.appendChild(atoms[i].toRuleML(variableNames, false,
+                            rmlFormat));
+                }
+                element.appendChild(el2);
+            } else {
+                element.appendChild(atoms[1].toRuleML(variableNames, false,
+                        rmlFormat));
+            }
 
-	    element.appendChild(atoms[0].toRuleML(variableNames, true, rmlFormat));
-	}
-	// Each atom no longer needs a closure attribute, the closure is
-	// defined at the Rulebase level
-	// Attribute a = new Attribute("closure", "universal");
-	// el.addAttribute(a);
+            element.appendChild(atoms[0].toRuleML(variableNames, true,
+                    rmlFormat));
+        }
 
-	return element;
+        return element;
     }
 
     /**
@@ -238,6 +222,6 @@ public class DefiniteClause {
      * @return Returns true if the clause represents a fact, otherwise false.
      */
     public boolean isFact() {
-	return (atoms.length == 1);
+        return (atoms.length == 1);
     }
 }
