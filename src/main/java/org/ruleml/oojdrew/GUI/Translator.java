@@ -672,20 +672,11 @@ public class Translator extends JFrame {
 	                   JOptionPane.ERROR_MESSAGE);
 		}
 		///work around to remove type dependency
-		try
-		{
-			rmlParser.parseRuleMLString(RuleMLFormat.RuleML91, rmltext);
-		} catch (Exception ex)
-		{
-
-			try
-			{
-				rmlParser.parseRuleMLString(RuleMLFormat.RuleML88, rmltext);
-			} catch (Exception ex2)
-			{
-				JOptionPane.showMessageDialog(this, ex2.getMessage(), "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
+        try {
+            rmlParser.parseRuleMLString(rmltext);
+        } catch (Exception ex2) {
+            JOptionPane.showMessageDialog(this, ex2.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
 
         StringBuffer sb = new StringBuffer();

@@ -69,7 +69,7 @@ public class RuleMLParser implements PreferenceChangeListener {
     private Configuration config;
     private boolean validateRuleML;
 
-    private RuleMLFormat ruleMLFormat;
+    private RuleMLFormat rmlFormat;
 
     private Level logLevel;
 
@@ -121,13 +121,13 @@ public class RuleMLParser implements PreferenceChangeListener {
             throws ParseException, ParsingException, IOException {
         Builder bl = new Builder();
         Document doc = bl.build(file);
-        parseDocument(format, doc);
+        parseDocument(doc);
     }
 
     /**
      * @see jdrew.oo.parsing.RuleMLParser#parseDocument
      */
-    public void parseRuleMLString(RuleMLFormat format, String contents)
+    public void parseRuleMLString(String contents)
             throws ParseException, ParsingException, IOException {
 
         if (validateRuleML) {
@@ -147,7 +147,7 @@ public class RuleMLParser implements PreferenceChangeListener {
             Document doc;
             try {
                 doc = bl.build(sr);
-                parseDocument(format, doc);
+                parseDocument(doc);
             } catch (Exception e) {
                 throw new ParseException(
                         "Document does not validate against the specified XML schema definition(s)!");
@@ -156,7 +156,7 @@ public class RuleMLParser implements PreferenceChangeListener {
             Builder bl = new Builder();
             StringReader sr = new StringReader(contents);
             Document doc = bl.build(sr);
-            parseDocument(format, doc);
+            parseDocument(doc);
         }
     }
 
@@ -184,9 +184,9 @@ public class RuleMLParser implements PreferenceChangeListener {
      *             (subclass) is thrown if the XML document is not well * formed
      *             or does not conform to the DTD specified.
      */
-    public void parseDocument(RuleMLFormat format, Document doc)
+    public void parseDocument(Document doc)
             throws ParseException, ParsingException {
-        RuleMLDocumentParser parser = new RuleMLDocumentParser(format, clauses);
+        RuleMLDocumentParser parser = new RuleMLDocumentParser(rmlFormat, clauses);
         parser.setLogLevel(logLevel);
 
         parser.parseRuleMLDocument(doc);
@@ -217,7 +217,7 @@ public class RuleMLParser implements PreferenceChangeListener {
             skippedValidation = true;
         }
 
-        parseRuleMLString(ruleMLFormat, contents);
+        parseRuleMLString(contents);
 
         // Re-enable validation
         if (skippedValidation) {
@@ -251,7 +251,7 @@ public class RuleMLParser implements PreferenceChangeListener {
 
         Element queryElement = document.getRootElement();
 
-        RuleMLTagNames rmlTags = new RuleMLTagNames(ruleMLFormat);
+        RuleMLTagNames rmlTags = new RuleMLTagNames(rmlFormat);
 
         Element rel = new Element(rmlTags.REL);
         rel.insertChild("$top", 0);
@@ -284,7 +284,7 @@ public class RuleMLParser implements PreferenceChangeListener {
      */
     private String ensureQueryTag(String query) {
         // Evil hack: encapsulate the query contents in a pair of <Query> tags
-        RuleMLTagNames rmlTags = new RuleMLTagNames(ruleMLFormat);
+        RuleMLTagNames rmlTags = new RuleMLTagNames(rmlFormat);
         query = query.trim();
         String queryTagOpen = String.format("<%s>", rmlTags.QUERY);
         String queryTagClose = String.format("</%s>", rmlTags.QUERY);
@@ -301,7 +301,7 @@ public class RuleMLParser implements PreferenceChangeListener {
      */
     public void preferenceChange(PreferenceChangeEvent evt) {
         validateRuleML = config.getValidateRuleMLEnabled();
-        ruleMLFormat = config.getSelectedRuleMLFormat();
+        rmlFormat = config.getSelectedRuleMLFormat();
         logLevel = config.getLogLevel();
     }
 }

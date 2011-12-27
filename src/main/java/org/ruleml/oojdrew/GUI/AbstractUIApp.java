@@ -28,7 +28,6 @@ import org.ruleml.oojdrew.Reasoner;
 import org.ruleml.oojdrew.parsing.InputFormat;
 import org.ruleml.oojdrew.parsing.POSLParser;
 import org.ruleml.oojdrew.parsing.RDFSParser;
-import org.ruleml.oojdrew.parsing.RuleMLFormat;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
 import org.ruleml.oojdrew.parsing.SubsumesParser;
 import org.ruleml.oojdrew.util.SymbolTable;
@@ -227,8 +226,7 @@ public abstract class AbstractUIApp {
         rmlParser.clear();
 
         try {
-            RuleMLFormat rmlFormat = config.getSelectedRuleMLFormat();
-            rmlParser.parseRuleMLString(rmlFormat, knowledgeBase);
+            rmlParser.parseRuleMLString(knowledgeBase);
             reasoner.loadClauses(rmlParser.iterator());
         } catch (Exception e) {
             defaultExceptionHandler(e);
