@@ -53,6 +53,7 @@ public class BottomUpUI implements UI {
 	private final JFrame frmOoJdrew = new JFrame();
 	private final ButtonGroup typeDefinitionButtonGroup = new ButtonGroup();
 	private final ButtonGroup knowledgeBaseButtonGroup = new ButtonGroup();
+	private final ButtonGroup outputFormatButtonGroup = new ButtonGroup();
 	private UndoRedoTextArea typeDefinitionTextArea;
 	private UndoRedoTextArea knowledgeBaseTextArea;
     private UndoRedoTextArea outputTextArea;
@@ -64,6 +65,7 @@ public class BottomUpUI implements UI {
     private JTabbedPane tabbedPane;
     private JRadioButton typeDefinitionFormatRDFS;
     private JRadioButton knowledgeBaseInputFormatRuleML;
+    private JRadioButton outputFormatRuleML;
     private JCheckBox chkBoxPrintRules;
     private JCheckBox chkBoxSeparateFacts;
     private JFormattedTextField tfInputLoopCounter;
@@ -297,10 +299,16 @@ public class BottomUpUI implements UI {
 		
 		JPanel outputTab = new JPanel();
 		tabbedPane.addTab("Output", null, outputTab, null);
-		
-		JScrollPane outputScrollPane = new JScrollPane();
-		
-		JLabel outputConfigurationLabel = new JLabel("Output:");
+
+        JScrollPane outputScrollPane = new JScrollPane();
+        JLabel outputConfigurationLabel = new JLabel("Output:");
+
+        outputFormatRuleML = new JRadioButton("RuleML");
+        JRadioButton outputFormatPOSL = new JRadioButton("POSL");
+        outputFormatPOSL.setSelected(true);
+
+        outputFormatButtonGroup.add(outputFormatRuleML);
+        outputFormatButtonGroup.add(outputFormatPOSL);
 		
 		chkBoxPrintRules = new JCheckBox("Print Rules");
 		
@@ -313,10 +321,8 @@ public class BottomUpUI implements UI {
 		    }
 		});
 		
-		JLabel lblNewLabel_1 = new JLabel("Max Loop Count:");
-		
+		JLabel lblbMaxLoopCount = new JLabel("Max Loop Count");
 		tfInputLoopCounter = new JFormattedTextField(0);
-		
 		tfInputLoopCounter.setColumns(10);
 		
 		GroupLayout gl_outputTab = new GroupLayout(outputTab);
@@ -329,14 +335,18 @@ public class BottomUpUI implements UI {
 		                .addGroup(gl_outputTab.createSequentialGroup()
 		                    .addComponent(outputConfigurationLabel)
 		                    .addPreferredGap(ComponentPlacement.UNRELATED)
-		                    .addComponent(chkBoxPrintRules)
+		                    .addComponent(outputFormatRuleML)
 		                    .addPreferredGap(ComponentPlacement.RELATED)
+		                    .addComponent(outputFormatPOSL)
+		                    .addGap(10)
+		                    .addComponent(chkBoxPrintRules)
+		                    .addPreferredGap(ComponentPlacement.UNRELATED)
 		                    .addComponent(chkBoxSeparateFacts)
 		                    .addPreferredGap(ComponentPlacement.UNRELATED)
-		                    .addComponent(lblNewLabel_1)
+		                    .addComponent(lblbMaxLoopCount)
 		                    .addPreferredGap(ComponentPlacement.RELATED)
 		                    .addComponent(tfInputLoopCounter, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-		                    .addPreferredGap(ComponentPlacement.RELATED, 203, Short.MAX_VALUE)
+		                    .addGap(84)
 		                    .addComponent(btnRunForwardReasoner)))
 		            .addContainerGap())
 		);
@@ -349,10 +359,12 @@ public class BottomUpUI implements UI {
 		            .addGroup(gl_outputTab.createParallelGroup(Alignment.BASELINE)
 		                .addComponent(btnRunForwardReasoner)
 		                .addComponent(outputConfigurationLabel)
-		                .addComponent(chkBoxPrintRules)
+		                .addComponent(outputFormatRuleML)
+		                .addComponent(outputFormatPOSL)
+		                .addComponent(lblbMaxLoopCount)
+		                .addComponent(tfInputLoopCounter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 		                .addComponent(chkBoxSeparateFacts)
-		                .addComponent(lblNewLabel_1)
-		                .addComponent(tfInputLoopCounter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+		                .addComponent(chkBoxPrintRules))
 		            .addContainerGap())
 		);
 		outputTab.setLayout(gl_outputTab);
@@ -364,193 +376,179 @@ public class BottomUpUI implements UI {
 		tabbedPane.setSelectedIndex(1);
 	}
 
-	public boolean getFrameVisible() {
-		return frmOoJdrew.isVisible();
-	}
-	
-	public void setFrameVisible(boolean visible) {
-		frmOoJdrew.setVisible(visible);
-	}
-	
-	public void setController(AbstractUIApp controller)
-	{
-		this.controller = (BottomUpApp) controller;
-		this.controller.syncUIWithSettings();
-	}
+    public boolean getFrameVisible() {
+        return frmOoJdrew.isVisible();
+    }
 
-	public void updateUI() {
-		knowledgeBaseTextArea.updateUI();
-		typeDefinitionTextArea.updateUI();
-		outputTextArea.updateUI();
-		
-		SwingUtilities.updateComponentTreeUI(getFrmOoJdrew());
-		getFrmOoJdrew().pack();
-	}
-	
-	public JFrame getFrmOoJdrew() {
-		return frmOoJdrew;
-	}
-	
-	public boolean getChckbxmntmValidateRulemlSelected() {
-		return chckbxmntmValidateRuleml.isSelected();
-	}
-	
-	public void setChckbxmntmValidateRulemlSelected(boolean selected) {
-		chckbxmntmValidateRuleml.setSelected(selected);
-	}
-	
-	private EditingTab currentEditingTab()
-	{
-		switch(getTabbedPaneSelectedIndex())
-		{
-		case 0:
-			return EditingTab.EditingTabTypeDefinition;
-			
-		case 1:
-			return EditingTab.EditingTabKnowledgeBase;
-			
-		case 2:
-			return EditingTab.EditingTabOutput;
-			
-		default:
-			throw new RuntimeException("Unknown tab selected.");
-		}
-	}
-	
-	private void clearCurrentEditingTab()
-	{
-		switch(currentEditingTab())
-		{
-		case EditingTabTypeDefinition:
-			setTypeDefinitionTextAreaText("");
-			break;
-			
-		case EditingTabKnowledgeBase:
-			setKnowledgeBaseTextAreaText("");
-			break;
-			
-		case EditingTabOutput:
-			setOutputTextAreaText("");
-			break;
-		}
-	}
-	
-	public void appendToCurrentEditingTab(String content)
-	{
-		StringBuilder stringBuilder = new StringBuilder();
-		
-		switch(currentEditingTab())
-		{
-		case EditingTabTypeDefinition:
-			stringBuilder.append(getTypeDefinitionTextAreaText());
-			stringBuilder.append(content);
-			setTypeDefinitionTextAreaText(stringBuilder.toString());
-			break;
-			
-		case EditingTabKnowledgeBase:
-			stringBuilder.append(getKnowledgeBaseTextAreaText());
-			stringBuilder.append(content);
-			setKnowledgeBaseTextAreaText(stringBuilder.toString());
-			break;
-			
-		case EditingTabQuery:
-			stringBuilder.append(getOutputTextAreaText());
-			stringBuilder.append(content);
-			setOutputTextAreaText(stringBuilder.toString());
-			break;
-		}		
-	}
-	
-	public void setTextForCurrentEditingTab(String content)
-	{
-		clearCurrentEditingTab();
-		appendToCurrentEditingTab(content);
-	}
-	
-	public String getTextForCurrentEditingTab()
-	{
-		String text = "";
-		switch(currentEditingTab())
-		{
-		case EditingTabTypeDefinition:
-			text = getTypeDefinitionTextAreaText();
-			break;
-			
-		case EditingTabKnowledgeBase:
-			text = getKnowledgeBaseTextAreaText();
-			break;
-			
-		case EditingTabQuery:
-			text = getOutputTextAreaText();
-			break;
-		}
-		return text;
-	}
-	
-	public String getTypeDefinitionTextAreaText() {
-		return typeDefinitionTextArea.getText();
-	}
-	
-	private void setTypeDefinitionTextAreaText(String text) {
-		typeDefinitionTextArea.setText(text);
-	}
-	
-	public String getKnowledgeBaseTextAreaText() {
-		return knowledgeBaseTextArea.getText();
-	}
-	
-	private void setKnowledgeBaseTextAreaText(String text_1) {
-		knowledgeBaseTextArea.setText(text_1);
-	}
-	
-	public String getOutputTextAreaText() {
-		return outputTextArea.getText();
-	}
-	
-	public void setOutputTextAreaText(String text) {
-	    outputTextArea.setText(text);
-	}
-	
-	private int getTabbedPaneSelectedIndex() {
-		return tabbedPane.getSelectedIndex();
-	}
-	
-	public InputFormat getTypeInformationInputFormat()
-	{
-		if(getTypeDefinitionFormatRDFSSelected())
-		{
-			return InputFormat.InputFormatRFDS;
-		}
-		
-		return InputFormat.InputFormatPOSL;
-	}
-	
-	private boolean getTypeDefinitionFormatRDFSSelected() {
-		return typeDefinitionFormatRDFS.isSelected();
-	}
-	
-	private boolean getKnowledgeBaseInputFormatRuleMLSelected() {
-		return knowledgeBaseInputFormatRuleML.isSelected();
-	}
-	
-	public InputFormat getKnowledgeBaseInputFormat()
-	{
-		if(getKnowledgeBaseInputFormatRuleMLSelected())
-		{
-			return InputFormat.InputFormatRuleML;
-		}
-		
-		return InputFormat.InputFormatPOSL;
-	}
+    public void setFrameVisible(boolean visible) {
+        frmOoJdrew.setVisible(visible);
+    }
+
+    public void setController(AbstractUIApp controller) {
+        this.controller = (BottomUpApp) controller;
+        this.controller.syncUIWithSettings();
+    }
+
+    public void updateUI() {
+        knowledgeBaseTextArea.updateUI();
+        typeDefinitionTextArea.updateUI();
+        outputTextArea.updateUI();
+
+        SwingUtilities.updateComponentTreeUI(getFrmOoJdrew());
+        getFrmOoJdrew().pack();
+    }
+
+    public JFrame getFrmOoJdrew() {
+        return frmOoJdrew;
+    }
+
+    public boolean getChckbxmntmValidateRulemlSelected() {
+        return chckbxmntmValidateRuleml.isSelected();
+    }
+
+    public void setChckbxmntmValidateRulemlSelected(boolean selected) {
+        chckbxmntmValidateRuleml.setSelected(selected);
+    }
+
+    private EditingTab currentEditingTab() {
+        switch (getTabbedPaneSelectedIndex()) {
+        case 0:
+            return EditingTab.EditingTabTypeDefinition;
+
+        case 1:
+            return EditingTab.EditingTabKnowledgeBase;
+
+        case 2:
+            return EditingTab.EditingTabOutput;
+
+        default:
+            throw new RuntimeException("Unknown tab selected.");
+        }
+    }
+
+    private void clearCurrentEditingTab() {
+        switch (currentEditingTab()) {
+        case EditingTabTypeDefinition:
+            setTypeDefinitionTextAreaText("");
+            break;
+
+        case EditingTabKnowledgeBase:
+            setKnowledgeBaseTextAreaText("");
+            break;
+
+        case EditingTabOutput:
+            setOutputTextAreaText("");
+            break;
+        }
+    }
+
+    public void appendToCurrentEditingTab(String content) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        switch (currentEditingTab()) {
+        case EditingTabTypeDefinition:
+            stringBuilder.append(getTypeDefinitionTextAreaText());
+            stringBuilder.append(content);
+            setTypeDefinitionTextAreaText(stringBuilder.toString());
+            break;
+
+        case EditingTabKnowledgeBase:
+            stringBuilder.append(getKnowledgeBaseTextAreaText());
+            stringBuilder.append(content);
+            setKnowledgeBaseTextAreaText(stringBuilder.toString());
+            break;
+
+        case EditingTabQuery:
+            stringBuilder.append(getOutputTextAreaText());
+            stringBuilder.append(content);
+            setOutputTextAreaText(stringBuilder.toString());
+            break;
+        }
+    }
+
+    public void setTextForCurrentEditingTab(String content) {
+        clearCurrentEditingTab();
+        appendToCurrentEditingTab(content);
+    }
+
+    public String getTextForCurrentEditingTab() {
+        String text = "";
+        switch (currentEditingTab()) {
+        case EditingTabTypeDefinition:
+            text = getTypeDefinitionTextAreaText();
+            break;
+
+        case EditingTabKnowledgeBase:
+            text = getKnowledgeBaseTextAreaText();
+            break;
+
+        case EditingTabQuery:
+            text = getOutputTextAreaText();
+            break;
+        }
+        return text;
+    }
+
+    public String getTypeDefinitionTextAreaText() {
+        return typeDefinitionTextArea.getText();
+    }
+
+    private void setTypeDefinitionTextAreaText(String text) {
+        typeDefinitionTextArea.setText(text);
+    }
+
+    public String getKnowledgeBaseTextAreaText() {
+        return knowledgeBaseTextArea.getText();
+    }
+
+    private void setKnowledgeBaseTextAreaText(String text_1) {
+        knowledgeBaseTextArea.setText(text_1);
+    }
+
+    public String getOutputTextAreaText() {
+        return outputTextArea.getText();
+    }
+
+    public void setOutputTextAreaText(String text) {
+        outputTextArea.setText(text);
+    }
+
+    private int getTabbedPaneSelectedIndex() {
+        return tabbedPane.getSelectedIndex();
+    }
+
+    public InputFormat getTypeInformationInputFormat() {
+        if (typeDefinitionFormatRDFS.isSelected()) {
+            return InputFormat.InputFormatRFDS;
+        }
+
+        return InputFormat.InputFormatPOSL;
+    }
+
+    public InputFormat getKnowledgeBaseInputFormat() {
+        if (knowledgeBaseInputFormatRuleML.isSelected()) {
+            return InputFormat.InputFormatRuleML;
+        }
+
+        return InputFormat.InputFormatPOSL;
+    }
+
+    public InputFormat getOutputFormat() {
+        if (outputFormatRuleML.isSelected()) {
+            return InputFormat.InputFormatRuleML;
+        }
+
+        return InputFormat.InputFormatPOSL;
+    }
 
     public boolean getStratificationCheckEnabled() {
         return chckbxmntmTestForStratification.isSelected();
     }
-    
+
     public boolean getSeparateFactsEnabled() {
         return chkBoxSeparateFacts.isSelected();
     }
-    
+
     public String getInputLoopCount() {
         return tfInputLoopCounter.getValue().toString();
     }

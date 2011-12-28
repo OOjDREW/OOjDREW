@@ -204,7 +204,7 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
             return;
         }
 
-        InputFormat inputFormat = getUI().getKnowledgeBaseInputFormat();
+        InputFormat outputFormat = getUI().getOutputFormat();
         RuleMLFormat rmlFormat = config.getSelectedRuleMLFormat();
         boolean separateFacts = getUI().getSeparateFactsEnabled();
         boolean printRules = getUI().getPrintRulesEnabled();
@@ -228,26 +228,26 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
         if (separateFacts) {
             StringBuilder stringBuilder = new StringBuilder();
 
-            String facts = getReasoner().printClauses(inputFormat, rmlFormat);
+            String facts = getReasoner().printClauses(outputFormat, rmlFormat);
             stringBuilder.append(facts);
 
             if (printRules) {
                 stringBuilder.append("\n% Rules : \n");
-                appendString(inputFormat, rmlFormat, rules.elements(),
+                appendString(outputFormat, rmlFormat, rules.elements(),
                         stringBuilder);
             }
             getUI().setOutputTextAreaText(stringBuilder.toString());
             
-        } else if (inputFormat == InputFormat.InputFormatPOSL) {
+        } else if (outputFormat == InputFormat.InputFormatPOSL) {
             StringBuilder stringBuilder = new StringBuilder();
 
             stringBuilder.append("% Derived Facts:\n\n");
-            appendString(inputFormat, rmlFormat, oldFacts.elements(),
+            appendString(outputFormat, rmlFormat, oldFacts.elements(),
                     stringBuilder);
             // Add the option to print rules or not
             if (printRules) {
                 stringBuilder.append("\n % Rules : \n");
-                appendString(inputFormat, rmlFormat, rules.elements(),
+                appendString(outputFormat, rmlFormat, rules.elements(),
                         stringBuilder);
             }
             getUI().setOutputTextAreaText(stringBuilder.toString());
@@ -278,7 +278,7 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
         }
     }
 
-    private void appendString(InputFormat inputFormat, RuleMLFormat rmlFormat,
+    private void appendString(InputFormat outputFormat, RuleMLFormat rmlFormat,
             Enumeration enumeration, StringBuilder stringBuilder) {
         while (enumeration.hasMoreElements()) {
             Vector children = (Vector) enumeration.nextElement();
@@ -286,7 +286,7 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
             while (it.hasNext()) {
                 DefiniteClause dc = (DefiniteClause) it.next();
 
-                if (inputFormat == InputFormat.InputFormatPOSL) {
+                if (outputFormat == InputFormat.InputFormatPOSL) {
                     stringBuilder.append(dc.toPOSLString());
                 } else {
                     stringBuilder.append(dc.toRuleMLString(rmlFormat));
