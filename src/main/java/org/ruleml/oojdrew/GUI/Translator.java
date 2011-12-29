@@ -184,7 +184,7 @@ public class Translator extends JFrame {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Configuration config = new Config();
+        Configuration config = new Config(Translator.class);
         RuleMLParser rmlParser = new RuleMLParser(config);
     	
     	
@@ -192,8 +192,8 @@ public class Translator extends JFrame {
         BasicConfigurator.configure();
         Logger root = Logger.getRootLogger();
         root.setLevel(Level.DEBUG);
-                translator.setSize(700,750);
-        translator.show();
+        translator.setSize(700, 750);
+        translator.setVisible(true);
         org.ruleml.oojdrew.Config.PRINTGENOIDS = false;
         org.ruleml.oojdrew.Config.PRINTGENSYMS = false;
         org.ruleml.oojdrew.Config.PRINTVARID = false;

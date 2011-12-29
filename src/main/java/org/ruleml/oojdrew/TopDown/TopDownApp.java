@@ -100,7 +100,7 @@ public class TopDownApp extends AbstractUIApp implements UISettingsController,
 
     public static TopDownApp getTopDownApp() {
         // Construct dependencies
-        Configuration config = new Config();
+        Configuration config = new Config(TopDownApp.class);
         PreferenceManager preferenceManager = new PreferenceManager(config);
         TopDownUI topDownUI = new TopDownUI();
         PreferenceDialogUI preferenceDialogUI = new PreferenceDialogUI();

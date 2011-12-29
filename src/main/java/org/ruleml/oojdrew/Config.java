@@ -92,81 +92,81 @@ public class Config implements Configuration {
 
     private Preferences preferences;
 
-    public Config() {
-	this.preferences = Preferences.userNodeForPackage(getClass());
+    public Config(Class clazz) {
+        this.preferences = Preferences.userNodeForPackage(clazz);
     }
 
     public boolean getValidateRuleMLEnabled() {
-	return preferences.getBoolean("ValidateRuleML", false);
+        return preferences.getBoolean("ValidateRuleML", false);
     }
 
     public void setValidateRuleMLEnabled(boolean enabled) {
-	preferences.putBoolean("ValidateRuleML", enabled);
+        preferences.putBoolean("ValidateRuleML", enabled);
     }
 
     public int getTextAreaFontSize() {
-	return preferences.getInt("TextAreaFontSize", 12);
+        return preferences.getInt("TextAreaFontSize", 12);
     }
 
     public void setTextAreaFontSize(int newSize) {
-	preferences.putInt("TextAreaFontSize", newSize);
+        preferences.putInt("TextAreaFontSize", newSize);
     }
 
     public void addPreferenceChangeListener(PreferenceChangeListener listener) {
-	preferences.addPreferenceChangeListener(listener);
+        preferences.addPreferenceChangeListener(listener);
     }
 
     public int getUIFontSize() {
-	return preferences.getInt("UIFontSize", 12);
+        return preferences.getInt("UIFontSize", 12);
     }
 
     public void setUIFontSize(int newSize) {
-	preferences.putInt("UIFontSize", newSize);
+        preferences.putInt("UIFontSize", newSize);
     }
 
     public boolean getDebugConsoleVisible() {
-	return preferences.getBoolean("DebugConsoleVisible", false);
+        return preferences.getBoolean("DebugConsoleVisible", false);
     }
 
     public void setDebugConsoleVisible(boolean visible) {
-	preferences.putBoolean("DebugConsoleVisible", visible);
+        preferences.putBoolean("DebugConsoleVisible", visible);
     }
 
     public String getSelectedLookAndFeel() {
-	String defaultLookAndFeelName = UIManager
-		.getSystemLookAndFeelClassName();
-	return preferences.get("LookAndFeel", defaultLookAndFeelName);
+        String defaultLookAndFeelName = UIManager
+                .getSystemLookAndFeelClassName();
+        return preferences.get("LookAndFeel", defaultLookAndFeelName);
     }
 
     public void setLookAndFeel(String lafClassName) {
-	preferences.put("LookAndFeel", lafClassName);
+        preferences.put("LookAndFeel", lafClassName);
     }
 
     public RuleMLFormat getSelectedRuleMLFormat() {
-	String defaultRuleMLFormat = RuleMLFormat.RuleML100.getVersionName();
-	String configuredRuleMLVersion = preferences.get("RuleMLFormat",
-		defaultRuleMLFormat);
-	return RuleMLFormat.fromString(configuredRuleMLVersion);
+        String defaultRuleMLFormat = RuleMLFormat.RuleML100.getVersionName();
+        String configuredRuleMLVersion = preferences.get("RuleMLFormat",
+                defaultRuleMLFormat);
+        return RuleMLFormat.fromString(configuredRuleMLVersion);
     }
 
     public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat) {
-	preferences.put("RuleMLFormat", rmlFormat.getVersionName());
+        preferences.put("RuleMLFormat", rmlFormat.getVersionName());
     }
 
     public boolean getLinkFontSizes() {
-	return preferences.getBoolean("LinkFontSizes", false);
+        return preferences.getBoolean("LinkFontSizes", false);
     }
 
     public void setLinkFontSizes(boolean linkFontSizes) {
-	preferences.putBoolean("LinkFontSizes", linkFontSizes);
+        preferences.putBoolean("LinkFontSizes", linkFontSizes);
     }
 
     public Level getLogLevel() {
-	int logLevel = preferences.getInt("LogLevel", Level.ERROR.toInt());
-	return Level.toLevel(logLevel);
+        int logLevel = preferences.getInt("LogLevel", Level.ERROR.toInt());
+        return Level.toLevel(logLevel);
     }
 
     public void setLogLevel(Level logLevel) {
-	preferences.putInt("LogLevel", logLevel.toInt());
+        preferences.putInt("LogLevel", logLevel.toInt());
     }
 }

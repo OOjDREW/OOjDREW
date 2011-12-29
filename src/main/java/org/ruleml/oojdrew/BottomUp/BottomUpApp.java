@@ -99,7 +99,7 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
 
     private static BottomUpApp getBottomUpApp() {
         // Construct dependencies
-        Configuration config = new Config();
+        Configuration config = new Config(BottomUpApp.class);
         PreferenceManager preferenceManager = new PreferenceManager(config);
         BottomUpUI bottomUpUI = new BottomUpUI();
         PreferenceDialogUI preferenceDialogUI = new PreferenceDialogUI();
