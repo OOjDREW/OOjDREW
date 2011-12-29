@@ -24,8 +24,8 @@ import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 import org.ruleml.oojdrew.Configuration;
+import org.ruleml.oojdrew.SyntaxFormat;
 import org.ruleml.oojdrew.Reasoner;
-import org.ruleml.oojdrew.parsing.InputFormat;
 import org.ruleml.oojdrew.parsing.POSLParser;
 import org.ruleml.oojdrew.parsing.RDFSParser;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
@@ -172,12 +172,12 @@ public abstract class AbstractUIApp {
 
     public void parseTypeInformation() {
         String typeInformation = ui.getTypeDefinitionTextAreaText();
-        InputFormat format = ui.getTypeInformationInputFormat();
+        SyntaxFormat format = ui.getTypeInformationInputFormat();
 
         // Reset the type system
         Types.reset();
 
-        if (format == InputFormat.InputFormatRFDS) {
+        if (format == SyntaxFormat.RDFS) {
             parseRDFSTypes(typeInformation);
         } else {
             parsePOSLTypes(typeInformation);
@@ -210,11 +210,11 @@ public abstract class AbstractUIApp {
         SymbolTable.reset();
         reasoner.clearClauses();
 
-        InputFormat knowledgeBaseFormat = ui.getKnowledgeBaseInputFormat();
+        SyntaxFormat knowledgeBaseFormat = ui.getKnowledgeBaseInputFormat();
         String knowledgeBase = ui.getKnowledgeBaseTextAreaText();
 
         if (!knowledgeBase.isEmpty()) {
-            if (knowledgeBaseFormat == InputFormat.InputFormatRuleML) {
+            if (knowledgeBaseFormat == SyntaxFormat.RULEML) {
                 parseRuleMLKnowledeBase(knowledgeBase);
             } else {
                 parsePOSLKnowledgeBase(knowledgeBase);

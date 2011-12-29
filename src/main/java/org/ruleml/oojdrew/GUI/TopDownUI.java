@@ -52,8 +52,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 
+import org.ruleml.oojdrew.SyntaxFormat;
 import org.ruleml.oojdrew.TopDown.TopDownApp;
-import org.ruleml.oojdrew.parsing.InputFormat;
 
 public class TopDownUI implements UI {
 
@@ -596,14 +596,14 @@ public class TopDownUI implements UI {
 		return tabbedPane.getSelectedIndex();
 	}
 	
-	public InputFormat getTypeInformationInputFormat()
+	public SyntaxFormat getTypeInformationInputFormat()
 	{
 		if(getTypeDefinitionFormatRDFSSelected())
 		{
-			return InputFormat.InputFormatRFDS;
+			return SyntaxFormat.RDFS;
 		}
 		
-		return InputFormat.InputFormatPOSL;
+		return SyntaxFormat.POSL;
 	}
 	
 	private boolean getTypeDefinitionFormatRDFSSelected() {
@@ -618,28 +618,28 @@ public class TopDownUI implements UI {
 		return knowledgeBaseInputFormatRuleML.isSelected();
 	}
 	
-	public InputFormat getKnowledgeBaseInputFormat()
+	public SyntaxFormat getKnowledgeBaseInputFormat()
 	{
 		if(getKnowledgeBaseInputFormatRuleMLSelected())
 		{
-			return InputFormat.InputFormatRuleML;
+			return SyntaxFormat.RULEML;
 		}
 		
-		return InputFormat.InputFormatPOSL;
+		return SyntaxFormat.POSL;
 	}
 	
 	private boolean getQueryFormatRuleMLSelected() {
 		return queryFormatRuleML.isSelected();
 	}
 	
-	public InputFormat getQueryInputFormat()
+	public SyntaxFormat getQueryInputFormat()
 	{
 		if(getQueryFormatRuleMLSelected())
 		{
-			return InputFormat.InputFormatRuleML;
+			return SyntaxFormat.RULEML;
 		}
 		
-		return InputFormat.InputFormatPOSL;
+		return SyntaxFormat.POSL;
 	}
 	
 	public boolean getTypeQueryCheckboxSelected() {

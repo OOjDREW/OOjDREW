@@ -15,10 +15,10 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-package org.ruleml.oojdrew.parsing;
+package org.ruleml.oojdrew;
 
-public enum InputFormat {
-	InputFormatRFDS,
-	InputFormatRuleML,
-	InputFormatPOSL
+public enum SyntaxFormat {
+	RDFS,
+	RULEML,
+	POSL
 }

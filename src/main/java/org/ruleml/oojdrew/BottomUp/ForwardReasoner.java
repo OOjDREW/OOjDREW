@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.ruleml.oojdrew.SyntaxFormat;
 import org.ruleml.oojdrew.Reasoner;
 import org.ruleml.oojdrew.BottomUp.Builtins.AssertBuiltin;
 import org.ruleml.oojdrew.BottomUp.Builtins.BUBuiltin;
@@ -58,7 +59,6 @@ import org.ruleml.oojdrew.Builtins.StringUpperCaseBuiltin;
 import org.ruleml.oojdrew.Builtins.SubstringBuiltin;
 import org.ruleml.oojdrew.Builtins.SubtractBuiltin;
 import org.ruleml.oojdrew.Builtins.TanBuiltin;
-import org.ruleml.oojdrew.parsing.InputFormat;
 import org.ruleml.oojdrew.parsing.RuleMLFormat;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.Term;
@@ -331,8 +331,7 @@ public class ForwardReasoner implements Reasoner {
      * This method will return a string that will contain the new facts and old
      * facts in RuleML or POSL form
      */
-    public String printClauses(InputFormat type,
-            RuleMLFormat version) {
+    public String printClauses(SyntaxFormat syntaxFormat, RuleMLFormat rmlFormat) {
 
         String out = "";
 
@@ -347,7 +346,7 @@ public class ForwardReasoner implements Reasoner {
             DefiniteClause dc = (DefiniteClause) it.next();
 
             stringsPOSL.addElement(dc.toPOSLString());
-            stringsRULEML.addElement(dc.toRuleMLString(version));
+            stringsRULEML.addElement(dc.toRuleMLString(rmlFormat));
 
             i++;
         }
@@ -355,7 +354,7 @@ public class ForwardReasoner implements Reasoner {
 
         if (flip) {
 
-            if (type == InputFormat.InputFormatPOSL) {
+            if (syntaxFormat == SyntaxFormat.POSL) {
                 // System.out.println("\n%Old Facts: ");
                 out = out + "%Old Facts: \n";
                 Iterator iter2 = stringsPOSL.iterator();
@@ -366,7 +365,7 @@ public class ForwardReasoner implements Reasoner {
                 }
             }
 
-            if (type == InputFormat.InputFormatRuleML) {
+            if (syntaxFormat == SyntaxFormat.RULEML) {
                 out = out + "%Old Facts: \n";
                 Iterator iter2 = stringsRULEML.iterator();
                 while (iter2.hasNext()) {
@@ -389,7 +388,7 @@ public class ForwardReasoner implements Reasoner {
             Vector v = (Vector) oldFacts.get(key);
             it = v.iterator();
 
-            if (type == InputFormat.InputFormatPOSL) {
+            if (syntaxFormat == SyntaxFormat.POSL) {
 
                 while (it.hasNext()) {
                     DefiniteClause dc = (DefiniteClause) it.next();
@@ -411,7 +410,7 @@ public class ForwardReasoner implements Reasoner {
 
             }
 
-            if (type == InputFormat.InputFormatRuleML) {
+            if (syntaxFormat == SyntaxFormat.RULEML) {
 
                 while (it.hasNext()) {
                     DefiniteClause dc = (DefiniteClause) it.next();
@@ -420,13 +419,13 @@ public class ForwardReasoner implements Reasoner {
                     boolean print = true;
                     while (iter.hasNext()) {
                         String test = (String) iter.next();
-                        if (test.equals(dc.toRuleMLString(version))) {
+                        if (test.equals(dc.toRuleMLString(rmlFormat))) {
                             print = false;
                         }
                     }
 
                     if (print) {
-                        out = out + dc.toRuleMLString(version) + "\n";
+                        out = out + dc.toRuleMLString(rmlFormat) + "\n";
                     }
                 }
 
@@ -594,7 +593,7 @@ public class ForwardReasoner implements Reasoner {
      * retrieve any processed facts with that predicate symbol; these will be
      * returned (as an iterator) to check if they unify with the clause.
      * 
-     * @param dc2
+     * @param dc
      *            The clause to find possible unifying facts for.
      * 
      * @param term
@@ -604,12 +603,12 @@ public class ForwardReasoner implements Reasoner {
      * @return An iterator over all clauses that may unify with the specified
      *         atom of the passed clause.
      */
-    private Iterator getUnifiableIterator(DefiniteClause dc2, int term) {
-        Term t = dc2.atoms[term];
+    private Iterator getUnifiableIterator(DefiniteClause dc, int term) {
+        Term t = dc.atoms[term];
         Integer sym = t.getSymbol();
         if (builtins.containsKey(sym)) {
             BUBuiltin b = (BUBuiltin) builtins.get(sym);
-            Vector v = b.buildResult(dc2, term);
+            Vector v = b.buildResult(dc, term);
             return v.iterator();
         } else if (oldFacts.containsKey(sym)) {
             Vector ofs = (Vector) oldFacts.get(sym);

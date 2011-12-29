@@ -38,6 +38,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.ruleml.oojdrew.Config;
 import org.ruleml.oojdrew.Configuration;
+import org.ruleml.oojdrew.SyntaxFormat;
 import org.ruleml.oojdrew.GUI.AbstractUIApp;
 import org.ruleml.oojdrew.GUI.DebugConsole;
 import org.ruleml.oojdrew.GUI.PreferenceDialogUI;
@@ -45,7 +46,6 @@ import org.ruleml.oojdrew.GUI.PreferenceManager;
 import org.ruleml.oojdrew.GUI.TextPaneAppender;
 import org.ruleml.oojdrew.GUI.TopDownUI;
 import org.ruleml.oojdrew.GUI.UISettingsController;
-import org.ruleml.oojdrew.parsing.InputFormat;
 import org.ruleml.oojdrew.parsing.POSLParser;
 import org.ruleml.oojdrew.parsing.RDFSParser;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
@@ -170,10 +170,10 @@ public class TopDownApp extends AbstractUIApp implements UISettingsController,
 
     public void issueQuery() {
         String query = getUI().getQueryTextAreaText();
-        InputFormat format = getUI().getQueryInputFormat();
+        SyntaxFormat format = getUI().getQueryInputFormat();
         boolean typeQuery = getUI().getTypeQueryCheckboxSelected();
 
-        if (format == InputFormat.InputFormatRuleML) {
+        if (format == SyntaxFormat.RULEML) {
             if (typeQuery) {
                 issueRuleMLTypeQuery(query);
             } else {

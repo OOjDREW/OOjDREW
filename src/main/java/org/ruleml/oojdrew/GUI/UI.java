@@ -2,7 +2,7 @@ package org.ruleml.oojdrew.GUI;
 
 import java.awt.Component;
 
-import org.ruleml.oojdrew.parsing.InputFormat;
+import org.ruleml.oojdrew.SyntaxFormat;
 
 public interface UI {
     
@@ -18,9 +18,9 @@ public interface UI {
     String getTextForCurrentEditingTab();
     
     String getTypeDefinitionTextAreaText();
-    InputFormat getTypeInformationInputFormat();
+    SyntaxFormat getTypeInformationInputFormat();
     
-    InputFormat getKnowledgeBaseInputFormat();
+    SyntaxFormat getKnowledgeBaseInputFormat();
     String getKnowledgeBaseTextAreaText();
     
     Component getFrmOoJdrew();

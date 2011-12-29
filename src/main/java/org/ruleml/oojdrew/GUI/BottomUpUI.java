@@ -45,8 +45,8 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import org.ruleml.oojdrew.SyntaxFormat;
 import org.ruleml.oojdrew.BottomUp.BottomUpApp;
-import org.ruleml.oojdrew.parsing.InputFormat;
 
 public class BottomUpUI implements UI {
 
@@ -517,28 +517,28 @@ public class BottomUpUI implements UI {
         return tabbedPane.getSelectedIndex();
     }
 
-    public InputFormat getTypeInformationInputFormat() {
+    public SyntaxFormat getTypeInformationInputFormat() {
         if (typeDefinitionFormatRDFS.isSelected()) {
-            return InputFormat.InputFormatRFDS;
+            return SyntaxFormat.RDFS;
         }
 
-        return InputFormat.InputFormatPOSL;
+        return SyntaxFormat.POSL;
     }
 
-    public InputFormat getKnowledgeBaseInputFormat() {
+    public SyntaxFormat getKnowledgeBaseInputFormat() {
         if (knowledgeBaseInputFormatRuleML.isSelected()) {
-            return InputFormat.InputFormatRuleML;
+            return SyntaxFormat.RULEML;
         }
 
-        return InputFormat.InputFormatPOSL;
+        return SyntaxFormat.POSL;
     }
 
-    public InputFormat getOutputFormat() {
+    public SyntaxFormat getOutputFormat() {
         if (outputFormatRuleML.isSelected()) {
-            return InputFormat.InputFormatRuleML;
+            return SyntaxFormat.RULEML;
         }
 
-        return InputFormat.InputFormatPOSL;
+        return SyntaxFormat.POSL;
     }
 
     public boolean getStratificationCheckEnabled() {
