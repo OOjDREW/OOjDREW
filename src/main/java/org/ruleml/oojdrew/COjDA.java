@@ -62,14 +62,10 @@ public class COjDA {
     boolean noTaxonomy = true;
     boolean noKB = true;
 
-    public static final int POSL = 1;
-    public static final int RULEML = 2;
-    public static final int RDFS = 3;
-
     /**
      * This COjDA constructor requires only a Knowledge base to be constructed.
      * 
-     * @param profile_KB
+     * @param kbSyntax
      *            The format the KB is in. 1 For POSL, 2 for RuleML91.
      * @param KB
      *            This File contains the KB to be parsed.
@@ -81,31 +77,31 @@ public class COjDA {
      * @throws ParseException
      * @throws ParsingException
      */
-    public COjDA(RuleMLParser rmlParser, int profile_KB, File KB)
+    public COjDA(RuleMLParser rmlParser, SyntaxFormat kbSyntax, File KB)
             throws RecognitionException, TokenStreamException, IOException,
             ValidityException, ParseException, ParsingException {
 
-        if (profile_KB == POSL) {
+        if (kbSyntax == SyntaxFormat.POSL) {
             pp = new POSLParser();
         } else {
             rp = rmlParser;
         }
         
-        parseKbAndInitializeReasoner(profile_KB, fileToString(KB));
+        parseKbAndInitializeReasoner(kbSyntax, fileToString(KB));
     }
 
-    public COjDA(int profile_KB, File KB) throws RecognitionException,
+    public COjDA(SyntaxFormat kbSyntax, File KB) throws RecognitionException,
             TokenStreamException, ValidityException, IOException,
             ParseException, ParsingException {
-        this(new RuleMLParser(new Config(COjDA.class)), profile_KB, KB);
+        this(new RuleMLParser(new Config(COjDA.class)), kbSyntax, KB);
     }
 
     /**
      * This COjDA constructor requires only a Knowledge base to be constructed.
      * 
-     * @param profile_KB
+     * @param kbSyntax
      *            - The format the KB is in. 1 For POSL, 2 for RuleML91.
-     * @param KB
+     * @param kb
      *            - This String contains the KB to be parsed.
      * @throws RecognitionException
      * @throws TokenStreamException
@@ -114,20 +110,20 @@ public class COjDA {
      * @throws ParsingException
      * @throws IOException
      */
-    COjDA(int profile_KB, String KB) throws RecognitionException,
+    COjDA(SyntaxFormat kbSyntax, String kb) throws RecognitionException,
             TokenStreamException, ValidityException, ParseException,
             ParsingException, IOException {
 
-        parseKbAndInitializeReasoner(profile_KB, KB);
+        parseKbAndInitializeReasoner(kbSyntax, kb);
     }
 
     /**
      * This COjDA constructor requires a Knowledge base and Taxonomy to be
      * constructed.
      * 
-     * @param profile_KB
+     * @param kbSyntax
      *            - The format the KB is in. 1 For POSL, 2 for RuleML91.
-     * @param profile_Taxonomy
+     * @param taxonomySyntax
      *            - The format the Taxonomy is in. 1 For POSL, 3 for RDFS.
      * @param KB
      *            - This String contains the KB to be parsed.
@@ -141,29 +137,26 @@ public class COjDA {
      * @throws IOException
      * @throws SubsumesException
      */
-    COjDA(int profile_KB, int profile_Taxonomy, String KB, String taxonomy)
+    COjDA(SyntaxFormat kbSyntax, SyntaxFormat taxonomySyntax, String KB, String taxonomy)
             throws RecognitionException, TokenStreamException,
             ValidityException, ParseException, ParsingException, IOException,
             SubsumesException {
 
         noTaxonomy = false;
 
-        if (profile_Taxonomy == POSL) {
-            taxonomyAPI = new TaxonomyQueryAPI(TaxonomyQueryAPI.POSL, taxonomy);
-        } else if (profile_Taxonomy == RDFS) {
-            taxonomyAPI = new TaxonomyQueryAPI(TaxonomyQueryAPI.RDFS, taxonomy);
-        }
+        taxonomyAPI = new TaxonomyQueryAPI();
+        taxonomyAPI.initializeTaxonomy(taxonomySyntax, taxonomy);
 
-        parseKbAndInitializeReasoner(profile_KB, KB);
+        parseKbAndInitializeReasoner(kbSyntax, KB);
     }
 
     /**
      * This COjDA constructor requires a Knowledge base and Taxonomy to be
      * constructed.
      * 
-     * @param profile_KB
+     * @param kbSyntax
      *            - The format the KB is in. 1 For POSL, 2 for RuleML91.
-     * @param profile_Taxonomy
+     * @param taxonomySyntax
      *            - The format the Taxonomy is in. 1 For POSL, 3 for RDFS..
      * @param KB
      *            - This String contains the KB to be parsed.
@@ -177,28 +170,25 @@ public class COjDA {
      * @throws IOException
      * @throws SubsumesException
      */
-    COjDA(int profile_KB, int profile_Taxonomy, String KB, File taxonomy)
+    COjDA(SyntaxFormat kbSyntax, SyntaxFormat taxonomySyntax, String KB, File taxonomy)
             throws RecognitionException, TokenStreamException,
             ValidityException, ParseException, ParsingException, IOException,
             SubsumesException {
         noTaxonomy = false;
 
-        if (profile_Taxonomy == POSL) {
-            taxonomyAPI = new TaxonomyQueryAPI(TaxonomyQueryAPI.POSL, taxonomy);
-        } else if (profile_Taxonomy == RDFS) {
-            taxonomyAPI = new TaxonomyQueryAPI(TaxonomyQueryAPI.RDFS, taxonomy);
-        }
+        taxonomyAPI = new TaxonomyQueryAPI();
+        taxonomyAPI.initializeTaxonomy(taxonomySyntax, taxonomy);
 
-        parseKbAndInitializeReasoner(profile_KB, KB);
+        parseKbAndInitializeReasoner(kbSyntax, KB);
     }
 
     /**
      * This COjDA constructor requires a Knowledge base and Taxonomy to be
      * constructed.
      * 
-     * @param profile_KB
+     * @param kbSyntax
      *            - The format the KB is in. 1 For POSL, 2 for RuleML91.
-     * @param profile_Taxonomy
+     * @param taxonomySyntax
      *            - The format the Taxonomy is in. 1 For POSL, 3 for RDFS.
      * @param KB
      *            - This File contains the KB to be parsed.
@@ -212,28 +202,25 @@ public class COjDA {
      * @throws ParsingException
      * @throws SubsumesException
      */
-    COjDA(int profile_KB, int profile_Taxonomy, File KB, String taxonomy)
+    COjDA(SyntaxFormat kbSyntax, SyntaxFormat taxonomySyntax, File KB, String taxonomy)
             throws RecognitionException, TokenStreamException, IOException,
             ValidityException, ParseException, ParsingException,
             SubsumesException {
         noTaxonomy = false;
 
-        if (profile_Taxonomy == POSL) {
-            taxonomyAPI = new TaxonomyQueryAPI(TaxonomyQueryAPI.POSL, taxonomy);
-        } else if (profile_Taxonomy == RDFS) {
-            taxonomyAPI = new TaxonomyQueryAPI(TaxonomyQueryAPI.RDFS, taxonomy);
-        }
+        taxonomyAPI = new TaxonomyQueryAPI();
+        taxonomyAPI.initializeTaxonomy(taxonomySyntax, taxonomy);
 
-        parseKbAndInitializeReasoner(profile_KB, fileToString(KB));
+        parseKbAndInitializeReasoner(kbSyntax, fileToString(KB));
     }
 
     /**
      * This COjDA constructor requires a Knowledge base and Taxonomy to be
      * constructed.
      * 
-     * @param profile_KB
+     * @param kbSyntax
      *            - The format the KB is in. 1 For POSL, 2 for RuleML91.
-     * @param profile_Taxonomy
+     * @param taxonomySyntax
      *            - The format the Taxonomy is in. 1 For POSL, 3 for RDFS..
      * @param KB
      *            - This File contains the KB to be parsed.
@@ -247,19 +234,16 @@ public class COjDA {
      * @throws ParsingException
      * @throws SubsumesException
      */
-    COjDA(int profile_KB, int profile_Taxonomy, File KB, File taxonomy)
+    COjDA(SyntaxFormat kbSyntax, SyntaxFormat taxonomySyntax, File KB, File taxonomy)
             throws RecognitionException, TokenStreamException, IOException,
             ValidityException, ParseException, ParsingException,
             SubsumesException {
         noTaxonomy = false;
 
-        if (profile_Taxonomy == POSL) {
-            taxonomyAPI = new TaxonomyQueryAPI(TaxonomyQueryAPI.POSL, taxonomy);
-        } else if (profile_Taxonomy == RDFS) {
-            taxonomyAPI = new TaxonomyQueryAPI(TaxonomyQueryAPI.RDFS, taxonomy);
-        }
+        taxonomyAPI = new TaxonomyQueryAPI();
+        taxonomyAPI.initializeTaxonomy(taxonomySyntax, taxonomy);
 
-        parseKbAndInitializeReasoner(profile_KB, fileToString(KB));
+        parseKbAndInitializeReasoner(kbSyntax, fileToString(KB));
     }
 
     /**
@@ -274,8 +258,8 @@ public class COjDA {
         br = new BackwardReasoner(br.clauses, br.oids);
     }
     
-    private void parseKbAndInitializeReasoner(int profile_KB, String KB) throws ParseException, ParsingException, IOException, RecognitionException, TokenStreamException {
-        if (profile_KB == POSL) {
+    private void parseKbAndInitializeReasoner(SyntaxFormat syntaxFormat, String KB) throws ParseException, ParsingException, IOException, RecognitionException, TokenStreamException {
+        if (syntaxFormat == SyntaxFormat.POSL) {
             pp.parseDefiniteClauses(KB);
             initializeBackwardReasoner(pp.iterator());
         } else {

@@ -17,9 +17,8 @@
 
 package org.ruleml.oojdrew.util;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,6 +27,7 @@ import nu.xom.Elements;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
+import org.ruleml.oojdrew.SyntaxFormat;
 import org.ruleml.oojdrew.parsing.POSLTypeQueryException;
 import org.ruleml.oojdrew.parsing.ParseException;
 import org.ruleml.oojdrew.parsing.RDFSParser;
@@ -40,80 +40,48 @@ import org.ruleml.oojdrew.parsing.TypeQueryParserRuleML;
 public class TaxonomyQueryAPI {
 
 	private QueryTypes typeQuery;
-    public static final int POSL = 1;
-    public static final int RDFS = 2;
 	
     /**
-	 * This method creates a TaxonomyQueryAPI object.
-	 * 
-	 * @param profile - Format for the TypeFile 1 for POSL, 2 For RDFS.
-	 * @param typeFile - A File containing the taxonomy.
+     * Setup a new taxonomy
+     * 
+     * @param syntaxFormat
+     *            The syntax format of the taxonomy (RuleML or POSL)
+     * @param taxonomy
+     *            The taxonomy document
+     * 
      * @throws ValidityException
+     * @throws ParseException
      * @throws ParsingException
      * @throws IOException
      * @throws SubsumesException
-     * @throws ParseException 
      */
-	public TaxonomyQueryAPI(int profile, File typeFile) throws ValidityException, ParsingException, IOException, SubsumesException, ParseException{
-		Types.reset();
-		
-		if(profile == RDFS){
-			RDFSParser.parseRDFSFile(typeFile);
-		}else if(profile == POSL){
-		   
-    		SubsumesParser sp = new SubsumesParser(fileToString(typeFile));
-    		sp.parseSubsumes();
-		}
-		
-		typeQuery = new QueryTypes();
-	}
-
-	/**
-	 * This method creates a TaxonomyQueryAPI object.
-	 * 
-	 * @param profile - Format for the TypeFile 1 for POSL, 2 For RDFS.
-	 * @param typeFile - A String containing the taxonomy.
-	 * @throws ValidityException
-	 * @throws ParsingException
-	 * @throws IOException
-	 * @throws ParseException
-	 * @throws SubsumesException
-	 */
-	public TaxonomyQueryAPI(int profile, String typeFile) throws ValidityException, ParsingException, IOException, ParseException, SubsumesException{
-		Types.reset();
-		if(profile == RDFS){
-			RDFSParser.parseRDFSString(typeFile);
-		}else if(profile == POSL){
-		   
-    		SubsumesParser sp = new SubsumesParser(typeFile);
-    		sp.parseSubsumes();
-		}
-		typeQuery = new QueryTypes();
-	}
-	
-	/**
-	 * This method Converts a file to a String.
-	 * 
-	 * @param the File to be converted.
-	 * @return the contents of the file as a string.
-	 * @throws IOException
-	 */
-	private String fileToString(File file) throws IOException{
-		
-		 FileReader inFile = new FileReader(file);
-        BufferedReader in = new BufferedReader(inFile);
-        String read ="";
-        String contents="";
+    public void initializeTaxonomy(SyntaxFormat syntaxFormat, String taxonomy)
+            throws ValidityException, ParseException, ParsingException, IOException,
+            SubsumesException {
+        Types.reset();
         
-        while((read = in.readLine()) != null)
-        {
-                contents = contents + read + '\n';
+        if (syntaxFormat == SyntaxFormat.RDFS) {
+            RDFSParser.parseRDFSString(taxonomy);
+        } else if (syntaxFormat == SyntaxFormat.POSL) {
+            SubsumesParser sp = new SubsumesParser(taxonomy);
+            sp.parseSubsumes();
         }
-        in.close();
-        
-        return contents;			
-	}
-	
+
+        typeQuery = new QueryTypes();
+    }
+    
+    /**
+     * Setup a new taxonomy
+     * 
+     * @see TaxonomyQueryAPI#initializeTaxonomy(SyntaxFormat, String)
+     */
+    public void initializeTaxonomy(SyntaxFormat syntaxFormat, File taxonomyFile)
+            throws FileNotFoundException, IOException, ValidityException, ParseException,
+            ParsingException, SubsumesException {
+        String fileContent = Util.readFile(taxonomyFile);
+        initializeTaxonomy(syntaxFormat, fileContent);
+    }
+
 	/**
 	 * This method will issue a Query on the KB using a RuleML Query.
 	 *
