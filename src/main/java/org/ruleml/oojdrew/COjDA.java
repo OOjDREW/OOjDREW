@@ -96,6 +96,8 @@ public class COjDA {
 
         knowledgeBaseInitialized = false;
         taxonomyInitialized = false;
+        
+        this.config.addPreferenceChangeListener(rmlParser);
     }
 
     /**
@@ -110,8 +112,6 @@ public class COjDA {
     public void configureAPI(RuleMLFormat rmlFormat, boolean enableValidation) {
         config.setSelectedRuleMLFormat(rmlFormat);
         config.setValidateRuleMLEnabled(enableValidation);
-
-        rmlParser.preferenceChange(null);
     }
 
     /**
