@@ -1,5 +1,5 @@
 // OO jDREW - An Object Oriented extension of the Java Deductive Reasoning Engine for the Web
-// Copyright (C) 2005 Marcel Ball
+// Copyright (C) 2011
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -17,9 +17,8 @@
 
 package org.ruleml.oojdrew;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -30,431 +29,280 @@ import java.util.StringTokenizer;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
+import org.apache.log4j.Level;
 import org.ruleml.oojdrew.TopDown.BackwardReasoner;
 import org.ruleml.oojdrew.parsing.POSLParser;
 import org.ruleml.oojdrew.parsing.ParseException;
 import org.ruleml.oojdrew.parsing.RDFSParser;
+import org.ruleml.oojdrew.parsing.RuleMLFormat;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
 import org.ruleml.oojdrew.parsing.SubsumesException;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.TaxonomyQueryAPI;
+import org.ruleml.oojdrew.util.Util;
 
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
 
 /**
  * This class implements the Complete OO jDREW API (COjDA)
- * 
- * @author craigb
- * 
  */
-
 public class COjDA {
 
-    int varSize = 0;
-    BackwardReasoner br;
-    DefiniteClause dc;
-    RuleMLParser rp;
-    POSLParser pp = new POSLParser();
-    RDFSParser rr;
-    TaxonomyQueryAPI taxonomyAPI;
+    private int varSize = 0;
 
-    boolean noTaxonomy = true;
-    boolean noKB = true;
+    private Configuration config;
+
+    private RuleMLParser rmlParser;
+    private POSLParser poslParser;
+    private TaxonomyQueryAPI taxonomyQueryAPI;
+
+    private BackwardReasoner backwardReasoner;
+
+    private boolean knowledgeBaseInitialized;
+    private boolean taxonomyInitialized;
+
+    public static COjDA getCOjDA() {
+        // Construct dependencies
+        Configuration config = new Config(COjDA.class);
+
+        // Create the parsers
+        RDFSParser rdfsParser = new RDFSParser();
+        POSLParser poslParser = new POSLParser();
+        RuleMLParser rmlParser = new RuleMLParser(config);
+        TaxonomyQueryAPI taxonomyQueryAPI = new TaxonomyQueryAPI();
+
+        // Create the reasoning engine
+        BackwardReasoner backwardReasoner = new BackwardReasoner();
+
+        // Create TopDownApp
+        COjDA cojda = new COjDA(config, poslParser, rmlParser, taxonomyQueryAPI, backwardReasoner);
+
+        return cojda;
+    }
+
+    private COjDA(Configuration config, POSLParser poslParser, RuleMLParser rmlParser,
+            TaxonomyQueryAPI taxonomyQueryAPI, BackwardReasoner backwardReasoner) {
+
+        this.config = config;
+
+        // log4j is not intended for API usage
+        this.config.setLogLevel(Level.OFF);
+
+        this.poslParser = poslParser;
+        this.rmlParser = rmlParser;
+        this.taxonomyQueryAPI = taxonomyQueryAPI;
+        this.backwardReasoner = backwardReasoner;
+
+        knowledgeBaseInitialized = false;
+        taxonomyInitialized = false;
+    }
 
     /**
-     * This COjDA constructor requires only a Knowledge base to be constructed.
+     * Configure the API
      * 
-     * @param kbSyntax
-     *            The format the KB is in. 1 For POSL, 2 for RuleML91.
-     * @param KB
-     *            This File contains the KB to be parsed.
+     * @param rmlFormat
+     *            RuleML format which should be used (e.g. RuleML 1.0)
      * 
-     * @throws RecognitionException
-     * @throws TokenStreamException
-     * @throws IOException
-     * @throws ValidityException
+     * @param enableValidation
+     *            If true, the XML validation will be enabled
+     */
+    public void configureAPI(RuleMLFormat rmlFormat, boolean enableValidation) {
+        config.setSelectedRuleMLFormat(rmlFormat);
+        config.setValidateRuleMLEnabled(enableValidation);
+
+        rmlParser.preferenceChange(null);
+    }
+
+    /**
+     * Parse a given knowledge base in the given syntax format and initialize a
+     * backward reasoner using the parsed knowledge base.
+     * 
+     * @param syntaxFormat
+     *            The syntax format of the knowledge base
+     * 
+     * @param knowledgeBase
+     *            The knowledge base which should be parsed
+     * 
      * @throws ParseException
      * @throws ParsingException
+     * @throws IOException
+     * @throws RecognitionException
+     * @throws TokenStreamException
      */
-    public COjDA(RuleMLParser rmlParser, SyntaxFormat kbSyntax, File KB)
-            throws RecognitionException, TokenStreamException, IOException,
-            ValidityException, ParseException, ParsingException {
+    public void initializeKnowledgeBase(SyntaxFormat syntaxFormat, String knowledgeBase)
+            throws ParseException, ParsingException, IOException, RecognitionException, TokenStreamException {
 
-        if (kbSyntax == SyntaxFormat.POSL) {
-            pp = new POSLParser();
-        } else {
-            rp = rmlParser;
+        if (syntaxFormat == SyntaxFormat.RDFS) {
+            throw new ParseException("RDFS cannot be used for knowledge base representation.");
         }
         
-        parseKbAndInitializeReasoner(kbSyntax, fileToString(KB));
+        Iterator kbIterator;
+        if (syntaxFormat == SyntaxFormat.POSL) {
+            poslParser.parseDefiniteClauses(knowledgeBase);
+            kbIterator = poslParser.iterator();
+        } else {
+            rmlParser.parseRuleMLString(knowledgeBase);
+            kbIterator = rmlParser.iterator();
+        }
+        initializeBackwardReasoner(kbIterator);
+        knowledgeBaseInitialized = true;
     }
 
-    public COjDA(SyntaxFormat kbSyntax, File KB) throws RecognitionException,
-            TokenStreamException, ValidityException, IOException,
+    /**
+     * Parse a given knowledge base in the given syntax format and initialize a
+     * backward reasoner using the parsed knowledge base.
+     * 
+     * @see COjDA#initializeKnowledgeBase(SyntaxFormat, String)
+     * 
+     */
+    public void initializeKnowledgeBase(SyntaxFormat syntaxFormat, File knowledgeBase)
+            throws FileNotFoundException, IOException, RecognitionException, TokenStreamException,
             ParseException, ParsingException {
-        this(new RuleMLParser(new Config(COjDA.class)), kbSyntax, KB);
+
+        String fileContent = Util.readFile(knowledgeBase);
+        initializeKnowledgeBase(syntaxFormat, fileContent);
     }
 
     /**
-     * This COjDA constructor requires only a Knowledge base to be constructed.
+     * Initialize a taxonomy (POSL or RDFS)
      * 
-     * @param kbSyntax
-     *            - The format the KB is in. 1 For POSL, 2 for RuleML91.
-     * @param kb
-     *            - This String contains the KB to be parsed.
-     * @throws RecognitionException
-     * @throws TokenStreamException
-     * @throws ValidityException
-     * @throws ParseException
-     * @throws ParsingException
-     * @throws IOException
-     */
-    COjDA(SyntaxFormat kbSyntax, String kb) throws RecognitionException,
-            TokenStreamException, ValidityException, ParseException,
-            ParsingException, IOException {
-
-        parseKbAndInitializeReasoner(kbSyntax, kb);
-    }
-
-    /**
-     * This COjDA constructor requires a Knowledge base and Taxonomy to be
-     * constructed.
+     * @param syntaxFormat
+     *            The syntax format of the taxonomy 
      * 
-     * @param kbSyntax
-     *            - The format the KB is in. 1 For POSL, 2 for RuleML91.
-     * @param taxonomySyntax
-     *            - The format the Taxonomy is in. 1 For POSL, 3 for RDFS.
-     * @param KB
-     *            - This String contains the KB to be parsed.
      * @param taxonomy
-     *            -This String contains the Taxonomy to be parsed.
-     * @throws RecognitionException
-     * @throws TokenStreamException
+     *            The taxonomy which should be initialized
+     * 
      * @throws ValidityException
      * @throws ParseException
      * @throws ParsingException
      * @throws IOException
      * @throws SubsumesException
      */
-    COjDA(SyntaxFormat kbSyntax, SyntaxFormat taxonomySyntax, String KB, String taxonomy)
-            throws RecognitionException, TokenStreamException,
-            ValidityException, ParseException, ParsingException, IOException,
-            SubsumesException {
-
-        noTaxonomy = false;
-
-        taxonomyAPI = new TaxonomyQueryAPI();
-        taxonomyAPI.initializeTaxonomy(taxonomySyntax, taxonomy);
-
-        parseKbAndInitializeReasoner(kbSyntax, KB);
+    public void initializeTaxonomy(SyntaxFormat syntaxFormat, String taxonomy) throws ValidityException,
+            ParseException, ParsingException, IOException, SubsumesException {
+        
+        if (syntaxFormat == SyntaxFormat.RULEML) {
+            throw new ParseException("RuleML cannot be used for taxonomy representation.");
+        }
+        
+        taxonomyQueryAPI.initializeTaxonomy(syntaxFormat, taxonomy);
+        taxonomyInitialized = true;
     }
 
     /**
-     * This COjDA constructor requires a Knowledge base and Taxonomy to be
-     * constructed.
+     * Initialize a POSL or a RDFS taxonomy 
      * 
-     * @param kbSyntax
-     *            - The format the KB is in. 1 For POSL, 2 for RuleML91.
-     * @param taxonomySyntax
-     *            - The format the Taxonomy is in. 1 For POSL, 3 for RDFS..
-     * @param KB
-     *            - This String contains the KB to be parsed.
-     * @param taxonomy
-     *            -This File contains the Taxonomy to be parsed.
+     * @see COjDA#initializeTaxonomy(SyntaxFormat, String)
+     */
+    public void initializeTaxonomy(SyntaxFormat syntaxFormat, File taxonomy) throws ValidityException,
+            ParseException, ParsingException, IOException, SubsumesException {
+
+        String fileContent = Util.readFile(taxonomy);
+        initializeTaxonomy(syntaxFormat, fileContent);
+    }
+
+    /**
+     * Issue a query on the knowledge base in either POSL or RuleML syntax
+     * 
+     * @param query
+     *            The POSL or RuleML knowledge base query as a string.
+     * 
+     * @return The answer as a string formatted RuleML expression.
+     * 
      * @throws RecognitionException
      * @throws TokenStreamException
+     * @throws IOException
+     * @throws ParsingException
+     * @throws ParseException
+     */
+    public String issueKnowledgebaseQuery(SyntaxFormat syntaxFormat, String query)
+            throws RecognitionException, TokenStreamException, ParseException, ParsingException, IOException {
+
+        if (!knowledgeBaseInitialized) {
+            throw new ParseException("No knowledge base available. Please initialize a knowledge base first.");
+        }
+
+        DefiniteClause definitiveClause;
+        if (syntaxFormat == SyntaxFormat.POSL) {
+            definitiveClause = poslParser.parseQueryString(query);
+        } else {
+            definitiveClause = rmlParser.parseRuleMLQuery(query);
+        }
+
+        Iterator solutionIterator = backwardReasoner.iterativeDepthFirstSolutionIterator(definitiveClause);
+        ArrayList<BindingPair> solutionPairs = generateBindingObjects(solutionIterator);
+
+        return generateRuleMLAnswerExpression(solutionPairs);
+    }
+
+    /**
+     * Issue a query on the knowledge base in either POSL or RuleML syntax
+     * 
+     * @see COjDA#issueKnowledgebaseQuery(SyntaxFormat, String)
+     */
+    public String issueKnowledgebaseQuery(SyntaxFormat syntaxFormat, File query) throws RecognitionException,
+            TokenStreamException, ParseException, ParsingException, IOException {
+
+        String fileContent = Util.readFile(query);
+        return issueKnowledgebaseQuery(syntaxFormat, fileContent);
+    }
+
+    /**
+     * Issue a query on the taxonomy by using either a POSL or a RuleML query.
+     * 
+     * @param query
+     *            The POSL or RuleML taxonomy query as a string.
+     * 
+     * @return The answer as a string formatted RuleML expression.
+     * 
      * @throws ValidityException
      * @throws ParseException
      * @throws ParsingException
      * @throws IOException
-     * @throws SubsumesException
+     * @throws Exception
      */
-    COjDA(SyntaxFormat kbSyntax, SyntaxFormat taxonomySyntax, String KB, File taxonomy)
-            throws RecognitionException, TokenStreamException,
-            ValidityException, ParseException, ParsingException, IOException,
-            SubsumesException {
-        noTaxonomy = false;
+    public String issueTaxonomyQuery(SyntaxFormat syntaxFormat, String query) throws ValidityException,
+            ParseException, ParsingException, Exception {
 
-        taxonomyAPI = new TaxonomyQueryAPI();
-        taxonomyAPI.initializeTaxonomy(taxonomySyntax, taxonomy);
+        if (!taxonomyInitialized) {
+            throw new ParseException("No taxonomy available. Please initialize a taxonomy first.");
+        }
 
-        parseKbAndInitializeReasoner(kbSyntax, KB);
+        return taxonomyQueryAPI.executeQuery(syntaxFormat, query);
     }
 
     /**
-     * This COjDA constructor requires a Knowledge base and Taxonomy to be
-     * constructed.
+     * Issue a query on the taxonomy by using either a POSL or a RuleML query.
      * 
-     * @param kbSyntax
-     *            - The format the KB is in. 1 For POSL, 2 for RuleML91.
-     * @param taxonomySyntax
-     *            - The format the Taxonomy is in. 1 For POSL, 3 for RDFS.
-     * @param KB
-     *            - This File contains the KB to be parsed.
-     * @param taxonomy
-     *            -This String contains the Taxonomy to be parsed.
-     * @throws RecognitionException
-     * @throws TokenStreamException
-     * @throws IOException
-     * @throws ValidityException
-     * @throws ParseException
-     * @throws ParsingException
-     * @throws SubsumesException
+     * @see COjDA#issueTaxonomyQuery(SyntaxFormat, String)
      */
-    COjDA(SyntaxFormat kbSyntax, SyntaxFormat taxonomySyntax, File KB, String taxonomy)
-            throws RecognitionException, TokenStreamException, IOException,
-            ValidityException, ParseException, ParsingException,
-            SubsumesException {
-        noTaxonomy = false;
+    public String issusTaxonomyQuery_RuleML(SyntaxFormat syntaxFormat, File query) throws ValidityException,
+            ParseException, ParsingException, IOException, Exception {
 
-        taxonomyAPI = new TaxonomyQueryAPI();
-        taxonomyAPI.initializeTaxonomy(taxonomySyntax, taxonomy);
-
-        parseKbAndInitializeReasoner(kbSyntax, fileToString(KB));
+        String fileContent = Util.readFile(query);
+        return issueTaxonomyQuery(syntaxFormat, fileContent);
     }
 
     /**
-     * This COjDA constructor requires a Knowledge base and Taxonomy to be
-     * constructed.
-     * 
-     * @param kbSyntax
-     *            - The format the KB is in. 1 For POSL, 2 for RuleML91.
-     * @param taxonomySyntax
-     *            - The format the Taxonomy is in. 1 For POSL, 3 for RDFS..
-     * @param KB
-     *            - This File contains the KB to be parsed.
-     * @param taxonomy
-     *            - This File contains the Taxonomy to be parsed.
-     * @throws RecognitionException
-     * @throws TokenStreamException
-     * @throws IOException
-     * @throws ValidityException
-     * @throws ParseException
-     * @throws ParsingException
-     * @throws SubsumesException
-     */
-    COjDA(SyntaxFormat kbSyntax, SyntaxFormat taxonomySyntax, File KB, File taxonomy)
-            throws RecognitionException, TokenStreamException, IOException,
-            ValidityException, ParseException, ParsingException,
-            SubsumesException {
-        noTaxonomy = false;
-
-        taxonomyAPI = new TaxonomyQueryAPI();
-        taxonomyAPI.initializeTaxonomy(taxonomySyntax, taxonomy);
-
-        parseKbAndInitializeReasoner(kbSyntax, fileToString(KB));
-    }
-
-    /**
-     * This method will initialize the OO jDREW engine.
+     * This method will initialize the OO jDREW reasoning engine.
      * 
      * @param clauses
      *            The facts to initialize OO jDREW with.
      */
     private void initializeBackwardReasoner(Iterator clauses) {
-        br = new BackwardReasoner();
-        br.loadClauses(clauses);
-        br = new BackwardReasoner(br.clauses, br.oids);
-    }
-    
-    private void parseKbAndInitializeReasoner(SyntaxFormat syntaxFormat, String KB) throws ParseException, ParsingException, IOException, RecognitionException, TokenStreamException {
-        if (syntaxFormat == SyntaxFormat.POSL) {
-            pp.parseDefiniteClauses(KB);
-            initializeBackwardReasoner(pp.iterator());
-        } else {
-            rp.parseRuleMLString(KB);
-            initializeBackwardReasoner(rp.iterator());
-        }
-    }
-
-    /**
-     * This method Converts a file to a String.
-     * 
-     * @param file
-     *            File to be converted.
-     *            
-     * @return the contents of the file as a string.
-     * 
-     * @throws IOException
-     */
-    private String fileToString(File file) throws IOException {
-        FileReader fileReader = new FileReader(file);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        String read = "";
-        String contents = "";
-
-        while ((read = bufferedReader.readLine()) != null) {
-            contents = contents + read + '\n';
-        }
-        bufferedReader.close();
-
-        return contents;
-    }
-
-    /**
-     * This method will issue a Query on the KB using a POSL Query
-     * 
-     * @param query
-     *            - a POSL query as a String.
-     * @return returns the RuleML answer expression as a String.
-     * 
-     * @throws RecognitionException
-     * @throws TokenStreamException
-     */
-    public String issueKBQuery_POSL(String query) throws RecognitionException,
-            TokenStreamException {
-
-        dc = pp.parseQueryString(query);
-        Iterator solit = br.iterativeDepthFirstSolutionIterator(dc);
-        ArrayList<BindingPair> solutionPairs = generateBindingObjects(solit);
-        return generateRuleMLAnswerExpression(solutionPairs);
-    }
-
-    /**
-     * This method will issue a Query on the KB using a POSL Query
-     * 
-     * @param query
-     *            - a POSL query stored in a File.
-     * @return returns the RuleML answer expression as a String.
-     * 
-     * @throws RecognitionException
-     * @throws TokenStreamException
-     * @throws IOException
-     */
-    public String issueKBQuery_POSL(File query) throws RecognitionException,
-            TokenStreamException, IOException {
-        return issueKBQuery_POSL(fileToString(query));
-    }
-
-    /**
-     * This method will issue a Query on the KB using a RuleML Query
-     * 
-     * @param query
-     *            - a RuleML query as a String.
-     * @return returns the RuleML answer expression as a String.
-     * 
-     * @throws ValidityException
-     * @throws ParseException
-     * @throws ParsingException
-     * @throws IOException
-     */
-    public String issueKBQuery_RuleML(String query) throws ValidityException,
-            ParseException, ParsingException, IOException {
-
-        dc = rp.parseRuleMLQuery(query);
-        Iterator solit = br.iterativeDepthFirstSolutionIterator(dc);
-        ArrayList<BindingPair> solutionPairs = generateBindingObjects(solit);
-        return generateRuleMLAnswerExpression(solutionPairs);
-    }
-
-    /**
-     * This method will issue a Query on the KB using a RuleML Query
-     * 
-     * @param query
-     *            - a RuleML query stored in a File.
-     * @return returns the RuleML answer expression as a String.
-     * 
-     * @throws ValidityException
-     * @throws ParseException
-     * @throws ParsingException
-     * @throws IOException
-     */
-    public String issueKBQuery_RuleML(File query) throws ValidityException,
-            ParseException, ParsingException, IOException {
-        return issueKBQuery_RuleML(fileToString(query));
-    }
-
-    /**
-     * This method will issue a POSL query on the Taxonomy.
-     * 
-     * @param query
-     *            - a POSL query as a String.
-     * @return returns the RuleML answer expression as a String.
-     * 
-     * @throws ValidityException
-     * @throws ParseException
-     * @throws ParsingException
-     * @throws IOException
-     * @throws Exception
-     */
-    public String issueTaxonomyQuery_POSL(String query)
-            throws ValidityException, ParseException, ParsingException,
-            IOException, Exception {
-
-        if (noTaxonomy)
-            return "Must initialize a taxonomy before executing taxonomy queries";
-
-        return taxonomyAPI.executeQueryPOSL(query);
-
-    }
-
-    /**
-     * This method will issue a POSL query on the Taxonomy.
-     * 
-     * @param query
-     *            - a POSL query stored in a File.
-     * @return returns the RuleML answer expression as a String.
-     * 
-     * @throws ValidityException
-     * @throws ParseException
-     * @throws ParsingException
-     * @throws IOException
-     * @throws Exception
-     */
-    public String issueTaxonomyQuery_POSL(File query) throws ValidityException,
-            ParseException, ParsingException, IOException, Exception {
-        return issueTaxonomyQuery_POSL(fileToString(query));
-    }
-
-    /**
-     * This method will issue a RuleML query on the Taxonomy.
-     * 
-     * @param query
-     *            - a RuleML query as a String.
-     * @return returns the RuleML answer expression as a String.
-     * 
-     * @throws ValidityException
-     * @throws ParseException
-     * @throws ParsingException
-     * @throws IOException
-     * @throws Exception
-     */
-    public String issusTaxonomyQuery_RuleML(String query)
-            throws ValidityException, ParseException, ParsingException,
-            IOException, Exception {
-
-        if (noTaxonomy)
-            return "Must initialize a taxonomy before executing taxonomy queries";
-
-        return taxonomyAPI.executeQueryRuleML(query);
-    }
-
-    /**
-     * This method will issue a RuleML query on the Taxonomy.
-     * 
-     * @param query
-     *            - a RuleML query stored in a File.
-     * @return returns the RuleML answer expression as a String.
-     * 
-     * @throws ValidityException
-     * @throws ParseException
-     * @throws ParsingException
-     * @throws IOException
-     * @throws Exception
-     */
-    public String issueTaxonomyQuery_RuleML(File query)
-            throws ValidityException, ParseException, ParsingException,
-            IOException, Exception {
-        return issusTaxonomyQuery_RuleML(fileToString(query));
+        backwardReasoner = new BackwardReasoner();
+        backwardReasoner.loadClauses(clauses);
+        backwardReasoner = new BackwardReasoner(backwardReasoner.clauses, backwardReasoner.oids);
     }
 
     /**
      * This method will generate the Binding Pairs.
      * 
      * @param solutions
-     *            - solutions to the queries.
-     * @return - returns an array list of all the binding pairs.
+     *            The results of the queries.
+     * 
+     * @return An array list of all the binding pairs.
      */
     private ArrayList<BindingPair> generateBindingObjects(Iterator solutions) {
 
@@ -462,8 +310,7 @@ public class COjDA {
 
         while (solutions.hasNext()) {
 
-            BackwardReasoner.GoalList gl = (BackwardReasoner.GoalList) solutions
-                    .next();
+            BackwardReasoner.GoalList gl = (BackwardReasoner.GoalList) solutions.next();
             Hashtable varbind = gl.varBindings;
             varSize = varbind.size();
             Enumeration e = varbind.keys();
@@ -494,19 +341,19 @@ public class COjDA {
      * a query
      * 
      * @param solutionPairs
-     *            - all the solutions to the query.
+     *            All the solutions to the query.
+     * 
      * @return RuleML answer expression based on the solutions given.
      */
-    private String generateRuleMLAnswerExpression(
-            ArrayList<BindingPair> solutionPairs) {
+    private String generateRuleMLAnswerExpression(ArrayList<BindingPair> solutionPairs) {
 
         String answer = "<RuleML>\n\t<Answer>\n";
 
         for (int i = 0; i < solutionPairs.size(); i++) {
 
-            if (i % varSize == 0)
+            if (i % varSize == 0) {
                 answer = answer + "\t\t<Rulebase>\n";
-
+            }
             answer = answer + "\t\t\t<Equal>\n";
 
             BindingPair pair = solutionPairs.get(i);
@@ -515,14 +362,13 @@ public class COjDA {
             StringTokenizer st = new StringTokenizer(pair.getValue(), "\n");
 
             while (st.hasMoreTokens()) {
-
                 answer = answer + "\t\t\t\t" + st.nextToken() + "\n";
             }
-
             answer = answer + "\t\t\t</Equal>";
 
-            if (i % varSize == varSize - 1)
+            if (i % varSize == varSize - 1) {
                 answer = answer + "\n\t\t</Rulebase>";
+            }
 
             if (!(i == solutionPairs.size() - 1)) {
                 answer = answer + "\n";
@@ -533,5 +379,4 @@ public class COjDA {
 
         return answer;
     }
-
 }
