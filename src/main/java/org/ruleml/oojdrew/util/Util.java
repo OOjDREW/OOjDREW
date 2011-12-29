@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -57,8 +58,8 @@ public class Util {
      *             Throws an IOException when web address is not accessible or
      *             when an error occurred during the read process
      */
-    public static String readFromURIWithTimeout(String uri,
-            int connectionTimeoutMillis) throws IOException {
+    public static String readFromURIWithTimeout(String uri, int connectionTimeoutMillis)
+            throws IOException {
         // Create new HTTP connection with given timeout
         URL url = new URL(uri);
         URLConnection urlConnection = url.openConnection();
@@ -69,7 +70,7 @@ public class Util {
         // Open input stream for reading
         InputStream inputStream = urlConnection.getInputStream();
 
-        String result = readString(new InputStreamReader(inputStream));
+        String result = readStream(new InputStreamReader(inputStream));
         return result;
     }
 
@@ -96,7 +97,7 @@ public class Util {
             File file = fileOpenDialog.getSelectedFile();
 
             // Open file for reading and read content
-            result = readString(new FileReader(file));
+            result = readFile(file);
         }
         return result;
     }
@@ -114,8 +115,7 @@ public class Util {
      *             Throws an IOException when file is not accessible or when an
      *             error occurred during the write process
      */
-    public static void selectAndSaveToFile(String content, Component parent)
-            throws IOException {
+    public static void selectAndSaveToFile(String content, Component parent) throws IOException {
         // Create file save dialog
         @SuppressWarnings("serial")
         JFileChooser fileSaveDialog = new JFileChooser() {
@@ -150,6 +150,18 @@ public class Util {
     }
 
     /**
+     * Read a given file and return its content as a string
+     * 
+     * @param file
+     *            The file to read content from
+     * 
+     * @see Util#readStream(Reader)
+     */
+    public static String readFile(File file) throws FileNotFoundException, IOException {
+        return readStream(new FileReader(file));
+    }
+
+    /**
      * Directly read content from a given reader object
      * 
      * @param reader
@@ -161,7 +173,7 @@ public class Util {
      *             Throws an IOException when an error occurred during the read
      *             process
      */
-    private static String readString(Reader reader) throws IOException {
+    private static String readStream(Reader reader) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(reader);
 
         // Read content to buffer
@@ -190,8 +202,7 @@ public class Util {
      *             Throws an IOException when an error occurred during the write
      *             process
      */
-    private static void writeToFile(Writer writer, String content)
-            throws IOException {
+    private static void writeToFile(Writer writer, String content) throws IOException {
         BufferedWriter bufferedWriter = new BufferedWriter(writer);
 
         // Write content and close steam
@@ -204,7 +215,7 @@ public class Util {
      * 
      * @param rmlElement
      *            Element to convert
-     *            
+     * 
      * @return The string representation of the element
      */
     public static String toRuleMLString(Element rmlElement) {
