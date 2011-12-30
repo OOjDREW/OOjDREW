@@ -1,85 +1,108 @@
-<Assert>
-  <Rulebase mapClosure="universal">
-    <!-- start XML comment ...
+<RuleML>
+  <Assert mapClosure="universal">
+    <Rulebase>
+      <!-- 
+      This example rulebase contains four clauses.
+      The first and second clauses are implications; 
+      the third and fourth ones are facts.
 
-     This example rulebase contains four rules.
-     The first and second rules are implications; the third and fourth ones are facts.
+      In formal English:
 
-     In English:
+      The first rule implies that a student engages in a 
+      course if that student takes the course by a professor 
+      and the student likes the course.
+      -->
+      <Implies>
+        <then>
+          <Atom>
+            <Rel>engage</Rel>
+            <Var>student</Var>
+            <Var>course</Var>
+          </Atom>
+        </then>
+        <if>
+          <!-- explicit 'And' -->
+          <And>
+            <Atom>
+              <Rel>take</Rel>
+              <Var>student</Var>
+              <Var>professor</Var>
+              <Var>course</Var>
+            </Atom>
+            <Atom>
+              <Rel>like</Rel>
+              <Var>student</Var>
+              <Var>course</Var>
+            </Atom>
+          </And>
+        </if>
+      </Implies>
 
-     The first rule implies that a person studies a course
-     if that person takes a course in a faculty and the person likes the course
-
-      .. end XML comment -->
-
-    <Implies>
-      <then>
-        <Atom>
-          <Rel>study</Rel>
-          <Var>person</Var>
-          <Var>course</Var>
-        </Atom>
-      </then>
-      <if>
-        <!-- explicit 'And' -->
-        <And>
+      <!-- The second rule implies that student takes a course by
+      a professor if a professor give a course for that student. -->
+      <Implies>
+        <then>
           <Atom>
             <Rel>take</Rel>
-            <Var>person</Var>
-            <Var>faculty</Var>
+            <Var>student</Var>
+            <Var>professor</Var>
             <Var>course</Var>
           </Atom>
+        </then>
+        <if>
           <Atom>
-            <Rel>like</Rel>
-            <Var>person</Var>
+            <Rel>give</Rel>
+            <Var>professor</Var>
+            <Var>student</Var>
             <Var>course</Var>
           </Atom>
-        </And>
-      </if>
-    </Implies>
+        </if>
+      </Implies>
 
-    <!-- The second rule implies that a person takes a course in a faculty
-    if the faculty has that course for the person. -->
-    <Implies>
-      <then>
-        <Atom>
-          <Rel>take</Rel>
-          <Var>person</Var>
-          <Var>faculty</Var>
-          <Var>course</Var>
-        </Atom>
-      </then>
-      <if>
-        <Atom>
-          <Rel>has</Rel>
-          <Var>faculty</Var>
-          <Var>person</Var>
-          <Var>course</Var>
-        </Atom>
-      </if>
-    </Implies>
+      <!-- The third rule is a fact that asserts that Fred 
+      give CS6795 for John. -->
+      <Atom>
+        <Rel>give</Rel>
+        <Ind>Fred</Ind>
+        <Ind>John Doe</Ind>
+        <Ind>CS6795</Ind>
+      </Atom>
 
-    <!-- The third rule is a fact that asserts that
-CS has CS6795 for John. -->
+
+      <!-- The fourth rule is a fact that asserts that John 
+      likes CS6795. -->
+      <Atom>
+        <Rel>like</Rel>
+        <Ind>John Doe</Ind>
+        <Ind>CS6795</Ind>
+      </Atom>
+    </Rulebase>
+  </Assert>
+  
+  <Query>
+    <!-- POSL like(?Name, ?Course) -->
     <Atom>
-      <Rel>has</Rel>
-      <Ind>CS</Ind>
-      <Ind>John</Ind>
-      <Ind>CS6795</Ind>
+      <op>
+        <Rel>like</Rel>
+      </op>
+      <Var>Name</Var>
+      <Var>Course</Var>
     </Atom>
+  </Query>
 
+  <!--
+  Specified Results
+  Success
+  
+  Variables
+  <Var>Name</Var>
+  <Var>Course</Var>
+  
+  Value
+  Name = John
+  Course = CS6795
 
-    <!-- The fourth rule is a fact that asserts that
-John likes CS6795.
- 
-. -->
-
-    <Atom>
-      <Rel>like</Rel>
-      <Ind>John</Ind>
-      <Ind>CS6795</Ind>
-    </Atom>
-
-
-  </Rulebase>
-</Assert>
+  Actual Results
+  Success
+  -->
+</RuleML>

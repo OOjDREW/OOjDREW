@@ -1,0 +1,14 @@
+<RuleML>
+  <Answer>
+    <Rulebase>
+      <Equal>
+        <Var>Name</Var>
+        "John Doe"
+      </Equal>
+      <Equal>
+        <Var>Course</Var>
+        CS6795
+      </Equal>
+    </Rulebase>               
+  </Answer>
+</RuleML>

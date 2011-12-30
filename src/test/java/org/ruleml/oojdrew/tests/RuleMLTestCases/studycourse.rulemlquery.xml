@@ -1,0 +1,10 @@
+<Query>
+  <!-- POSL like(?Name, ?Course) -->
+  <Atom>
+    <op>
+      <Rel>like</Rel>
+    </op>
+    <Var>Name</Var>
+    <Var>Course</Var>
+  </Atom>
+</Query>
