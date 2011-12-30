@@ -18,6 +18,25 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   
+  <profiles>
+    <profile>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <main.class>org.ruleml.oojdrew.TopDown.TopDownApp</main.class>
+        <output.filename>${project.build.finalName}</output.filename>
+      </properties>
+    </profile>
+    <profile>
+      <id>bottom-up</id>
+      <properties>
+        <main.class>org.ruleml.oojdrew.BottomUp.BottomUpApp</main.class>
+        <output.filename>${project.build.finalName}-BU</output.filename>
+      </properties>
+    </profile>
+  </profiles>
+  
   <repositories>
     <!--other repositories if any-->
     <repository>
@@ -68,12 +87,13 @@
             <configuration>
                 <archive>
                     <manifest>
-                        <mainClass>org.ruleml.oojdrew.TopDown.TopDownApp</mainClass>
+                        <mainClass>${main.class}</mainClass>
                     </manifest>
                 </archive>
                 <descriptorRefs>
                     <descriptorRef>jar-with-dependencies</descriptorRef>
                 </descriptorRefs>
+            	<finalName>${output.filename}</finalName>
             </configuration>
             <executions>
                 <execution>
