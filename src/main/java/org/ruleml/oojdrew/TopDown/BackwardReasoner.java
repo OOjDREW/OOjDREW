@@ -131,14 +131,8 @@ public class BackwardReasoner implements Reasoner {
      *
      */
     public BackwardReasoner() {
-        this.clauses = new Hashtable();
-        this.oids = new Hashtable();
+        this(new Hashtable(), new Hashtable());
         oids.put(-1, new Vector());
-        choicePoints = new Stack();
-        nExtensions = 0;
-        nInferences = 0;
-        builtins = new Hashtable();
-        registerBuiltins();
     }
 
     /**
@@ -214,8 +208,6 @@ public class BackwardReasoner implements Reasoner {
      *
      * @param it
      */
-         
-     
     public void loadClauses(Iterator it) {    	
         while (it.hasNext()) {
             DefiniteClause dc = (DefiniteClause) it.next();
@@ -272,9 +264,6 @@ public class BackwardReasoner implements Reasoner {
      * @param gl GoalList
      * @param b StringBuffer
      */
-     
-     
-     
     private void toString(int indent, GoalList gl, StringBuffer b) {
         for (int i = 0; i < indent; i++) {
             b.append(" ");
@@ -331,19 +320,12 @@ public class BackwardReasoner implements Reasoner {
      
      
     public class DepthFirstSolutionIterator implements Iterator {
-
-		//Constructor takes a Definite Clause for a query
-
-        DepthFirstSolutionIterator(DefiniteClause queryClause) {
-            foundNext = false;
-            failed = false;
-            enteringFirstTime = true;
-            top = new GoalList(queryClause);
-            top.init();
-        }
 		
+        boolean foundNext;
+        boolean failed;
+        boolean enteringFirstTime;
+        
 		//Constructor Takes a goal list.
-
         DepthFirstSolutionIterator(GoalList goalList) {
             foundNext = false;
             failed = false;
@@ -351,10 +333,12 @@ public class BackwardReasoner implements Reasoner {
             top = goalList;
             top.init();
         }
+        
+        //Constructor takes a Definite Clause for a query
+        DepthFirstSolutionIterator(DefiniteClause queryClause) {
+            this(new GoalList(queryClause));
+        }
 
-        boolean foundNext;
-        boolean failed;
-        boolean enteringFirstTime;
 		//Check to see if there is a next goal
         public boolean hasNext() {
             if (foundNext) {
@@ -429,7 +413,6 @@ public class BackwardReasoner implements Reasoner {
         private boolean chronologicalBacktrack() {
             //go back to most recent choicepoint that has something to try
             //unbind any variables that were done since that choice
-
             boolean foundSomethingToRetry = false;
             while (!choicePoints.empty() && !foundSomethingToRetry) {
                 Goal g = (Goal) choicePoints.pop();
@@ -447,7 +430,6 @@ public class BackwardReasoner implements Reasoner {
             }
             return foundSomethingToRetry;
         }
-
     }
 
 
@@ -468,8 +450,14 @@ public class BackwardReasoner implements Reasoner {
      
     public class IterativeDepthFirstSolutionIterator implements Iterator {
 
-        IterativeDepthFirstSolutionIterator(GoalList goalList,
-                                            int max, int by) {
+        private boolean foundNext;
+        private boolean failed;
+        private boolean enteringFirstTime;
+        private int max;
+        private int by;
+        private boolean bumpedIntoLimit;
+        
+        IterativeDepthFirstSolutionIterator(GoalList goalList, int max, int by) {
             foundNext = false;
             failed = false;
             enteringFirstTime = true;
@@ -480,25 +468,9 @@ public class BackwardReasoner implements Reasoner {
             top.init();
         }
 
-        IterativeDepthFirstSolutionIterator(DefiniteClause queryClause,
-                                            int max, int by) {
-
-            foundNext = false;
-            failed = false;
-            enteringFirstTime = true;
-            this.max = max;
-            this.by = by;
-            bumpedIntoLimit = false;
-            top = new GoalList(queryClause);
-            top.init();
+        IterativeDepthFirstSolutionIterator(DefiniteClause queryClause, int max, int by) {
+            this(new GoalList(queryClause), max, by);
         }
-
-        private boolean foundNext;
-        private boolean failed;
-        private boolean enteringFirstTime;
-        private int max;
-        private int by;
-        private boolean bumpedIntoLimit;
 
         public boolean hasNext() {
             if (foundNext) {
@@ -533,12 +505,10 @@ public class BackwardReasoner implements Reasoner {
                         int nextChoiceSize = g.nextChoiceSize();
                         choicePoints.push(g);
                         g.nextChoice(Goal.PROPAGATE_WHEN_SOLVED);
-                        //logger.debug("NExtensions = " + nExtensions + "\nnextChoiceSize = " +
-                        //            nextChoiceSize + "\nmax = " + max);
+                        //logger.debug("NExtensions = " + nExtensions + "\nnextChoiceSize = " + nextChoiceSize + "\nmax = " + max);
 
                         if (nExtensions + nextChoiceSize > max) {
-                            //uses the number of new subgoals as an admissible heuristic
-                            //in an a* search
+                            //uses the number of new subgoals as an admissible heuristic in an a* search
                             bumpedIntoLimit = true;
                             if (!iterativeDepthChronologicalBacktrack()) {
                                 failed = true;
@@ -612,9 +582,7 @@ public class BackwardReasoner implements Reasoner {
             }
             return foundSomethingToRetry;
         }
-
     }
-
 
     /**
      *
@@ -640,8 +608,7 @@ public class BackwardReasoner implements Reasoner {
      * @param by
      * @return
      */
-    public Iterator iterativeDepthFirstSolutionIterator
-            (DefiniteClause queryClause, int max, int by) {
+    public Iterator iterativeDepthFirstSolutionIterator(DefiniteClause queryClause, int max, int by) {
         return new IterativeDepthFirstSolutionIterator(queryClause, max, by);
     }
 
@@ -661,8 +628,7 @@ public class BackwardReasoner implements Reasoner {
      * @param by
      * @return
      */
-    public Iterator iterativeDepthFirstSolutionIterator
-            (GoalList goalList, int max, int by) {
+    public Iterator iterativeDepthFirstSolutionIterator(GoalList goalList, int max, int by) {
         return new IterativeDepthFirstSolutionIterator(goalList, max, by);
     }
 
@@ -671,8 +637,7 @@ public class BackwardReasoner implements Reasoner {
      * @param goalList
      * @return
      */
-    public Iterator iterativeDepthFirstSolutionIterator
-            (GoalList goalList) {
+    public Iterator iterativeDepthFirstSolutionIterator(GoalList goalList) {
         return new IterativeDepthFirstSolutionIterator(goalList, 1, 1);
     }
 
@@ -740,9 +705,29 @@ public class BackwardReasoner implements Reasoner {
         public static final int PROVE_BY_SUBGOALLIST = 0;
         public static final int PROVE_BY_BUILTIN = 1;
         public static final int PROVE_BY_NAF = 2;
-
+        
+        SubGoalListIterator sglit;
+        GoalList goalList;
+        int literalIndex;
+        int symbolIndex;
+        int propagateMode;
         int state;
         int proveByType;
+        boolean solved;
+        GoalList subGoalList;
+        
+        /**
+        *
+        * @param goalList GoalList
+        * @param literalIndex int
+        */
+       Goal(GoalList goalList, int literalIndex) {
+           this.goalList = goalList;
+           this.literalIndex = literalIndex;
+           solved = false;
+           subGoalList = null;
+           state = INITIAL_STATE;
+       }
 
         /**
          *
@@ -780,62 +765,38 @@ public class BackwardReasoner implements Reasoner {
 
         /**
          *
-         * @param goalList GoalList
-         * @param literalIndex int
-         */
-        Goal(GoalList goalList, int literalIndex) {
-            this.goalList = goalList;
-            this.literalIndex = literalIndex;
-            solved = false;
-            subGoalList = null;
-            state = INITIAL_STATE;
-        }
-
-        /**
-         *
          * @return boolean
          */
         boolean nafGoal() {
             return goalList.atoms[symbolIndex].getSymbol() == SymbolTable.INAF;
         }
-
-        SubGoalListIterator sglit;
-        GoalList goalList;
-        int literalIndex;
-        int symbolIndex;
-        int propagateMode;
-        boolean solved;
-        GoalList subGoalList;
-
+        
         /**
          *
          * @return boolean
          */
         boolean hasMoreChoices() {
-            //logger.debug("Entering hasMoreChoices()");
+            // logger.debug("Entering hasMoreChoices()");
             if (proveByType == PROVE_BY_SUBGOALLIST) {
                 return hasMoreSubGoalLists();
             } else if (proveByType == PROVE_BY_NAF) {
-                if (state == HAS_NO_NAF_SOLUTION_STATE ||
-                    state == HAS_NAF_SOLUTION_STATE) {
+                if ((state == HAS_NO_NAF_SOLUTION_STATE) || (state == HAS_NAF_SOLUTION_STATE)) {
                     return false;
                 } else if (state == INITIAL_STATE) {
-                   // logger.debug("Proving by NAF:");
+                    // logger.debug("Proving by NAF:");
                     Term nafAtom = this.goalList.atoms[this.symbolIndex];
                     String goalString = "";
 
                     Term[] nafAtomterms = nafAtom.getSubTerms();
                     for (int i = 0; i < nafAtomterms.length; i++) {
-                        goalString +=
-                                nafAtomterms[i].toPOSLString(this.goalList.
-                                variableNames);
+                        goalString += nafAtomterms[i].toPOSLString(this.goalList.variableNames);
                         if ((i + 1) < nafAtomterms.length) {
                             goalString += ",";
                         }
                     }
                     goalString += ".";
 
-                    //logger.debug("Naf goal string: " + goalString);
+                    // logger.debug("Naf goal string: " + goalString);
 
                     BackwardReasoner nafTree = null;
                     DefiniteClause nafQueryClause = null;
@@ -844,33 +805,33 @@ public class BackwardReasoner implements Reasoner {
                         try {
                             nafQueryClause = dcfp.parseQueryString(goalString);
                         } catch (antlr.RecognitionException ex1) {
-                           // logger.error("Cannot parse naf clause: " +
-                            //             goalString);
-                           // logger.error(
-                            //        "This should never happen as this is a generated clause string.");
+                            // logger.error("Cannot parse naf clause: " +
+                            // goalString);
+                            // logger.error(
+                            // "This should never happen as this is a generated clause string.");
                             return false;
                         } catch (antlr.TokenStreamException ex1) {
-                           // logger.error("IO Exception parsing naf clause.");
+                            // logger.error("IO Exception parsing naf clause.");
                             return false;
                         }
 
-                        //logger.debug("New BackwardReasoner for naf clause: " + goalString);
+                        // logger.debug("New BackwardReasoner for naf clause: "
+                        // + goalString);
 
                         nafTree = new BackwardReasoner(clauses, oids);
 
                     } catch (RuntimeException e) {
-                        //logger.error("Runtime exception creating naf clause.");
+                        // logger.error("Runtime exception creating naf clause.");
                         return false;
                     }
 
-                    Iterator nafSolver = nafTree.depthFirstSolutionIterator(
-                            nafQueryClause);
+                    Iterator nafSolver = nafTree.depthFirstSolutionIterator(nafQueryClause);
 
                     if (nafSolver.hasNext()) {
-                        //logger.debug("NO NAF solution");
+                        // logger.debug("NO NAF solution");
                         state = HAS_NO_NAF_SOLUTION_STATE;
                     } else {
-                        //logger.debug("NAF soltuion");
+                        // logger.debug("NAF soltuion");
                         state = HAS_UNCONSUMED_NAF_SOLUTION_STATE;
                     }
                 }
@@ -878,7 +839,7 @@ public class BackwardReasoner implements Reasoner {
             }
             // else if (provedByType == PROVED_BY_BUILTIN){
             else {
-                return false; //Can't happen unless proveByType is missing
+                return false; // Can't happen unless proveByType is missing
             }
         }
 
@@ -902,10 +863,9 @@ public class BackwardReasoner implements Reasoner {
             nExtensions++;
             nInferences++;
             if (BackwardReasoner.REPORT_EVERY_N_INFERENCES > 0) {
-                if (nInferences % BackwardReasoner.REPORT_EVERY_N_INFERENCES ==
-                    0) {
-                    //logger.info("Performed " + nInferences +
-                     //           " inferences");
+                if (nInferences % BackwardReasoner.REPORT_EVERY_N_INFERENCES == 0) {
+                    // logger.info("Performed " + nInferences +
+                    // " inferences");
                 }
             }
         }
@@ -916,18 +876,17 @@ public class BackwardReasoner implements Reasoner {
          */
         int nextChoiceSize() {
             if (!hasMoreChoices()) {
-                throw new EngineException("Attempted next choice for " +
-                                          this +", but no more choices exist");
+                throw new EngineException("Attempted next choice for " + this + ", but no more choices exist");
             } else if (proveByType == PROVE_BY_SUBGOALLIST) {
                 return sglit.nextGoalListSize() - 1;
-            } else if (proveByType == PROVE_BY_NAF){
+            } else if (proveByType == PROVE_BY_NAF) {
                 return 0;
             } else {
                 return 1;
             }
         }
 
-            /**
+        /**
          *
          */
         void undoChoice() {
@@ -973,9 +932,7 @@ public class BackwardReasoner implements Reasoner {
         boolean hasMoreSubGoalLists() {
             if (state == INITIAL_STATE) {
                 state = HAS_NO_SUBGOALLIST_STATE;
-                sglit = new SubGoalListIterator(this,
-                                                SubGoalListIterator.
-                                                APPLY_TO_GOALLIST);
+                sglit = new SubGoalListIterator(this, SubGoalListIterator.APPLY_TO_GOALLIST);
                 //if (true) {
                 //    SubGoalListIterator sglit_1 = new SubGoalListIterator(this,
                 //            SubGoalListIterator.APPLY_TO_GOALLIST);
@@ -1049,16 +1006,9 @@ public class BackwardReasoner implements Reasoner {
             b.append(this.goalList.atoms[this.symbolIndex].toPOSLString(this.
                     goalList.variableNames));
             
-            //System.out.println("Test Line 1003: ");
-            //System.out.println(this.goalList.atoms[this.symbolIndex].toPOSLString(this.
-             //       goalList.variableNames));
-            
-            
             return b.toString();
         }
-
     } //Goal
-
 
     /**
      * GoalList - contains a list of Goals and is attached to a specific Goal
@@ -1106,6 +1056,19 @@ public class BackwardReasoner implements Reasoner {
     public class GoalList {
         public Hashtable varBindings;
 
+        public int varCount;
+        public String[] variableNames;
+        public boolean hasVariableNames;
+        public int atomCount = 0;
+        public Term[] atoms;
+        public Goal parent;
+        public Goal[] memberGoals;
+        
+        boolean hasParent = false;
+        boolean solved = false;
+  
+        private Stack s;
+        
         /**
          *
          * @param dc DefiniteClause
@@ -1116,6 +1079,7 @@ public class BackwardReasoner implements Reasoner {
             hasVariableNames = true;
             variableNames = dc.variableNames;
             varBindings = new Hashtable();
+            s = new Stack();
         }
 
         /**
@@ -1134,7 +1098,6 @@ public class BackwardReasoner implements Reasoner {
                     memberGoals[i].proveByType = Goal.PROVE_BY_NAF;
                 } else {
                     memberGoals[i].proveByType = Goal.PROVE_BY_SUBGOALLIST;
-                    //else -- add in builtins
                 }
             }
         }
@@ -1152,22 +1115,10 @@ public class BackwardReasoner implements Reasoner {
         void setSymbolIndex() {
             int symbolIndex = 0;
             for (int i = 1; i < atomCount; i++) {
-                //symbolIndex += symbols[symbolIndex][1];
                 symbolIndex++;
                 memberGoals[i].symbolIndex = symbolIndex;
             }
         }
-
-        public int varCount;
-        public String[] variableNames;
-        public boolean hasVariableNames;
-        public int atomCount = 0;
-        //int[][] symbols;
-        public Term[] atoms;
-        public Goal parent;
-        public Goal[] memberGoals;
-        boolean hasParent = false;
-        boolean solved = false;
 
         /**
          *
@@ -1264,7 +1215,7 @@ public class BackwardReasoner implements Reasoner {
             //need this
             b.append(this.atoms[0].toPOSLString(this.variableNames)); //top
            
-            //Recontructing posl in the goal list 
+            //Reconstructing POSL in the goal list 
             
             //System.out.println("Test Line 1214 BR:");
             //System.out.println(this.atoms[0].toPOSLString(this.variableNames));
@@ -1288,7 +1239,7 @@ public class BackwardReasoner implements Reasoner {
             //need this
            // b.append(this.atoms[0].toPOSLString(this.variableNames)); //top
            
-            //Recontructing posl in the goal list 
+            //Reconstructing POSL in the goal list 
             
             //System.out.println("Test Line 1214 BR:");
             //System.out.println(this.atoms[0].toPOSLString(this.variableNames));
@@ -1347,22 +1298,18 @@ public class BackwardReasoner implements Reasoner {
          * @return Term
          */
         public Term getAtom(int idx) {
-            if (idx < 0 || idx >= this.atoms.length) {
+            if ((idx < 0) || (idx >= this.atoms.length)) {
                 return null;
             } else {
                 return this.atoms[idx].deepCopy();
             }
         }
 
-        private Stack s = new Stack();
-
         /**
          *
          */
         public void createBackup() {
-            //s.push(new StackFrame(symbols, varCount, hasVariableNames, variableNames));
-            s.push(new StackFrame(atoms, varCount, hasVariableNames,
-                                  variableNames));
+            s.push(new StackFrame(atoms, varCount, hasVariableNames, variableNames));
         }
 
         /**
@@ -1373,12 +1320,10 @@ public class BackwardReasoner implements Reasoner {
                 //logger.error("Popped empty stack");
             } else {
                 StackFrame sf = (StackFrame) s.pop();
-                //symbols = sf.symbols;
                 atoms = sf.atoms;
                 varCount = sf.varCount;
                 hasVariableNames = sf.hasVariableNames;
                 variableNames = sf.variableNames;
-                //setSymbolIndex();
             }
         }
 
@@ -1405,7 +1350,6 @@ public class BackwardReasoner implements Reasoner {
          * @version 0.89
          */
         class StackFrame {
-            //int[][] symbols;
             Term[] atoms;
             int varCount;
             boolean hasVariableNames;
@@ -1433,21 +1377,17 @@ public class BackwardReasoner implements Reasoner {
              * @param hasVariableNames boolean
              * @param variableNames String[]
              */
-            StackFrame(Term[] atoms, int varCount, boolean hasVariableNames,
-                       String[] variableNames) {
+            StackFrame(Term[] atoms, int varCount, boolean hasVariableNames, String[] variableNames) {
+                
                 this.atoms = cloneTermArray(atoms, 0);
-
-                //System.arraycopy(symbols, 0, this.symbols, 0, symbols.length);
                 this.varCount = varCount;
                 this.hasVariableNames = hasVariableNames;
                 if (hasVariableNames) {
                     this.variableNames = new String[varCount];
-                    System.arraycopy(variableNames, 0, this.variableNames, 0,
-                                     varCount);
+                    System.arraycopy(variableNames, 0, this.variableNames, 0, varCount);
                 }
             }
         }
-
 
         /**
          *
@@ -1457,7 +1397,6 @@ public class BackwardReasoner implements Reasoner {
             return this.variableNames;
         }
     } //BackwardReasoner.GoalList
-
 
     /**
      *
@@ -1475,6 +1414,12 @@ public class BackwardReasoner implements Reasoner {
         public static final int APPLY_TO_GOALLIST = 0;
         public static final int APPLY_TO_GOAL_AND_GOALLIST = 1;
         public static final int APPLY_TO_GOAL = 2;
+        
+        private int mode;
+        public Iterator uit;
+        private GoalList nextGoalList;
+        private Goal goal;
+        private boolean foundNext = false;
 
         /**
          *
@@ -1483,26 +1428,13 @@ public class BackwardReasoner implements Reasoner {
          */
         SubGoalListIterator(Goal goal, int mode) {
             this.goal = goal;
-            //this.uit = discTree.unifiableIterator(goal.goalList.symbols, goal.literalIndex);
-
-            this.uit = this.getUnifiableIterator(goal.goalList,
-                                                 goal.literalIndex);
-
+            this.uit = this.getUnifiableIterator(goal.goalList, goal.literalIndex);
             this.mode = mode;
-            if (mode == APPLY_TO_GOALLIST) {
-            } else if (mode == APPLY_TO_GOAL_AND_GOALLIST) {
-            } else if (mode == APPLY_TO_GOAL) {
-            } else {
+            
+            if ((mode != APPLY_TO_GOALLIST) && (mode != APPLY_TO_GOAL_AND_GOALLIST) && (mode != APPLY_TO_GOAL)) {
                 throw new EngineException("SubGoalListIterator mode not valid");
             }
         }
-
-        private int mode;
-        //public DiscTree.UnifiableIterator uit;
-        public Iterator uit;
-        private GoalList nextGoalList;
-        private Goal goal;
-        private boolean foundNext = false;
 
         /**
          *
@@ -1514,8 +1446,8 @@ public class BackwardReasoner implements Reasoner {
             Term t = gl.getAtom(term);
             Integer sym = t.getSymbol();
             if (builtins.containsKey(sym)) {
-               // logger.debug("Using builtin for " +
-                //             SymbolTable.symbol(sym.intValue()));
+                // logger.debug("Using builtin for " +
+                // SymbolTable.symbol(sym.intValue()));
                 TDBuiltin b = (TDBuiltin) builtins.get(sym);
                 Vector v = new Vector();
                 DefiniteClause dc = b.buildResult(gl, term);
@@ -1525,26 +1457,24 @@ public class BackwardReasoner implements Reasoner {
                 return v.iterator();
             }
 
-            if(!t.subTerms[0].isExpr() && t.subTerms[0].getSymbol() >= 0){
-                //logger.debug("Retrieving by oid");
+            if (!t.subTerms[0].isExpr() && t.subTerms[0].getSymbol() >= 0) {
+                // logger.debug("Retrieving by oid");
                 Integer oid = t.subTerms[0].getSymbol();
-                if(oids.containsKey(oid)){
-                    //logger.debug("Found oid: " + oid);
-                    Vector v = (Vector)oids.get(oid);
-                    Vector v2 = (Vector)oids.get(-1);
+                if (oids.containsKey(oid)) {
+                    // logger.debug("Found oid: " + oid);
+                    Vector v = (Vector) oids.get(oid);
+                    Vector v2 = (Vector) oids.get(-1);
                     Vector v3 = new Vector();
                     v3.addAll(v);
                     v3.addAll(v2);
                     return v3.iterator();
-                }
-                else{
-                   // logger.debug("Did not find oid: " + oid);
-                    Vector v = (Vector)oids.get(-1);
+                } else {
+                    // logger.debug("Did not find oid: " + oid);
+                    Vector v = (Vector) oids.get(-1);
                     return v.iterator();
                 }
-            }
-            else{
-               // logger.debug("Finding by symbol");
+            } else {
+                // logger.debug("Finding by symbol");
                 if (clauses.containsKey(sym)) {
                     Vector v = (Vector) clauses.get(sym);
                     return v.iterator();
@@ -1559,8 +1489,8 @@ public class BackwardReasoner implements Reasoner {
          *
          * @return boolean
          */
-        public boolean hasNextOld() {      
-        	
+        public boolean hasNextOld() {
+
             if (foundNext) {
                 return true;
             } else if (!uit.hasNext()) {
@@ -1569,32 +1499,28 @@ public class BackwardReasoner implements Reasoner {
                 nextGoalList = new GoalList((DefiniteClause) uit.next());
                 nextGoalList.init();
 
-                Unifier u = new Unifier(goal, nextGoalList,
-                                        Unifier.DCTREE_MODE, true);
+                Unifier u = new Unifier(goal, nextGoalList, Unifier.DCTREE_MODE, true);
                 try {
                     if (u.unified) {
-                        if (mode == APPLY_TO_GOALLIST
-                            || mode == APPLY_TO_GOAL_AND_GOALLIST) {
+                        if ((mode == APPLY_TO_GOALLIST) || (mode == APPLY_TO_GOAL_AND_GOALLIST)) {
                             u.applyToGoalList();
-                            //nextGoalList.setSymbolIndex();
+                            // nextGoalList.setSymbolIndex();
                         }
-                        if (mode == APPLY_TO_GOAL_AND_GOALLIST
-                            || mode == APPLY_TO_GOAL) {
+                        if ((mode == APPLY_TO_GOAL_AND_GOALLIST) || (mode == APPLY_TO_GOAL)) {
                             goal.goalList.createBackup();
                             u.applyToGoal();
                             goal.setSymbolIndex();
-
                         }
                         foundNext = true;
                         return true;
                     } else {
-                    	count++;
-                    	System.out.println(count);
+                        count++;
+                        System.out.println(count);
                         return hasNextOld();
                     }
                 } catch (Exception e) {
-                    //logger.error(e.getMessage());
-                	System.out.println("stack results: ");
+                    // logger.error(e.getMessage());
+                    System.out.println("stack results: ");
                     e.printStackTrace();
                     return false;
                 }
@@ -1602,47 +1528,41 @@ public class BackwardReasoner implements Reasoner {
         }
 
         //has next 2
-        public boolean hasNext()
-        {
-           
-           if(foundNext) return true;
-           
-           if(!uit.hasNext()) return false;
-           
-           while(uit.hasNext())
-           {
-               nextGoalList = new GoalList( (DefiniteClause) uit.next());
-               nextGoalList.init();
+        public boolean hasNext() {
 
-               Unifier u = new Unifier(goal, nextGoalList, Unifier.DCTREE_MODE,
-        true);
+            if (foundNext)
+                return true;
 
-               try
-               {
-                   if(u.unified) {
-                       if(mode == APPLY_TO_GOALLIST || mode ==
-        APPLY_TO_GOAL_AND_GOALLIST)
-                       {
-                           u.applyToGoalList();
-                       }
-                       if (mode == APPLY_TO_GOAL_AND_GOALLIST || mode ==
-        APPLY_TO_GOAL)
-                       {
-                           goal.goalList.createBackup();
-                           u.applyToGoal();
-                           goal.setSymbolIndex();
-                       }
-                       foundNext = true;
-                       return true;
-                   }
+            if (!uit.hasNext())
+                return false;
 
-               }
-               catch( Exception e ){
-            	   return false;   
-               }
-          }
-           return false;
+            while (uit.hasNext()) {
+                nextGoalList = new GoalList((DefiniteClause) uit.next());
+                nextGoalList.init();
+
+                Unifier u = new Unifier(goal, nextGoalList, Unifier.DCTREE_MODE, true);
+
+                try {
+                    if (u.unified) {
+                        if ((mode == APPLY_TO_GOALLIST) || (mode == APPLY_TO_GOAL_AND_GOALLIST)) {
+                            u.applyToGoalList();
+                        }
+                        if ((mode == APPLY_TO_GOAL_AND_GOALLIST) || (mode == APPLY_TO_GOAL)) {
+                            goal.goalList.createBackup();
+                            u.applyToGoal();
+                            goal.setSymbolIndex();
+                        }
+                        foundNext = true;
+                        return true;
+                    }
+
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+            return false;
         }
+        
         /**
          *
          * @return Object
@@ -1671,8 +1591,7 @@ public class BackwardReasoner implements Reasoner {
          * @throws UnsupportedOperationException
          */
         public void remove() throws UnsupportedOperationException {
-            throw new UnsupportedOperationException
-                    ("SubGoalListIterator does not allow remove");
+            throw new UnsupportedOperationException("SubGoalListIterator does not allow remove");
         }
     }
 } //BackwardReasoner
