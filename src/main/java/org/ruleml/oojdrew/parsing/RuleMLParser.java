@@ -108,16 +108,16 @@ public class RuleMLParser implements PreferenceChangeListener {
     /**
      * @see jdrew.oo.parsing.RuleMLParser#parseDocument
      */
-    public void parseFile(RuleMLFormat format, String filename)
+    public void parseFile(String filename)
             throws ParseException, ParsingException, IOException {
         File file = new File(filename);
-        parseFile(format, file);
+        parseFile(file);
     }
 
     /**
      * @see jdrew.oo.parsing.RuleMLParser#parseDocument
      */
-    public void parseFile(RuleMLFormat format, File file)
+    public void parseFile(File file)
             throws ParseException, ParsingException, IOException {
         Builder bl = new Builder();
         Document doc = bl.build(file);

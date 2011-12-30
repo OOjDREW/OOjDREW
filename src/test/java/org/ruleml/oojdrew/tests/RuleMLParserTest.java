@@ -24,6 +24,7 @@ import org.ruleml.oojdrew.parsing.RuleMLFormat;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
 
 public class RuleMLParserTest extends TestCase {
+    
     private Configuration config;
 
     public static void main(String[] args) {
@@ -52,37 +53,32 @@ public class RuleMLParserTest extends TestCase {
     }
 
     public void testRuleML91CompatibilityParsing() {
-        genericRuleMLParsingTest(
-                "src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/discount_091_compat.ruleml.xml",
-                RuleMLFormat.RuleML91, false);
+        config.setSelectedRuleMLFormat(RuleMLFormat.RuleML91);
+        genericRuleMLParsingTest("src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/discount_091_compat.ruleml.xml", false);
     }
 
     public void testRuleML91Parsing() {
-        genericRuleMLParsingTest(
-                "src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/discount-0.91.ruleml.xml",
-                RuleMLFormat.RuleML91, false);
+        config.setSelectedRuleMLFormat(RuleMLFormat.RuleML91);
+        genericRuleMLParsingTest("src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/discount-0.91.ruleml.xml", false);
     }
 
     public void testRuleML100Parsing() {
-        genericRuleMLParsingTest(
-                "src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/discount-1.0.ruleml.xml",
-                RuleMLFormat.RuleML100, false);
+        config.setSelectedRuleMLFormat(RuleMLFormat.RuleML100);
+        genericRuleMLParsingTest("src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/discount-1.0.ruleml.xml", false);
     }
 
     public void testRuleML100WithoutRoot() {
-        genericRuleMLParsingTest(
-                "src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/studycourse.ruleml.xml",
-                RuleMLFormat.RuleML100, false);
+        config.setSelectedRuleMLFormat(RuleMLFormat.RuleML100);
+        genericRuleMLParsingTest("src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/studycourse.ruleml.xml", false);
     }
 
-    public void genericRuleMLParsingTest(String ruleMLFile,
-            RuleMLFormat rmlFormat, boolean shouldThrow) {
+    public void genericRuleMLParsingTest(String ruleMLFile, boolean shouldThrow) {
         boolean thrown = false;
-
+        
         RuleMLParser rmlParser = new RuleMLParser(config);
 
         try {
-            rmlParser.parseFile(rmlFormat, ruleMLFile);
+            rmlParser.parseFile(ruleMLFile);
         } catch (Exception e1) {
             e1.printStackTrace();
             thrown = true;
