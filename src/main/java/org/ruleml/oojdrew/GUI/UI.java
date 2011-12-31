@@ -9,10 +9,7 @@ public interface UI {
     void setController(AbstractUIApp controller);
     
     void updateUI();
-    
-    void setChckbxmntmValidateRulemlSelected(boolean enabled);
-    boolean getChckbxmntmValidateRulemlSelected();
-    
+        
     void setTextForCurrentEditingTab(String text);
     void appendToCurrentEditingTab(String text);
     String getTextForCurrentEditingTab();

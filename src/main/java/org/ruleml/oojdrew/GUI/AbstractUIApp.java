@@ -76,9 +76,6 @@ public abstract class AbstractUIApp {
         preferenceDialogUI.setLookAndFeel(config.getSelectedLookAndFeel());
         preferenceDialogUI.setRuleMLFormat(config.getSelectedRuleMLFormat());
         preferenceDialogUI.setLoggingLevel(config.getLogLevel());
-
-        ui.setChckbxmntmValidateRulemlSelected(config
-                .getValidateRuleMLEnabled());
     }
 
     public void applySettingsFromUI() {
@@ -89,9 +86,6 @@ public abstract class AbstractUIApp {
         config.setLookAndFeel(preferenceDialogUI.getSelectedLookAndFeel());
         config.setSelectedRuleMLFormat(preferenceDialogUI.getRuleMLFormat());
         config.setLogLevel(preferenceDialogUI.getLoggingLevel());
-
-        config.setValidateRuleMLEnabled(ui
-                .getChckbxmntmValidateRulemlSelected());
     }
 
     public void showDebugConsole() {

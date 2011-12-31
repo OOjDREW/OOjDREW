@@ -23,9 +23,6 @@ import org.apache.log4j.Level;
 import org.ruleml.oojdrew.parsing.RuleMLFormat;
 
 public interface Configuration {
-    public boolean getValidateRuleMLEnabled();
-    public void setValidateRuleMLEnabled(boolean enabled);
-
     public int getTextAreaFontSize();
     public void setTextAreaFontSize(int newSize);
 

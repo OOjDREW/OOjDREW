@@ -34,8 +34,6 @@ public class DefaultReasonerMenu extends JMenuBar {
     private JMenu mnFile;
     private JMenu mnOptions;
     private JMenu mnRun;
-    
-    private JCheckBoxMenuItem chckbxmntmValidateRuleml;
 
     // UI controller class
     private AbstractUIApp controller;
@@ -109,15 +107,7 @@ public class DefaultReasonerMenu extends JMenuBar {
         mnFile.add(mntmExit);
     }
     
-    private void populateOptionsMenu() { 
-        chckbxmntmValidateRuleml = new JCheckBoxMenuItem("Validate RuleML");
-        chckbxmntmValidateRuleml.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                controller.applySettingsFromUI();
-            }
-        });
-        mnOptions.add(chckbxmntmValidateRuleml);
-        
+    private void populateOptionsMenu() {         
         JMenuItem mntmShowDebugConsole = new JMenuItem("Show debug console");
         mntmShowDebugConsole.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -152,14 +142,6 @@ public class DefaultReasonerMenu extends JMenuBar {
             }
         });
         mnRun.add(mnRmlNormalizer);
-    }
-    
-    public boolean getChckbxmntmValidateRulemlSelected() {
-        return chckbxmntmValidateRuleml.isSelected();
-    }
-
-    public void setChckbxmntmValidateRulemlSelected(boolean selected) {
-        chckbxmntmValidateRuleml.setSelected(selected);
     }
     
     public void setController(AbstractUIApp controller) {

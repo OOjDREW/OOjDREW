@@ -67,8 +67,7 @@ public class RuleMLParser implements PreferenceChangeListener {
      */
     private Vector<DefiniteClause> clauses;
     private Configuration config;
-    private boolean validateRuleML;
-
+    
     private RuleMLFormat rmlFormat;
 
     private Level logLevel;
@@ -108,8 +107,7 @@ public class RuleMLParser implements PreferenceChangeListener {
     /**
      * @see jdrew.oo.parsing.RuleMLParser#parseDocument
      */
-    public void parseFile(String filename)
-            throws ParseException, ParsingException, IOException {
+    public void parseFile(String filename) throws ParseException, ParsingException, IOException {
         File file = new File(filename);
         parseFile(file);
     }
@@ -117,8 +115,7 @@ public class RuleMLParser implements PreferenceChangeListener {
     /**
      * @see jdrew.oo.parsing.RuleMLParser#parseDocument
      */
-    public void parseFile(File file)
-            throws ParseException, ParsingException, IOException {
+    public void parseFile(File file) throws ParseException, ParsingException, IOException {
         Builder bl = new Builder();
         Document doc = bl.build(file);
         parseDocument(doc);
@@ -127,37 +124,11 @@ public class RuleMLParser implements PreferenceChangeListener {
     /**
      * @see jdrew.oo.parsing.RuleMLParser#parseDocument
      */
-    public void parseRuleMLString(String contents)
-            throws ParseException, ParsingException, IOException {
-
-        if (validateRuleML) {
-            XMLReader xmlReader;
-            try {
-                xmlReader = XMLReaderFactory
-                        .createXMLReader("org.apache.xerces.parsers.SAXParser");
-                xmlReader.setFeature(
-                        "http://apache.org/xml/features/validation/schema",
-                        true);
-            } catch (SAXException e) {
-                throw new ParseException("Unable to create XML validator");
-            }
-
-            Builder bl = new Builder(xmlReader, true);
-            StringReader sr = new StringReader(contents);
-            Document doc;
-            try {
-                doc = bl.build(sr);
-                parseDocument(doc);
-            } catch (Exception e) {
-                throw new ParseException(
-                        "Document does not validate against the specified XML schema definition(s)!");
-            }
-        } else {
-            Builder bl = new Builder();
-            StringReader sr = new StringReader(contents);
-            Document doc = bl.build(sr);
-            parseDocument(doc);
-        }
+    public void parseRuleMLString(String contents) throws ParseException, ParsingException, IOException {
+        Builder bl = new Builder();
+        StringReader sr = new StringReader(contents);
+        Document doc = bl.build(sr);
+        parseDocument(doc);
     }
 
     /**
@@ -184,8 +155,7 @@ public class RuleMLParser implements PreferenceChangeListener {
      *             (subclass) is thrown if the XML document is not well * formed
      *             or does not conform to the DTD specified.
      */
-    public void parseDocument(Document doc)
-            throws ParseException, ParsingException {
+    public void parseDocument(Document doc) throws ParseException, ParsingException {
         RuleMLDocumentParser parser = new RuleMLDocumentParser(rmlFormat, clauses);
         parser.setLogLevel(logLevel);
 
@@ -210,19 +180,7 @@ public class RuleMLParser implements PreferenceChangeListener {
         contents = ensureQueryTag(contents);
         contents = buildFakeImplication(contents);
 
-        // Disable validation for RuleML queries
-        boolean skippedValidation = false;
-        if (validateRuleML) {
-            validateRuleML = false;
-            skippedValidation = true;
-        }
-
         parseRuleMLString(contents);
-
-        // Re-enable validation
-        if (skippedValidation) {
-            validateRuleML = true;
-        }
 
         return (DefiniteClause) clauses.lastElement();
     }
@@ -300,7 +258,6 @@ public class RuleMLParser implements PreferenceChangeListener {
      * Updates parser configuration when preferences have changed
      */
     public void preferenceChange(PreferenceChangeEvent evt) {
-        validateRuleML = config.getValidateRuleMLEnabled();
         rmlFormat = config.getSelectedRuleMLFormat();
         logLevel = config.getLogLevel();
     }

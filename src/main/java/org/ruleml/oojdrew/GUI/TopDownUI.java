@@ -28,10 +28,8 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -391,14 +389,6 @@ public class TopDownUI implements UI {
 	
 	public JFrame getFrmOoJdrew() {
 		return frmOoJdrew;
-	}
-	
-	public boolean getChckbxmntmValidateRulemlSelected() {
-		return menuBar.getChckbxmntmValidateRulemlSelected();
-	}
-	
-	public void setChckbxmntmValidateRulemlSelected(boolean selected) {
-	    menuBar.setChckbxmntmValidateRulemlSelected(selected);
 	}
 	
 	private EditingTab currentEditingTab()

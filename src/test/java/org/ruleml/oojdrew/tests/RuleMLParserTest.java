@@ -49,7 +49,6 @@ public class RuleMLParserTest extends TestCase {
     public RuleMLParserTest(String testName) {
         super(testName);
         this.config = new MockConfiguration();
-        config.setValidateRuleMLEnabled(false);
     }
 
     public void testRuleML91CompatibilityParsing() {

@@ -31,8 +31,7 @@ public class COjDATest extends TestCase {
     }
     
     public void ruleML100ParsingTestStudyCourse() {
-        boolean enableXMLValidation = false;
-        api.configureAPI(RuleMLFormat.RuleML100, enableXMLValidation);
+        api.configureAPI(RuleMLFormat.RuleML100);
         
         String testCaseDirectory = "src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/";
         

@@ -109,9 +109,8 @@ public class COjDA {
      * @param enableValidation
      *            If true, the XML validation will be enabled
      */
-    public void configureAPI(RuleMLFormat rmlFormat, boolean enableValidation) {
+    public void configureAPI(RuleMLFormat rmlFormat) {
         config.setSelectedRuleMLFormat(rmlFormat);
-        config.setValidateRuleMLEnabled(enableValidation);
     }
 
     /**

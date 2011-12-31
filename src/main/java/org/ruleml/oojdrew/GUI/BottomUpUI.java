@@ -331,14 +331,6 @@ public class BottomUpUI implements UI {
         return frmOoJdrew;
     }
 
-    public boolean getChckbxmntmValidateRulemlSelected() {
-        return menuBar.getChckbxmntmValidateRulemlSelected();
-    }
-
-    public void setChckbxmntmValidateRulemlSelected(boolean selected) {
-        menuBar.setChckbxmntmValidateRulemlSelected(selected);
-    }
-
     private EditingTab currentEditingTab() {
         switch (getTabbedPaneSelectedIndex()) {
         case 0:

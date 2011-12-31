@@ -24,20 +24,11 @@ import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.parsing.RuleMLFormat;
 
 public class MockConfiguration implements Configuration {
-    private boolean ruleMLCompatibilityModeEnabled;
     private int uiFontSize;
     private boolean linkFontSizes;
     private String lookAndFeelClassName;
     private RuleMLFormat rmlFormat;
     private Level logLevel;
-
-    public boolean getValidateRuleMLEnabled() {
-        return ruleMLCompatibilityModeEnabled;
-    }
-
-    public void setValidateRuleMLEnabled(boolean enabled) {
-        ruleMLCompatibilityModeEnabled = enabled;
-    }
 
     public int getTextAreaFontSize() {
         throw new UnsupportedOperationException();
