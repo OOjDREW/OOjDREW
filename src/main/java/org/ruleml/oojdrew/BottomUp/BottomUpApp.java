@@ -153,39 +153,34 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
         return successful;
     }
 
-    public void checkStratificiation() {
+    public void checkKnowledgeBaseForStratificiation() {
         boolean strat = getReasoner().isStratifiable();
         System.out.println("Is stratifiable: " + strat);
         // Data base is not stratifiable
         if (!strat) {
             // Allowing the user to see the details on why stratification failed
-            int ans = JOptionPane
-                    .showConfirmDialog(
-                            ui.getFrmOoJdrew(),
-                            "Knowledge base is not stratifiable. \nWould you like to see more detials?\n",
-                            "Non-Stratfiable", JOptionPane.YES_NO_OPTION);
+            int dlgResult = JOptionPane.showConfirmDialog(ui.getFrmOoJdrew(),
+                    "Knowledge base is not stratifiable. \nWould you like to see more detials?\n",
+                    "Non-Stratfiable", JOptionPane.YES_NO_OPTION);
             // If the user wants to see the details, he can
-            if (ans == 0) {
+            if (dlgResult == JOptionPane.YES_OPTION) {
                 Vector msg = getReasoner().getMessage();
                 Iterator msgIterator = msg.iterator();
                 String message = "";
                 int count = 1;
                 while (msgIterator.hasNext()) {
-                    message = message + count + ")"
-                            + (String) msgIterator.next() + "\n";
+                    message = message + count + ")" + (String) msgIterator.next() + "\n";
                     count++;
                 }
-                JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), message,
-                        "Stratification Violations",
+                JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), message, "Stratification Violations",
                         JOptionPane.INFORMATION_MESSAGE);
 
             }
         }
         // Tells the user that the knowledge base is stratifiable
         if (strat) {
-            JOptionPane.showMessageDialog(ui.getFrmOoJdrew(),
-                    "Knowledge base is stratifiable.", "Stratfiable",
-                    JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), "Knowledge base is stratifiable.",
+                    "Stratfiable", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

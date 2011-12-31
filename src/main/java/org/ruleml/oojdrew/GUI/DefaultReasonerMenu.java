@@ -55,14 +55,14 @@ public class DefaultReasonerMenu extends JMenuBar {
         
         this.add(mnFile);
         this.add(mnOptions);
-        //this.add(mnRun);
+        this.add(mnRun);
     }
     
-    public void addOptionMenu(Component component) {
+    public void addToOptionMenu(Component component) {
         mnOptions.add(component);
     }
     
-    public void addRunMenu(Component component) {
+    public void addToRunMenu(Component component) {
         mnRun.add(component);
     }
     

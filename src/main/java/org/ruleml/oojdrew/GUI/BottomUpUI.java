@@ -30,7 +30,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -99,14 +99,14 @@ public class BottomUpUI implements UI {
 	 
 		frmOoJdrew.setJMenuBar(menuBar);
 		
-	    JMenu chckbxmntmTestForStratification = new JMenu("Test Knowledgebase for Stratification");
+		JMenuItem chckbxmntmTestForStratification = new JMenuItem("Test Knowledgebase for Stratification");
 		chckbxmntmTestForStratification.setToolTipText("Checks if the knowledgebase is stratifiable");
 		chckbxmntmTestForStratification.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                controller.checkStratificiation();
+                controller.checkKnowledgeBaseForStratificiation();
             }
         });
-		menuBar.addRunMenu(chckbxmntmTestForStratification);
+		menuBar.addToRunMenu(chckbxmntmTestForStratification);
 		
 		frmOoJdrew.getContentPane().setLayout(new BorderLayout(0, 0));
 			
