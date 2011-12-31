@@ -153,7 +153,7 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
         return successful;
     }
 
-    private void checkStratificiation() {
+    public void checkStratificiation() {
         boolean strat = getReasoner().isStratifiable();
         System.out.println("Is stratifiable: " + strat);
         // Data base is not stratifiable
@@ -186,16 +186,6 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
             JOptionPane.showMessageDialog(ui.getFrmOoJdrew(),
                     "Knowledge base is stratifiable.", "Stratfiable",
                     JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
-    @Override
-    public void parseKnowledgeBase() {
-        super.parseKnowledgeBase();
-
-        // Testing for stratification if user wants to.
-        if (getUI().getStratificationCheckEnabled()) {
-            checkStratificiation();
         }
     }
 

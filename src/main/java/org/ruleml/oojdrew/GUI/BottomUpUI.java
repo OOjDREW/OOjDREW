@@ -21,26 +21,20 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
@@ -51,15 +45,13 @@ import org.ruleml.oojdrew.BottomUp.BottomUpApp;
 public class BottomUpUI implements UI {
 
 	private final JFrame frmOoJdrew = new JFrame();
+	private final DefaultReasonerMenu menuBar = new DefaultReasonerMenu();
 	private final ButtonGroup typeDefinitionButtonGroup = new ButtonGroup();
 	private final ButtonGroup knowledgeBaseButtonGroup = new ButtonGroup();
 	private final ButtonGroup outputFormatButtonGroup = new ButtonGroup();
 	private UndoRedoTextArea typeDefinitionTextArea;
 	private UndoRedoTextArea knowledgeBaseTextArea;
     private UndoRedoTextArea outputTextArea;
-    private JCheckBoxMenuItem chckbxmntmValidateRuleml;
-    private JCheckBoxMenuItem chckbxmntmTestForStratification;
-    private JMenuItem mntmShowDebugConsole;
     private JPanel typeDefinitonTab;
     private JPanel knowledgeBaseTab;
     private JTabbedPane tabbedPane;
@@ -104,82 +96,18 @@ public class BottomUpUI implements UI {
 		frmOoJdrew.setTitle("OO jDREW");
         frmOoJdrew.setBounds(100, 100, 661, 700);
 		frmOoJdrew.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		JMenuBar menuBar = new JMenuBar();
+	 
 		frmOoJdrew.setJMenuBar(menuBar);
 		
-		JMenu mnFile = new JMenu("File");
-		menuBar.add(mnFile);
-		
-		JMenuItem mntmOpenFile = new JMenuItem("Open file...");
-		mntmOpenFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
-		mntmOpenFile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				controller.openFile();
-			}
-		});
-		mnFile.add(mntmOpenFile);
-		
-		JMenuItem mntmOpenUri = new JMenuItem("Open URI...");
-		mntmOpenUri.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				controller.openURI();
-			}
-		});
-		mnFile.add(mntmOpenUri);
-		
-		JMenuItem mntmSaveAs = new JMenuItem("Save as...");
-		mntmSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
-		mntmSaveAs.setMnemonic(KeyEvent.VK_S);
-		mntmSaveAs.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				controller.saveFileAs();
-			}
-		});
-		mnFile.add(mntmSaveAs);
-		
-		mnFile.addSeparator();
-		
-		JMenuItem mntmExit = new JMenuItem("Exit");
-		mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK));
-		mntmExit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
-		mnFile.add(mntmExit);
-		
-		JMenu mnOptions = new JMenu("Options");
-		menuBar.add(mnOptions);
-		
-		chckbxmntmValidateRuleml = new JCheckBoxMenuItem("Validate RuleML");
-		chckbxmntmValidateRuleml.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				controller.applySettingsFromUI();
-			}
-		});
-		mnOptions.add(chckbxmntmValidateRuleml);
-		
-		mntmShowDebugConsole = new JMenuItem("Show debug console");
-		mntmShowDebugConsole.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				controller.showDebugConsole();
-			}
-		});
-		
-		chckbxmntmTestForStratification = new JCheckBoxMenuItem("Test for Stratification");
+	    JMenu chckbxmntmTestForStratification = new JMenu("Test Knowledgebase for Stratification");
 		chckbxmntmTestForStratification.setToolTipText("Checks if the knowledgebase is stratifiable");
-		mnOptions.add(chckbxmntmTestForStratification);
-		mnOptions.add(mntmShowDebugConsole);
+		chckbxmntmTestForStratification.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                controller.checkStratificiation();
+            }
+        });
+		menuBar.addRunMenu(chckbxmntmTestForStratification);
 		
-		JMenuItem mntmPreferences = new JMenuItem("Preferences...");
-		mntmPreferences.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
-		mntmPreferences.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				controller.showPreferenceDialog();
-			}
-		});
-		mnOptions.add(mntmPreferences);
 		frmOoJdrew.getContentPane().setLayout(new BorderLayout(0, 0));
 			
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
@@ -385,6 +313,7 @@ public class BottomUpUI implements UI {
     }
 
     public void setController(AbstractUIApp controller) {
+        menuBar.setController(controller);
         this.controller = (BottomUpApp) controller;
         this.controller.syncUIWithSettings();
     }
@@ -403,11 +332,11 @@ public class BottomUpUI implements UI {
     }
 
     public boolean getChckbxmntmValidateRulemlSelected() {
-        return chckbxmntmValidateRuleml.isSelected();
+        return menuBar.getChckbxmntmValidateRulemlSelected();
     }
 
     public void setChckbxmntmValidateRulemlSelected(boolean selected) {
-        chckbxmntmValidateRuleml.setSelected(selected);
+        menuBar.setChckbxmntmValidateRulemlSelected(selected);
     }
 
     private EditingTab currentEditingTab() {
@@ -539,10 +468,6 @@ public class BottomUpUI implements UI {
         }
 
         return SyntaxFormat.POSL;
-    }
-
-    public boolean getStratificationCheckEnabled() {
-        return chckbxmntmTestForStratification.isSelected();
     }
 
     public boolean getSeparateFactsEnabled() {
