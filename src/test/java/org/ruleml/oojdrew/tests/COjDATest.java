@@ -16,7 +16,7 @@ public class COjDATest extends TestCase {
     public static void main(String[] args) {
         try {
             COjDATest test = new COjDATest("RuleML 1.0 parsing via API (StudyCourse)");
-            test.ruleML100ParsingTestStudyCourse();
+            test.testRuleML100ParsingStudyCourse();
 
             System.out.println("All tests passed.");
         } catch (Exception e) {
@@ -30,7 +30,7 @@ public class COjDATest extends TestCase {
         api = COjDA.getCOjDA();
     }
     
-    public void ruleML100ParsingTestStudyCourse() {
+    public void testRuleML100ParsingStudyCourse() {
         api.configureAPI(RuleMLFormat.RuleML100);
         
         String testCaseDirectory = "src/test/java/org/ruleml/oojdrew/tests/RuleMLTestCases/";
