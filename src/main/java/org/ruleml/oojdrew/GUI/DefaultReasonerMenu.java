@@ -130,7 +130,7 @@ public class DefaultReasonerMenu extends JMenuBar {
         JMenuItem mnRmlValidator = new JMenuItem("RuleML (XML) validator");
         mnRmlValidator.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // TODO
+                controller.validateRuleMLDocument();
             }
         });
         mnRun.add(mnRmlValidator);
@@ -138,7 +138,7 @@ public class DefaultReasonerMenu extends JMenuBar {
         JMenuItem mnRmlNormalizer = new JMenuItem("RuleML (XSLT) normalizer");
         mnRmlNormalizer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // TODO
+                controller.normalizeRuleMLDocument();
             }
         });
         mnRun.add(mnRmlNormalizer);

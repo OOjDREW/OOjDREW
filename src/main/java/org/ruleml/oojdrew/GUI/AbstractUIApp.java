@@ -33,6 +33,7 @@ import org.ruleml.oojdrew.parsing.SubsumesParser;
 import org.ruleml.oojdrew.util.SymbolTable;
 import org.ruleml.oojdrew.util.Types;
 import org.ruleml.oojdrew.util.Util;
+import org.ruleml.oojdrew.xml.RuleMLValidator;
 
 public abstract class AbstractUIApp {
 
@@ -102,7 +103,7 @@ public abstract class AbstractUIApp {
     }
 
     private boolean showOpenForAppendDialog() {
-        return 0 == JOptionPane.showConfirmDialog(null, "Append content?",
+        return 0 == JOptionPane.showConfirmDialog(ui.getFrmOoJdrew(), "Append content?",
                 "Append or replace?", JOptionPane.YES_NO_OPTION);
     }
 
@@ -241,16 +242,34 @@ public abstract class AbstractUIApp {
     }
 
     protected void defaultExceptionHandler(Exception e) {
-        String msg = String.format("Unknown error occured (%s)", e.getClass()
-                .getName());
+        String msg;
         if (e.getMessage() != null) {
             msg = e.getMessage();
         } else if (e.getCause() != null && e.getCause().getMessage() != null) {
             msg = e.getCause().getMessage();
+        } else {
+            msg = String.format("Unknown error occured (%s)", e.getClass().getName());
         }
 
-        JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), msg, "Error",
-                JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), msg, "Error", JOptionPane.ERROR_MESSAGE);
         logger.error(msg);
+    }
+    
+    protected void showInformationDialog(String title, String message) {
+        JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), message, title, JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    protected void validateRuleMLDocument() {
+        String content = ui.getKnowledgeBaseTextAreaText();
+        try {
+            RuleMLValidator.validateRuleMLDocument(content);
+            showInformationDialog("Successfully validated document.", "Validation successful");
+        } catch (Exception e) {
+            defaultExceptionHandler(e);
+        }
+    }
+    
+    protected void normalizeRuleMLDocument() {
+        defaultExceptionHandler(new Exception("Not yet implemented"));
     }
 }
