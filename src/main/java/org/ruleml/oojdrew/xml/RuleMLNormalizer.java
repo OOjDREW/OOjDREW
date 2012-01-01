@@ -2,7 +2,9 @@ package org.ruleml.oojdrew.xml;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
 import javax.xml.transform.Transformer;
@@ -11,6 +13,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import nu.xom.Builder;
+import nu.xom.Document;
+import nu.xom.ParsingException;
+import nu.xom.Serializer;
 
 import org.ruleml.oojdrew.parsing.RuleMLFormat;
 
@@ -31,11 +38,15 @@ public class RuleMLNormalizer {
     // XALAN (default) XML transformer
     private final String XalanTransformer = "org.apache.xalan.processor.TransformerFactoryImpl";
 
+    // XML indent used for document formatting 
+    private final int XmlIndent = 2;
+
     /**
-     * Initializes a RuleML normalizer which uses either XSL version 1.x or version 2.x
+     * Initializes a RuleML normalizer which uses XSL either in version 1.x or
+     * in version 2.0
      * 
      * @param xslVersion
-     *      The XSL version to use (XSL 1.x or XSL 2.0)
+     *            The XSL version to use (XSL 1.x or XSL 2.0)
      */
     public RuleMLNormalizer(XSLVersion xslVersion) {
         if (xslVersion == XSLVersion.XSL20) {
@@ -47,7 +58,7 @@ public class RuleMLNormalizer {
     }
     
     /**
-     * Initializes a RuleML normalizer which uses XSL version 1.x
+     * Initializes a RuleML normalizer which uses XSL in version 1.x
      */
     public RuleMLNormalizer() {
         this(XSLVersion.XSL1X);
@@ -66,11 +77,12 @@ public class RuleMLNormalizer {
      * 
      * @throws TransformerFactoryConfigurationError
      * @throws TransformerException
-     * @throws UnsupportedEncodingException
+     * @throws IOException 
+     * @throws ParsingException 
+     * @throws UnsupportedEncodingException 
      */
     public String normalize(String input, RuleMLFormat rmlFormat)
-            throws TransformerFactoryConfigurationError, TransformerException, UnsupportedEncodingException {
-
+            throws TransformerFactoryConfigurationError, TransformerException, ParsingException, UnsupportedEncodingException {
         String normalizerXSLT = getXSLTNormalizer(rmlFormat);
         InputStream xsltStream = RuleMLNormalizer.class.getResourceAsStream(normalizerXSLT);
         StreamSource xsltStreamSource = new StreamSource(xsltStream);
@@ -81,17 +93,47 @@ public class RuleMLNormalizer {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         StreamResult outputTarget = new StreamResult(outputStream);
 
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();        
         Transformer xmlTransformer = transformerFactory.newTransformer(xsltStreamSource);
 
         xmlTransformer.transform(xmlSource, outputTarget);
         String result = outputTarget.getOutputStream().toString();
-
-        // Remove blank lines and return normalized RuleML
-        result = result.replaceAll("(?m)^\\s+$[\r|\n]+", "");
+        
+        // Format normalized document
+        try {
+            result = formatDocument(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return result;
     }
-
+    
+    /**
+     * Format (pretty print) a given XML document
+     * 
+     * @param xmlDocument
+     *            The document to format
+     * 
+     * @return The formatted document
+     * 
+     * @throws ParsingException
+     * @throws IOException
+     */
+    private String formatDocument(String xmlDocument) throws ParsingException, IOException {
+        // Create formatted document
+        Builder builder = new Builder();
+        StringReader stringReader = new StringReader(xmlDocument);
+        Document formattedDocument = builder.build(stringReader);
+        
+        // Write formatted document to output stream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Serializer serializer = new Serializer(outputStream);
+        serializer.setIndent(XmlIndent);      
+        serializer.write(formattedDocument);
+        
+        return outputStream.toString();
+    }
+    
     /**
      * Get the XSLT for the given RuleML format. By now, RuleML 1.0 and
      * RuleML 0.91 are supported.
