@@ -34,9 +34,6 @@ import nu.xom.ParsingException;
 import org.apache.log4j.Level;
 import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.util.DefiniteClause;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * A class for parsing RuleML. This is broken into two section. The RuleMLParser
