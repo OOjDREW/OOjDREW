@@ -144,11 +144,9 @@ public class RuleMLDocumentParser {
 
         // If <RuleML> is root element
         if (rootName.equals(tagNames.RULEML)) {
-            Element assertElement = getFirstChildElement(documentRoot,
-                    tagNames.ASSERT);
+            Element assertElement = getFirstChildElement(documentRoot, tagNames.ASSERT);
             if (assertElement == null) {
-                throw new ParseException(
-                        "<Assert> has to be the first child of the <RuleML>.");
+                throw new ParseException("<Assert> has to be child of the <RuleML>.");
             }
             documentRoot = assertElement;
             rootName = assertElement.getLocalName();
@@ -159,8 +157,7 @@ public class RuleMLDocumentParser {
             ruleMLRoot = documentRoot;
 
             // <Rulebase> is a optional child of <Assert>
-            Element ruleBaseElement = getFirstChildElement(documentRoot,
-                    tagNames.RULEBASE);
+            Element ruleBaseElement = getFirstChildElement(documentRoot, tagNames.RULEBASE);
 
             // <And> is a optional child of either <Rulebase> or <Assert>
             // (0.88+)
@@ -172,8 +169,7 @@ public class RuleMLDocumentParser {
         }
 
         if (ruleMLRoot == null) {
-            throw new ParseException(String.format(
-                    "Undefined RuleML root element (%s)", rootName));
+            throw new ParseException(String.format("Undefined RuleML root element (%s)", rootName));
         }
 
         return ruleMLRoot;
@@ -264,8 +260,7 @@ public class RuleMLDocumentParser {
             t.setAtom(true);
             return t;
         } else {
-            throw new ParseException(
-                    "<Assert> should only contain <Atom> (fact) or <Implies> elements.");
+            throw new ParseException("<Assert> should only contain <Atom> (fact) or <Implies> elements.");
         }
     }
 
@@ -288,8 +283,7 @@ public class RuleMLDocumentParser {
         Elements atoms = neg.getChildElements("Atom");
         if (atoms.size() != 1) {
             logger.error("OO jDREW only supports classical negation over single atoms.");
-            throw new ParseException(
-                    "OO jDREW only supports classical negation over single atoms.");
+            throw new ParseException("OO jDREW only supports classical negation over single atoms.");
         }
 
         Element firstAtom = skipRoleTag(atoms.get(0));
@@ -436,8 +430,7 @@ public class RuleMLDocumentParser {
                 if (dc2 != null)
                     newclauses.add(dc2);
             } catch (Exception e) {
-                throw new ParseException(
-                        "Error creating inconsistency check rule.");
+                throw new ParseException("Error creating inconsistency check rule.");
             }
         } else {
             throw new ParseException(
@@ -468,8 +461,7 @@ public class RuleMLDocumentParser {
                 } else if (elementName.equals(tagNames.NEG)) {
                     subterms.add(parseAtom(element, false, true));
                 } else {
-                    throw new ParseException(String.format(
-                            "<%s> is not allowed as child of <And>",
+                    throw new ParseException(String.format("<%s> is not allowed as child of <And>",
                             elementName));
                 }
             }
@@ -1151,7 +1143,7 @@ public class RuleMLDocumentParser {
     private Element getFirstChildElement(Element element, String childName) {
         Elements children = element.getChildElements();
         for (int i = 0; i < children.size(); i++) {
-            Element child = children.get(i);
+            Element child = skipRoleTag(children.get(i));
             if (child.getLocalName().equals(childName)) {
                 return child;
             }
@@ -1198,7 +1190,6 @@ public class RuleMLDocumentParser {
         Attribute type = element.getAttribute(tagNames.TYPE);
 
         int typeid = Types.IOBJECT;
-
         if (type != null) {
             typeid = Types.typeID(type.getValue().trim());
             if (typeid == -1) {
@@ -1206,7 +1197,6 @@ public class RuleMLDocumentParser {
                         + " is not defined.");
             }
         }
-
         return typeid;
     }
 
