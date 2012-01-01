@@ -24,15 +24,17 @@ import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 import org.ruleml.oojdrew.Configuration;
-import org.ruleml.oojdrew.SyntaxFormat;
 import org.ruleml.oojdrew.Reasoner;
+import org.ruleml.oojdrew.SyntaxFormat;
 import org.ruleml.oojdrew.parsing.POSLParser;
 import org.ruleml.oojdrew.parsing.RDFSParser;
+import org.ruleml.oojdrew.parsing.RuleMLFormat;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
 import org.ruleml.oojdrew.parsing.SubsumesParser;
 import org.ruleml.oojdrew.util.SymbolTable;
 import org.ruleml.oojdrew.util.Types;
 import org.ruleml.oojdrew.util.Util;
+import org.ruleml.oojdrew.xml.RuleMLNormalizer;
 import org.ruleml.oojdrew.xml.RuleMLValidator;
 
 public abstract class AbstractUIApp {
@@ -178,8 +180,7 @@ public abstract class AbstractUIApp {
             parsePOSLTypes(typeInformation);
         }
 
-        // Type information may have changed, time to parse the knowledge base
-        // again.
+        // Type information may have changed, time to parse the knowledge base again.
         parseKnowledgeBase();
     }
 
@@ -270,6 +271,15 @@ public abstract class AbstractUIApp {
     }
     
     protected void normalizeRuleMLDocument() {
-        defaultExceptionHandler(new Exception("Not yet implemented"));
+        RuleMLFormat rmlFormat = config.getSelectedRuleMLFormat();
+        String input = ui.getTextForCurrentEditingTab();
+        
+        RuleMLNormalizer normalizer = new RuleMLNormalizer();
+        try {
+            String normalizedRuleML = normalizer.normalize(input, rmlFormat);
+            ui.setTextForCurrentEditingTab(normalizedRuleML);
+        } catch (Exception e) {
+            defaultExceptionHandler(e);
+        }
     }
 }
