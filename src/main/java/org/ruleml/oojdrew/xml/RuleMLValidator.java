@@ -29,7 +29,7 @@ public class RuleMLValidator {
         } catch (ValidityException e) {
             throw new ValidityException("Document does not validate against the specified XSD.");
         } catch (Exception e) {
-            throw new ValidityException("Error occurred during document validation.");
+            throw new Exception("Error occurred during document validation.");
         }
     }
 }

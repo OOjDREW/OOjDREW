@@ -62,6 +62,7 @@ import org.ruleml.oojdrew.Builtins.TanBuiltin;
 import org.ruleml.oojdrew.parsing.RuleMLFormat;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.Term;
+import org.ruleml.oojdrew.util.Util;
 
 import ptolemy.graph.DirectedAcyclicGraph;
 import ptolemy.graph.Edge;
@@ -74,7 +75,7 @@ import ptolemy.graph.Node;
  * jdrew.oo.bu.Subsumption Class.
  * 
  * A forward reasoner works by processing "new" facts; As each new fact is
- * processed unificiation with all previously exisiting rules is attempted; if
+ * processed unification with all previously existing rules is attempted; if
  * the unification is successful one of two things happens: if the resolvent is
  * a fact then it is added to the end of the new facts list; if the resolvent is
  * a rule then it is processed (attempting unification with all processed facts)
@@ -157,7 +158,7 @@ public class ForwardReasoner implements Reasoner {
      */
     private int loopCounter;
 
-    // Logger logger = Logger.getLogger("jdrew.oo.bu.ForwardReasoner");
+    // Logger logger = Logger.getLogger(ForwardReasoner.class);
 
     /**
      * This vector will contain all nodes in the precedence graph. Its needed to
@@ -204,11 +205,9 @@ public class ForwardReasoner implements Reasoner {
      * calling the registerBuiltins();
      */
     public ForwardReasoner() {
-        super();
-        oldFacts = new Hashtable();
         rules = new Hashtable();
         builtins = new Hashtable();
-
+        oldFacts = new Hashtable();
         newFacts = new Vector();
         registerBuiltins();
     }
@@ -255,9 +254,7 @@ public class ForwardReasoner implements Reasoner {
      */
     private void registerBuiltins() {
         this.registerBuiltin(new AssertBuiltin(this));
-
         this.registerBuiltin(new AbsBuiltin());
-
         this.registerBuiltin(new AddBuiltin());
         this.registerBuiltin(new CeilingBuiltin());
         this.registerBuiltin(new ContainsBuiltin());
@@ -287,7 +284,6 @@ public class ForwardReasoner implements Reasoner {
         this.registerBuiltin(new SubstringBuiltin());
         this.registerBuiltin(new SubtractBuiltin());
         this.registerBuiltin(new TanBuiltin());
-
     }
 
     /**
@@ -333,106 +329,82 @@ public class ForwardReasoner implements Reasoner {
      */
     public String printClauses(SyntaxFormat syntaxFormat, RuleMLFormat rmlFormat) {
 
-        String out = "";
+        StringBuilder output = new StringBuilder();
 
-        int i = 1;
-        Iterator it = newFacts.iterator();
-        // needs to excute multiple times
-
+        Iterator newFactsIterator = newFacts.iterator();
+        // needs to execute multiple times
         if (!flip) {
             flip = true;
         }
-        while (it.hasNext()) {
-            DefiniteClause dc = (DefiniteClause) it.next();
+        while (newFactsIterator.hasNext()) {
+            DefiniteClause dc = (DefiniteClause) newFactsIterator.next();
 
             stringsPOSL.addElement(dc.toPOSLString());
             stringsRULEML.addElement(dc.toRuleMLString(rmlFormat));
-
-            i++;
         }
-        // return(out);
 
         if (flip) {
-
-            if (syntaxFormat == SyntaxFormat.POSL) {
-                // System.out.println("\n%Old Facts: ");
-                out = out + "%Old Facts: \n";
-                Iterator iter2 = stringsPOSL.iterator();
-                while (iter2.hasNext()) {
-                    String out2 = (String) iter2.next();
-                    // System.out.println(out2);
-                    out = out + out2 + "\n";
-                }
+            output.append(Util.NEWLINE);
+            output.append("%Old Facts:");
+            output.append(Util.NEWLINE);
+            
+            Iterator oldFactsIterator;
+            if (syntaxFormat == SyntaxFormat.POSL) {                
+                oldFactsIterator = stringsPOSL.iterator();
+            } else { 
+                // use SyntaxFormat.RULEML
+                oldFactsIterator = stringsRULEML.iterator();
             }
-
-            if (syntaxFormat == SyntaxFormat.RULEML) {
-                out = out + "%Old Facts: \n";
-                Iterator iter2 = stringsRULEML.iterator();
-                while (iter2.hasNext()) {
-                    String out2 = (String) iter2.next();
-                    // System.out.println(out2);
-                    out = out + out2 + "\n";
-                }
-            }
-
-        }
-
-        // System.out.println("\n%New Facts ");
-        out = out + "\n%New Facts: \n";
-        Enumeration keys = oldFacts.keys();
-        i = 1;
-
-        while (keys.hasMoreElements()) {
-
-            Integer key = (Integer) keys.nextElement();
-            Vector v = (Vector) oldFacts.get(key);
-            it = v.iterator();
-
-            if (syntaxFormat == SyntaxFormat.POSL) {
-
-                while (it.hasNext()) {
-                    DefiniteClause dc = (DefiniteClause) it.next();
-
-                    Iterator iter = stringsPOSL.iterator();
-                    boolean print = true;
-                    while (iter.hasNext()) {
-                        String test = (String) iter.next();
-                        if (test.equals(dc.toPOSLString())) {
-                            print = false;
-                        }
-                    }
-
-                    if (print) {
-                        out = out + dc.toPOSLString() + "\n";
-                        // System.out.println(dc.toPOSLString());
-                    }
-                }
-
-            }
-
-            if (syntaxFormat == SyntaxFormat.RULEML) {
-
-                while (it.hasNext()) {
-                    DefiniteClause dc = (DefiniteClause) it.next();
-
-                    Iterator iter = stringsRULEML.iterator();
-                    boolean print = true;
-                    while (iter.hasNext()) {
-                        String test = (String) iter.next();
-                        if (test.equals(dc.toRuleMLString(rmlFormat))) {
-                            print = false;
-                        }
-                    }
-
-                    if (print) {
-                        out = out + dc.toRuleMLString(rmlFormat) + "\n";
-                    }
-                }
-
+            
+            while (oldFactsIterator.hasNext()) {
+                String currentFact = (String) oldFactsIterator.next();
+                output.append(currentFact);
+                output.append(Util.NEWLINE);
             }
         }
 
-        return out;
+        output.append(Util.NEWLINE);
+        output.append("%New Facts::");
+        output.append(Util.NEWLINE);
+        
+        Enumeration oldFactsEnum = oldFacts.keys();
+        Iterator clauseIterator;
+        if (syntaxFormat == SyntaxFormat.POSL) {
+            clauseIterator = stringsRULEML.iterator();
+        } else {
+            clauseIterator = stringsPOSL.iterator();
+        }
+        
+        while (oldFactsEnum.hasMoreElements()) {
+            Integer key = (Integer) oldFactsEnum.nextElement();
+            Vector oldFact = (Vector) oldFacts.get(key);
+            newFactsIterator = oldFact.iterator();
+            
+            while (newFactsIterator.hasNext()) {
+                DefiniteClause dc = (DefiniteClause) newFactsIterator.next();
+                String currentClause;
+                if (syntaxFormat == SyntaxFormat.POSL) {
+                    currentClause = dc.toPOSLString();
+                } else {
+                    currentClause = dc.toRuleMLString(rmlFormat);
+                }
+
+                boolean print = true;
+                while (clauseIterator.hasNext()) {
+                    String test = (String) clauseIterator.next();
+                    if (test.equals(currentClause)) {
+                        print = false;
+                        break;
+                    }
+                }
+
+                if (print) {
+                    output.append(currentClause);
+                    output.append(Util.NEWLINE);
+                }
+            }
+        }
+        return output.toString();
     }
 
     /**
@@ -485,19 +457,16 @@ public class ForwardReasoner implements Reasoner {
         while (newFacts.size() > 0) {
 
             DefiniteClause dc = (DefiniteClause) newFacts.remove(0);
-
             // logger.debug("Processing " + dc.toPOSLString());
-
             if (this.isSubsumed(dc)) {
                 // If this new fact is subsumed by an old fact ignore and go to
                 // next new fact
                 continue;
-
             }
 
             Integer sym = dc.atoms[0].getSymbol();
-
-            if (oldFacts.containsKey(sym)) { // add new fact to oldFact "list"
+            // Add new fact to oldFact "list"
+            if (oldFacts.containsKey(sym)) {
                 Vector v = (Vector) oldFacts.get(sym);
                 v.add(dc);
             } else {
@@ -507,7 +476,6 @@ public class ForwardReasoner implements Reasoner {
             } // end adding new fact to oldFact "List"
 
             ArrayList al = new ArrayList();
-
             if (rules.containsKey(sym)) {
                 // Rules with the same relation symbol - possible unifications
                 Vector v = (Vector) rules.get(sym);
@@ -516,16 +484,12 @@ public class ForwardReasoner implements Reasoner {
                     // go though all possible unifications, and try to unify
                     DefiniteClause rule = (DefiniteClause) it.next();
 
-                    // logger.debug("Unifying with rule " +
-                    // rule.toPOSLString());
-
-                    Unifier u = new Unifier(dc, rule);
-
-                    if (u.unifies()) {
+                    // logger.debug("Unifying with rule " + rule.toPOSLString());
+                    Unifier unifier = new Unifier(dc, rule);
+                    if (unifier.unifies()) {
                         // new fact unifies with a rule - process the resolvent
-                        DefiniteClause r = u.resolvent();
-                        // logger.debug("Unified - resolvent: " +
-                        // r.toPOSLString());
+                        DefiniteClause r = unifier.resolvent();
+                        // logger.debug("Unified - resolvent: " + r.toPOSLString());
                         al.add(r);
                     }
                 }
@@ -570,10 +534,8 @@ public class ForwardReasoner implements Reasoner {
                     // dc.toPOSLString());
                     return true;
                 }
-
             }
         }
-
         return false;
     }
 
@@ -642,17 +604,13 @@ public class ForwardReasoner implements Reasoner {
      *            method.
      */
     private void process(DefiniteClause dc) {
-
         if (dc.atoms.length == 1) {
-
             // check to see at this point if dc still contains data
-
             newFacts.add(dc);
+            
         } else {
             // logger.debug("Processing " + dc.toPOSLString());
-
             Vector newResults = new Vector();
-
             Integer sym = dc.atoms[1].getSymbol();
             Iterator ofsit = getUnifiableIterator(dc, 1);
 
@@ -710,11 +668,9 @@ public class ForwardReasoner implements Reasoner {
      * 
      * See the source for a more detailed comment.
      */
-    public void buildPrecedenceGraph() {
-
+    public void buildPrecedenceGraph() { 
         Enumeration e = rules.elements();
-
-        // this while loop loops through each rule
+        // loop through each rule
         while (e.hasMoreElements()) {
             // we are getting the rule from the iterator
             Vector rule = (Vector) e.nextElement();
@@ -780,11 +736,10 @@ public class ForwardReasoner implements Reasoner {
                             // for multiple nested nafs
                         }
                     }
-                    // only excute this code if there isnt a nested naf
+                    // only execute this code if there is no nested naf
                     if (!containsANestedNaf) {
 
                         Iterator nodeIterator2 = nodes.iterator();
-
                         while (nodeIterator2.hasNext()) {
                             Node n2 = (Node) nodeIterator2.next();
                             Term compare2 = (Term) n2.getWeight();
@@ -801,7 +756,6 @@ public class ForwardReasoner implements Reasoner {
                             dg.addNode(source);
                             nodes.addElement(source);
                         }
-
                     }
                     // creating the edge with the source, sink and if it
                     // is negative clause or not
@@ -840,10 +794,10 @@ public class ForwardReasoner implements Reasoner {
 
     /**
      * This method is used to see if there is a negative edge in a cycle in the
-     * precedence graph. What it does is check every edge in the predence graph
+     * precedence graph. What it does is check every edge in the precedence graph
      * and test if it is within a cycle and if it is then we test if the edge is
      * negative. If we find a negative edge in a cycle its all we need to know
-     * that a knowledge base is not stratfiable.
+     * that a knowledge base is not stratifiable.
      * 
      * We loop through each edge and check if its source and sink are nodes in
      * cycles, which ptolemy can detect. So we loop through all possible
@@ -890,25 +844,20 @@ public class ForwardReasoner implements Reasoner {
             Term source = (Term) ((Node) edge.source()).getWeight();
             Term sink = (Term) ((Node) edge.sink()).getWeight();
             int numberOfNodes = cycleNodes.size();
-
             for (int i = 0; i < numberOfNodes; i++) {
 
                 Node n1 = (Node) cycleNodes.elementAt(i);
                 Term t1 = (Term) n1.getWeight();
-
                 for (int j = 0; j < numberOfNodes; j++) {
 
                     Node n2 = (Node) cycleNodes.elementAt(j);
                     Term t2 = (Term) n2.getWeight();
                     Unifier u = new Unifier();
-
                     if (u.unify(source, t1) && (u.unify(sink, t2))) {
 
                         String ugly = "" + edge.getWeight();
                         int b = Integer.parseInt(ugly);
-
                         if (b == negative) {
-
                             // System.out.println("Negative edge found in cycle");
                             Node n11 = (Node) edge.source();
                             Node n22 = (Node) edge.sink();
@@ -934,20 +883,18 @@ public class ForwardReasoner implements Reasoner {
                         }
                     }
                 }
-
             }
         }
         return neg;
-        // return false;
     }
 
     /**
-     * This method is used to see if a Knowledge base is statfiable or not. It
+     * This method is used to see if a Knowledge base is stratifiable or not. It
      * first checks if the rules contain a naf or not. If no rule contains a naf
-     * then its stratfiable. If there is a naf we have to create a precedence
+     * then its stratifiable. If there is a naf we have to create a precedence
      * graph and test if there is a negative cycle or not.
      * 
-     * @return True if the knowledge base is stratfiable, otherwise false
+     * @return True if the knowledge base is stratifiable, otherwise false
      */
     public boolean isStratifiable() {
         // checks to see if the rules contain a naf
@@ -956,8 +903,8 @@ public class ForwardReasoner implements Reasoner {
         }
         // build the precedent graph
         this.buildPrecedenceGraph();
-        // if we detect a negative cycle that means that its not stratfiable
-        // if we do not detect a negative cylce that means it is stratfiable
+        // if we detect a negative cycle that means that its not stratifiable
+        // if we do not detect a negative cycle that means it is stratifiable
         return !this.detectNegativeCycle();
     }
 
@@ -968,31 +915,24 @@ public class ForwardReasoner implements Reasoner {
      * then we know its stratifiable and there is no point in building a
      * precedence graph and checking for negative cycles.
      * 
-     * @return boolean - true if a rule contians naf, false otherwise
+     * @return boolean - true if a rule contains naf, false otherwise
      */
 
     public boolean rulesContainsNaf() {
+        Enumeration ruleElements = rules.elements();
+        while (ruleElements.hasMoreElements()) {
+            Vector rule = (Vector) ruleElements.nextElement();
+            Iterator ruleIterator = rule.iterator();
 
-        Enumeration e = rules.elements();
-
-        while (e.hasMoreElements()) {
-
-            Vector rule = (Vector) e.nextElement();
-            Iterator it = rule.iterator();
-
-            while (it.hasNext()) {
-
-                DefiniteClause dc = (DefiniteClause) it.next();
-
+            while (ruleIterator.hasNext()) {
+                DefiniteClause dc = (DefiniteClause) ruleIterator.next();
                 for (int j = 0; j < dc.atoms.length; j++) {
-
                     Term t1 = dc.atoms[j];
 
                     if (t1.getSymbolString().equals("naf")) {
                         return true;
                     }
                 }
-
             }
         }
         return false;
@@ -1003,12 +943,12 @@ public class ForwardReasoner implements Reasoner {
      * should stop running.
      * 
      * @param String
-     *            - the number of times a rule should loop
+     *            The number of times a rule should loop
      * 
      */
     public void setLoopCounter(String number) {
         int num = Integer.parseInt(number);
-        loopCounter = num;
+        setLoopCounter(num);
     }
 
     /**
@@ -1027,7 +967,7 @@ public class ForwardReasoner implements Reasoner {
      * This method is used to get the number of times when the forward reasoner
      * should stop running.
      * 
-     * @return int - the number of times a rule should loop
+     * @return The number of times a rule should loop
      * 
      */
     public int getLoopCounter() {

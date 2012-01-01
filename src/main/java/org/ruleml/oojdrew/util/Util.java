@@ -44,7 +44,7 @@ public class Util {
     /**
      * Line separator (new line) specified by the operating system
      */
-    private static String lineSeparator = System.getProperty("line.separator");
+    public static final String NEWLINE = System.getProperty("line.separator");
 
     /**
      * Read content from a given web address (URI)
@@ -181,7 +181,7 @@ public class Util {
         String currentLine;
         while ((currentLine = bufferedReader.readLine()) != null) {
             buffer.append(currentLine);
-            buffer.append(lineSeparator);
+            buffer.append(NEWLINE);
         }
 
         // Close stream and return file content
@@ -222,7 +222,7 @@ public class Util {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         nu.xom.Serializer serializer = new nu.xom.Serializer(outputStream);
         serializer.setIndent(3);
-        serializer.setLineSeparator(lineSeparator);
+        serializer.setLineSeparator(NEWLINE);
         try {
             Document doc = new Document(rmlElement);
             serializer.write(doc);

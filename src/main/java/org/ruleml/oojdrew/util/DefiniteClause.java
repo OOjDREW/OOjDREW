@@ -104,7 +104,8 @@ public class DefiniteClause {
         if (org.ruleml.oojdrew.Config.PRPRINT) {
             return toPOSLString();
         } else {
-            return toRuleMLString(RuleMLFormat.RuleML88);
+            // TODO remove constant version
+            return toRuleMLString(RuleMLFormat.RuleML88); 
         }
     }
 
@@ -187,7 +188,6 @@ public class DefiniteClause {
      * @return The RuleML representation of the clause stored as a XOM tree.
      */
     public Element toRuleML(RuleMLFormat rmlFormat) {
-
         RuleMLTagNames rmlTagNames = new RuleMLTagNames(rmlFormat);
 
         Element element;
