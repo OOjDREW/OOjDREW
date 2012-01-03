@@ -18,20 +18,15 @@
 package org.ruleml.oojdrew.GUI;
 import java.awt.Component;
 import java.awt.Dialog;
-import java.awt.FileDialog;
-import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,16 +34,15 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import nu.xom.Attribute;
 import nu.xom.Builder;
@@ -69,6 +63,7 @@ import org.ruleml.oojdrew.parsing.RuleMLParser;
 import org.ruleml.oojdrew.parsing.SubsumesParser;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.Types;
+import org.ruleml.oojdrew.util.Util;
 
 /**
  * This class implements a Translater that is used to translate RuleML 0.88 to 
@@ -86,18 +81,17 @@ import org.ruleml.oojdrew.util.Types;
  */
 public class Translator extends JFrame {
         
-     /**
-      * This keeps track of the current Parser being used
-      */
-       
-    public static RuleMLFormat ruleMLversion = RuleMLFormat.RuleML88;
+    /**
+     * This keeps track of the current Parser being used
+     */
+    private RuleMLFormat ruleMLversion = RuleMLFormat.RuleML88;
     
     private RuleMLParser rmlParser;
     
      /**
       * This is the constructor for the Translator.
       */   
-    public Translator(RuleMLParser rmlParser) {
+    public Translator(RuleMLParser rmlParser) {        
     	this.rmlParser = rmlParser;
     	
         try {
@@ -112,20 +106,41 @@ public class Translator extends JFrame {
      * initialize the form.
      */
     private void jbInit() throws Exception {
+        
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                System.exit(0);
+            }
+        });
             
-        JMenu fileMenu = new JMenu("File");
-        //creating a ExitAction and a ConnAction both are defined later
-        ExitActionT exitAction = new ExitActionT("Exit");
-        OpenActionT openAction = new OpenActionT("Open File");
-        WriteActionT writeAction = new WriteActionT("Write File");
-        
-        
-        //adding the connection action and exit action to the menu
-        fileMenu.add(openAction);
+        JMenu fileMenu = new JMenu("File");       
+       
+        JMenuItem mntmOpenFile = new JMenuItem("Open file...");
+        mntmOpenFile.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                openFile();
+            }
+        });
+        fileMenu.add(mntmOpenFile);
         fileMenu.addSeparator();  
-        fileMenu.add(writeAction);
-        fileMenu.addSeparator();            
-        fileMenu.add(exitAction);
+        
+        JMenuItem mntmSaveFile = new JMenuItem("Save as...");
+        mntmSaveFile.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                writeFile();
+            }
+        });
+        fileMenu.add(mntmSaveFile);
+        fileMenu.addSeparator();
+        
+        JMenuItem mntmExit = new JMenuItem("Exit");
+        mntmExit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                System.exit(0);
+            }
+        });
+        fileMenu.add(mntmExit);
                 
         //making a new menu bar and adding the file menu to it                
         JMenuBar sysMenu = new JMenuBar();
@@ -145,29 +160,26 @@ public class Translator extends JFrame {
         jbToRML91.setBounds(new Rectangle(542, 338, 145, 23));
         jbToRML91.addMouseListener(new Translator_jbToRML91_mouseAdapter(this));
         jbToRML91.setText("To RuleML 0.91/1.0");
-        this.addWindowListener(new Translator_windowAdapter(this));
         jScrollPane2.setBounds(new Rectangle(5, 370, 685, 300));
         jLabel1.setBounds(new Rectangle(5, 350, 66, 15));
         jScrollPane1.setBounds(new Rectangle(5, 28, 685, 300));
         jLabel2.setBounds(new Rectangle(5, 5, 84, 15));
-       // jbTypes.setBounds(new Rectangle(530, 337, 115, 23));
-       // jbTypes.setText("Types");
-       // jbTypes.addMouseListener(new Translator_jbTypes_mouseAdapter(this));
+
         rmltext.setLineWrap(false);
         posltext.setLineWrap(false);
         posltext.setWrapStyleWord(true);
-        jScrollPane1.getViewport().add(rmltext);
+        jScrollPane1.setViewportView(rmltext);
         rmltext.setText("");
         rmltext.setWrapStyleWord(true);
 
         jLabel1.setText("POSL");
-        jScrollPane2.getViewport().add(posltext);
+        jScrollPane2.setViewportView(posltext);
         jLabel2.setText("RuleML");
         this.getContentPane().add(jLabel1, null);
         this.getContentPane().add(jLabel2, null);
         this.getContentPane().add(jScrollPane1, null);
         this.getContentPane().add(jScrollPane2, null);
-       // this.getContentPane().add(jbTypes);
+
         this.getContentPane().add(jbToPosl, null);
         this.getContentPane().add(jbPosl91To1, null);
         this.getContentPane().add(jbToRML, null);
@@ -202,140 +214,68 @@ public class Translator extends JFrame {
 
     /**
      * This method first prompts what the user wants to write(Posl/RuleML) then
-     * the user selects where they want to save the file and name the file.  
-     * It then writes the contents after running the forward reasoner.
+     * the user selects where they want to save the file and name the file. It
+     * then writes the contents after running the forward reasoner.
      */
-   public static void writeFile(){
-        
-        JFrame f1 = new JFrame();
-        
-         Object[] possibleValues = {"RuleML", "POSL"};
-         Object selectedValue = JOptionPane.showInputDialog(null,
+    public void writeFile() {
+        Object[] possibleValues = { "RuleML", "POSL" };
+        Object selectedValue = JOptionPane.showInputDialog(null, "Select one", "Type of File",
+                JOptionPane.INFORMATION_MESSAGE, null, possibleValues, possibleValues[0]);
 
-            "Select one", "Type of File",
+        if (selectedValue != null) {
+            String toWrite;
+            if (selectedValue.equals("RuleML")) {
+                toWrite = rmltext.getText();
+            } else {
+                toWrite = posltext.getText();
+            }
 
-            JOptionPane.INFORMATION_MESSAGE, null,
-
-            possibleValues, possibleValues[0]);
-    
-    System.out.println(selectedValue);
-    
-    
-    if(selectedValue != null){
-
-        Frame parent = new Frame();
-        
-        FileDialog fd = new FileDialog(parent, "Please choose a file:",
-                   FileDialog.SAVE);
-        fd.show();
-        String inputValue = fd.getFile();
-        String fileName = fd.getDirectory() + inputValue;
-                
-        FileOutputStream out;
-    	PrintStream print;
-
-            if(inputValue != null){
-    
-            try
-               {
-                       //false = new
-                       //true = append
-                      
-                out = new FileOutputStream(fileName,false);
-                print = new PrintStream(out);
-                        
-                        if(selectedValue.equals("RuleML")){
-                                print.println(rmltext.getText());        
-                        }
-                        if(selectedValue.equals("POSL")){
-                                print.println(posltext.getText());        
-                        }
-
-                        print.close();
-              }                            
-  
-               catch (IOException e)
-                {
+            try {
+                Util.selectAndSaveToFile(toWrite, this);
+            } catch (IOException e) {
                 System.err.println("error with file");
-                }
-         }
+            }
         }
-        }//write file
+    }
     
     /**
      * This method prompts the user to select a file and then,
      * places its contents in the selected text area(POSL, RuleML).
      */
-    public static void openFile(){
-        
-         JFrame f1 = new JFrame();
-        
-         Object[] possibleValues = {"RuleML", "POSL"};
-         Object selectedValue = JOptionPane.showInputDialog(null,
-
-            "Select one", "Type of File",
-
-            JOptionPane.INFORMATION_MESSAGE, null,
-
-            possibleValues, possibleValues[0]);
+    public void openFile(){
+        Object[] possibleValues = { "RuleML", "POSL" };
+        Object selectedValue = JOptionPane.showInputDialog(null, "Select one", "Type of File",
+                JOptionPane.INFORMATION_MESSAGE, null, possibleValues, possibleValues[0]);
             
-    if(selectedValue != null){
-    
-    
-    System.out.println(selectedValue);
-
-        Frame parent = new Frame();
-        
-        FileDialog fd = new FileDialog(parent, "Please choose a file:",
-                   FileDialog.LOAD);
-        fd.show();
-
-        String selectedItem = fd.getFile();        
-        String fileName = fd.getDirectory() + fd.getFile();
-        
-                try {
-
-                        FileReader inFile = new FileReader(fileName);
-                        BufferedReader in = new BufferedReader(inFile);
-                        String read ="";
-                        String contents="";
-                        
-                        while((read = in.readLine()) != null)
-                        {
-                                contents = contents + read + '\n';
-                        }
-                        in.close();
-
-                                if(selectedValue.equals("RuleML")){
-                                rmltext.setText(contents);
-                                posltext.setText("");        
-                                }
-                                if(selectedValue.equals("POSL")){
-                                posltext.setText(contents);
-                                rmltext.setText("");        
-                                }                                
-                                
-                } catch (Exception e) {
-                        posltext.setText(e.toString());
-                        System.out.println(e.toString());
-                }              
-        }//selected value != null
-  }//openFile
-
-    //TypeDefFrame tdf = new TypeDefFrame();
+        if (selectedValue != null) {
+            try {
+                String content = Util.selectAndReadFile(this);
+                if (selectedValue.equals("RuleML")) {
+                    rmltext.setText(content);
+                    posltext.setText("");
+                }
+                if (selectedValue.equals("POSL")) {
+                    posltext.setText(content);
+                    rmltext.setText("");
+                }
+            } catch (Exception e) {
+                posltext.setText(e.toString());
+                System.out.println(e.toString());
+            }
+        }
+    }
 
     JScrollPane jScrollPane1 = new JScrollPane();
-    static JTextArea rmltext = new JTextArea();
+    UndoRedoTextArea rmltext = new UndoRedoTextArea("");
+    UndoRedoTextArea posltext = new UndoRedoTextArea("");
     JScrollPane jScrollPane2 = new JScrollPane();
-    static JTextArea posltext = new JTextArea();
     JLabel jLabel1 = new JLabel();
     JLabel jLabel2 = new JLabel();
     JButton jbToPosl = new JButton();
     JButton jbPosl91To1 = new JButton();
     JButton jbToRML = new JButton();
     JButton jbToRML91 = new JButton();
-    //JButton jbTypes = new JButton();
-    
+
     /**
      * This method is called when the user closing the window.
      */
@@ -714,123 +654,7 @@ public class Translator extends JFrame {
        // tdf.show();
     }
 }
- /**
-  * This class implements a ExitActionT which is used by the Menu bar in the
-  * Translator.
-  *
-  * <p>Title: OO jDREW</p>
-  *
-  * <p>Description: Reasoning Engine for the Semantic Web - Supporting OO RuleML
-  * 0.88</p>
-  *
-  * <p>Copyright: Copyright (c) 2005</p>
-  *
-  * @author Ben Craig
-  * @version 0.89
-  */
-        class ExitActionT extends AbstractAction
-        {
-                /**
-                 * This is the contructor for a ExitAction.
-                 *It calls the contructor for a AbstractAction.
-                 *@param String name - the name for the action
-                 */
-                
-                ExitActionT(String name)
-                {
-                        super(name);
-                }
-
-                /**
-                 * This method is called when a ExitAction is performed
-                 *When an exitAction is performed it will exit the program.
-                 *@param event - the event that occured
-                 */
-
-                public void actionPerformed(ActionEvent event)
-                {
-                        System.exit(0);
-                }
-        }//ExitAction
-        
- /**
-  * This class implements a OpenActionT which is used by the Menu bar in the
-  * Translator.
-  *
-  * <p>Title: OO jDREW</p>
-  *
-  * <p>Description: Reasoning Engine for the Semantic Web - Supporting OO RuleML
-  * 0.88</p>
-  *
-  * <p>Copyright: Copyright (c) 2005</p>
-  *
-  * @author Ben Craig
-  * @version 0.89
-  */       
-        class OpenActionT extends AbstractAction
-        {
-                /**
-                 * This is the contructor for a OpenAction.
-                 * It calls the contructor for a AbstractAction.
-                 * @param String name - the name for the action
-                 */
-                
-                OpenActionT(String name)
-                {
-                        super(name);
-                }
-
-                /**
-                 * This method is called when a OpenAction is performed
-                 * When an openAction is performed it will open a file.
-                 * @param event - the event that occured
-                 */
-
-                public void actionPerformed(ActionEvent event)
-                {
-                        Translator.openFile();
-                }
-        }//Open Action
- /**
-  * This class implements a WriteActionT which is used by the Menu bar in the
-  * Translator.
-  *
-  * <p>Title: OO jDREW</p>
-  *
-  * <p>Description: Reasoning Engine for the Semantic Web - Supporting OO RuleML
-  * 0.88</p>
-  *
-  * <p>Copyright: Copyright (c) 2005</p>
-  *
-  * @author Ben Craig
-  * @version 0.89
-  */ 
-        class WriteActionT extends AbstractAction
-        {
-                /**
-                 * This is the contructor for a WriteAction.
-                 * It calls the contructor for a AbstractAction.
-                 * @param String name - the name for the action
-                 */
-                
-                WriteActionT(String name)
-                {
-                        super(name);
-                }
-
-                /**
-                 * This method is called when a WriteAction is performed
-                 * When an writeAction is performed it will write the text
-                 * out to a file.
-                 * @param event - the event that occured
-                 */
-
-                public void actionPerformed(ActionEvent event)
-                {
-                        Translator.writeFile();
-                }
-        }//Open Action
- 
+         
  /**
   * This class implements a MouseAdapter
   *
@@ -944,28 +768,5 @@ class Translator_jbToRML91_mouseAdapter extends MouseAdapter {
 
     public void mouseClicked(MouseEvent e) {
         adaptee.jbToRML91_mouseClicked(e);
-    }
-}
- /**
-  * This class implements a WindowAdapter
-  *
-  * <p>Title: OO jDREW</p>
-  *
-  * <p>Description: Reasoning Engine for the Semantic Web - Supporting OO RuleML
-  * 0.88</p>
-  *
-  * <p>Copyright: Copyright (c) 2005</p>
-  *
-  * @author Ben Craig
-  * @version 0.89
-  */ 
-class Translator_windowAdapter extends WindowAdapter {
-    private Translator adaptee;
-    Translator_windowAdapter(Translator adaptee) {
-        this.adaptee = adaptee;
-    }
-
-    public void windowClosing(WindowEvent e) {
-        adaptee.windowClosing(e);
     }
 }
