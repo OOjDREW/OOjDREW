@@ -18,12 +18,13 @@
 package org.ruleml.oojdrew.util;
 
 import java.awt.Component;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +39,9 @@ import javax.swing.JOptionPane;
 
 import nu.xom.Document;
 import nu.xom.Element;
+
+import com.ibm.icu.text.CharsetDetector;
+import com.ibm.icu.text.CharsetMatch;
 
 public class Util {
 
@@ -158,7 +162,20 @@ public class Util {
      * @see Util#readStream(Reader)
      */
     public static String readFile(File file) throws FileNotFoundException, IOException {
-        return readStream(new FileReader(file));
+        FileInputStream fileInputStream = new FileInputStream(file);
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+        
+        // Detect character set for Unicode handling
+        CharsetDetector charsetDetector = new CharsetDetector();
+        charsetDetector.setText(bufferedInputStream);
+        CharsetMatch charsetMatch = charsetDetector.detect();
+        
+        if (charsetMatch == null) {
+            throw new IOException("Unsupported character set.");
+        }
+        
+        Reader reader = charsetMatch.getReader();
+        return readStream(reader);
     }
 
     /**
