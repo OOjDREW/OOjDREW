@@ -21,7 +21,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.prefs.PreferenceChangeListener;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -30,9 +29,7 @@ import nu.xom.Attribute;
 import nu.xom.Element;
 
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 import org.ruleml.oojdrew.Config;
 import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.SyntaxFormat;
@@ -41,8 +38,6 @@ import org.ruleml.oojdrew.GUI.BottomUpUI;
 import org.ruleml.oojdrew.GUI.DebugConsole;
 import org.ruleml.oojdrew.GUI.PreferenceDialogUI;
 import org.ruleml.oojdrew.GUI.PreferenceManager;
-import org.ruleml.oojdrew.GUI.TextPaneAppender;
-import org.ruleml.oojdrew.GUI.UISettingsController;
 import org.ruleml.oojdrew.parsing.POSLParser;
 import org.ruleml.oojdrew.parsing.RDFSParser;
 import org.ruleml.oojdrew.parsing.RuleMLFormat;
@@ -53,8 +48,7 @@ import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.SymbolTable;
 import org.ruleml.oojdrew.xml.XmlUtils;
 
-public class BottomUpApp extends AbstractUIApp implements UISettingsController,
-        PreferenceChangeListener {
+public class BottomUpApp extends AbstractUIApp {
 
     public static void main(String[] args) {
         // The look and feel must be set before any UI objects are constructed
@@ -71,21 +65,13 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
         app.run();
     }
 
-    private BottomUpApp(Configuration config,
-            PreferenceManager preferenceManager, BottomUpUI bottomUpUI,
-            PreferenceDialogUI preferenceDialogUI, DebugConsole debugConsole,
-            RDFSParser rdfsParser, POSLParser poslParser,
-            RuleMLParser rmlParser, SubsumesParser subsumesParser,
-            ForwardReasoner forwardReasoner) {
+    private BottomUpApp(Configuration config, PreferenceManager preferenceManager,
+            PreferenceDialogUI preferenceDialogUI, BottomUpUI bottomUpUI, Logger logger,
+            DebugConsole debugConsole, RDFSParser rdfsParser, POSLParser poslParser, RuleMLParser rmlParser,
+            SubsumesParser subsumesParser, ForwardReasoner forwardReasoner) {
 
-        super(config, preferenceManager, bottomUpUI, preferenceDialogUI,
-                debugConsole, rdfsParser, poslParser, rmlParser,
-                subsumesParser, forwardReasoner);
-
-        ui.setController(this);
-        preferenceDialogUI.setSettingsController(this);
-        config.addPreferenceChangeListener(this);
-        preferenceChange(null);
+        super(config, preferenceManager, preferenceDialogUI, bottomUpUI, logger, debugConsole, rdfsParser,
+                poslParser, rmlParser, subsumesParser, forwardReasoner);
     }
 
     private void run() {
@@ -108,12 +94,7 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
         DebugConsole debugConsole = new DebugConsole();
 
         BasicConfigurator.configure();
-        Logger root = Logger.getRootLogger();
-        root.setLevel(Level.DEBUG);
-        TextPaneAppender tpa = new TextPaneAppender(new PatternLayout(
-                "%-5p %d [%t]:  %m%n"), "Debug");
-        tpa.setTextPane(debugConsole.getTextPane());
-        root.addAppender(tpa);
+        Logger logger = Logger.getRootLogger();
 
         // Create the parsers
         RDFSParser rdfsParser = new RDFSParser();
@@ -125,9 +106,8 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
         ForwardReasoner forwardReasoner = new ForwardReasoner();
 
         // Create a BottomUp application
-        BottomUpApp bottomUpApp = new BottomUpApp(config, preferenceManager,
-                bottomUpUI, preferenceDialogUI, debugConsole, rdfsParser,
-                poslParser, rmlParser, subsumesParser, forwardReasoner);
+        BottomUpApp bottomUpApp = new BottomUpApp(config, preferenceManager, preferenceDialogUI, bottomUpUI,
+                logger, debugConsole, rdfsParser, poslParser, rmlParser, subsumesParser, forwardReasoner);
 
         return bottomUpApp;
     }
@@ -187,7 +167,7 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
         }
 
         SyntaxFormat outputFormat = getUI().getOutputFormat();
-        RuleMLFormat rmlFormat = config.getSelectedRuleMLFormat();
+        RuleMLFormat rmlFormat = config.getRuleMLFormat();
         boolean separateFacts = getUI().getSeparateFactsEnabled();
         boolean printRules = getUI().getPrintRulesEnabled();
 

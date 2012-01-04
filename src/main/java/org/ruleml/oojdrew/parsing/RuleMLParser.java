@@ -255,7 +255,7 @@ public class RuleMLParser implements PreferenceChangeListener {
      * Updates parser configuration when preferences have changed
      */
     public void preferenceChange(PreferenceChangeEvent evt) {
-        rmlFormat = config.getSelectedRuleMLFormat();
+        rmlFormat = config.getRuleMLFormat();
         logLevel = config.getLogLevel();
     }
 }

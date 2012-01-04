@@ -91,9 +91,24 @@ public class Config implements Configuration {
     public static boolean PRINTANONVARNAMES = false;
 
     private Preferences preferences;
+    
+    private int uiPreferenceChanges;
 
     public Config(Class clazz) {
-        this.preferences = Preferences.userNodeForPackage(clazz);
+        preferences = Preferences.userNodeForPackage(clazz);
+        uiPreferenceChanges = 1;
+    }
+    
+    public void addPreferenceChangeListener(PreferenceChangeListener listener) {
+        preferences.addPreferenceChangeListener(listener);
+    }
+    
+    public int getUiPreferenceChangeCount() {
+        return uiPreferenceChanges;
+    }
+    
+    public void decreaseUiPreferenceChangeCount() {
+        uiPreferenceChanges--;
     }
 
     public int getTextAreaFontSize() {
@@ -101,11 +116,11 @@ public class Config implements Configuration {
     }
 
     public void setTextAreaFontSize(int newSize) {
-        preferences.putInt("TextAreaFontSize", newSize);
-    }
-
-    public void addPreferenceChangeListener(PreferenceChangeListener listener) {
-        preferences.addPreferenceChangeListener(listener);
+        int oldSize = getTextAreaFontSize();
+        if (oldSize != newSize) {
+            preferences.putInt("TextAreaFontSize", newSize);
+            uiPreferenceChanges++;
+        }
     }
 
     public int getUIFontSize() {
@@ -113,7 +128,11 @@ public class Config implements Configuration {
     }
 
     public void setUIFontSize(int newSize) {
-        preferences.putInt("UIFontSize", newSize);
+        int oldSize = getUIFontSize();
+        if (oldSize != newSize) {
+            preferences.putInt("UIFontSize", newSize);
+            uiPreferenceChanges++;
+        }
     }
 
     public boolean getDebugConsoleVisible() {
@@ -121,28 +140,33 @@ public class Config implements Configuration {
     }
 
     public void setDebugConsoleVisible(boolean visible) {
-        preferences.putBoolean("DebugConsoleVisible", visible);
+        if (getDebugConsoleVisible() != visible) {
+            preferences.putBoolean("DebugConsoleVisible", visible);
+        }
     }
 
-    public String getSelectedLookAndFeel() {
-        String defaultLookAndFeelName = UIManager
-                .getSystemLookAndFeelClassName();
+    public String getLookAndFeel() {
+        String defaultLookAndFeelName = UIManager.getSystemLookAndFeelClassName();
         return preferences.get("LookAndFeel", defaultLookAndFeelName);
     }
 
     public void setLookAndFeel(String lafClassName) {
-        preferences.put("LookAndFeel", lafClassName);
+        if (!getLookAndFeel().equals(lafClassName)) {
+            preferences.put("LookAndFeel", lafClassName);
+            uiPreferenceChanges++;
+        }
     }
 
-    public RuleMLFormat getSelectedRuleMLFormat() {
+    public RuleMLFormat getRuleMLFormat() {
         String defaultRuleMLFormat = RuleMLFormat.RuleML100.getVersionName();
-        String configuredRuleMLVersion = preferences.get("RuleMLFormat",
-                defaultRuleMLFormat);
+        String configuredRuleMLVersion = preferences.get("RuleMLFormat", defaultRuleMLFormat);
         return RuleMLFormat.fromString(configuredRuleMLVersion);
     }
 
     public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat) {
-        preferences.put("RuleMLFormat", rmlFormat.getVersionName());
+        if (getRuleMLFormat() != rmlFormat) {
+            preferences.put("RuleMLFormat", rmlFormat.getVersionName());
+        }
     }
 
     public boolean getLinkFontSizes() {
@@ -150,7 +174,9 @@ public class Config implements Configuration {
     }
 
     public void setLinkFontSizes(boolean linkFontSizes) {
-        preferences.putBoolean("LinkFontSizes", linkFontSizes);
+        if (getLinkFontSizes() != linkFontSizes) {
+            preferences.putBoolean("LinkFontSizes", linkFontSizes);
+        }
     }
 
     public Level getLogLevel() {
@@ -159,6 +185,8 @@ public class Config implements Configuration {
     }
 
     public void setLogLevel(Level logLevel) {
-        preferences.putInt("LogLevel", logLevel.toInt());
+        if (getLogLevel() != logLevel) {
+            preferences.putInt("LogLevel", logLevel.toInt());
+        }
     }
 }

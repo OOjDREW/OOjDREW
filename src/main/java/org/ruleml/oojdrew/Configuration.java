@@ -23,6 +23,12 @@ import org.apache.log4j.Level;
 import org.ruleml.oojdrew.parsing.RuleMLFormat;
 
 public interface Configuration {
+    
+    void addPreferenceChangeListener(PreferenceChangeListener listener);
+    
+    public int getUiPreferenceChangeCount();
+    public void decreaseUiPreferenceChangeCount();
+    
     public int getTextAreaFontSize();
     public void setTextAreaFontSize(int newSize);
 
@@ -32,14 +38,12 @@ public interface Configuration {
     public boolean getLinkFontSizes();
     public void setLinkFontSizes(boolean linkFontSizes);
 
-    public String getSelectedLookAndFeel();
+    public String getLookAndFeel();
     public void setLookAndFeel(String lafClassName);
 
-    public RuleMLFormat getSelectedRuleMLFormat();
+    public RuleMLFormat getRuleMLFormat();
     public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat);
 
     public Level getLogLevel();
     public void setLogLevel(Level logLevel);
-
-    void addPreferenceChangeListener(PreferenceChangeListener listener);
 }

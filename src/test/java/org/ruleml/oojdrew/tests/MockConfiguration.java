@@ -30,6 +30,14 @@ public class MockConfiguration implements Configuration {
     private RuleMLFormat rmlFormat;
     private Level logLevel;
 
+    public int getUiPreferenceChangeCount() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void decreaseUiPreferenceChangeCount() {
+        throw new UnsupportedOperationException();
+    }
+   
     public int getTextAreaFontSize() {
         throw new UnsupportedOperationException();
     }
@@ -53,11 +61,11 @@ public class MockConfiguration implements Configuration {
         lookAndFeelClassName = lafClassName;
     }
 
-    public String getSelectedLookAndFeel() {
+    public String getLookAndFeel() {
         return lookAndFeelClassName;
     }
 
-    public RuleMLFormat getSelectedRuleMLFormat() {
+    public RuleMLFormat getRuleMLFormat() {
         return rmlFormat;
     }
 

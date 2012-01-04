@@ -23,7 +23,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.prefs.PreferenceChangeListener;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -33,9 +32,7 @@ import javax.swing.tree.DefaultTreeModel;
 import nu.xom.Elements;
 
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 import org.ruleml.oojdrew.Config;
 import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.SyntaxFormat;
@@ -43,9 +40,7 @@ import org.ruleml.oojdrew.GUI.AbstractUIApp;
 import org.ruleml.oojdrew.GUI.DebugConsole;
 import org.ruleml.oojdrew.GUI.PreferenceDialogUI;
 import org.ruleml.oojdrew.GUI.PreferenceManager;
-import org.ruleml.oojdrew.GUI.TextPaneAppender;
 import org.ruleml.oojdrew.GUI.TopDownUI;
-import org.ruleml.oojdrew.GUI.UISettingsController;
 import org.ruleml.oojdrew.parsing.POSLParser;
 import org.ruleml.oojdrew.parsing.RDFSParser;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
@@ -58,8 +53,7 @@ import org.ruleml.oojdrew.util.QueryTypes;
 import org.ruleml.oojdrew.util.SubsumesStructure;
 import org.ruleml.oojdrew.util.Term;
 
-public class TopDownApp extends AbstractUIApp implements UISettingsController,
-        PreferenceChangeListener {
+public class TopDownApp extends AbstractUIApp {
 
     // TODO: Rewrite all code that uses the following variables
     // These variables were copied from the old UI
@@ -109,12 +103,7 @@ public class TopDownApp extends AbstractUIApp implements UISettingsController,
         DebugConsole debugConsole = new DebugConsole();
 
         BasicConfigurator.configure();
-        Logger root = Logger.getRootLogger();
-        root.setLevel(Level.DEBUG);
-        TextPaneAppender tpa = new TextPaneAppender(new PatternLayout(
-                "%-5p %d [%t]:  %m%n"), "Debug");
-        tpa.setTextPane(debugConsole.getTextPane());
-        root.addAppender(tpa);
+        Logger logger = Logger.getRootLogger();
 
         // Create the parsers
         RDFSParser rdfsParser = new RDFSParser();
@@ -127,27 +116,19 @@ public class TopDownApp extends AbstractUIApp implements UISettingsController,
 
         // Create TopDownApp
         TopDownApp topDownApp = new TopDownApp(config, preferenceManager,
-                topDownUI, preferenceDialogUI, debugConsole, rdfsParser,
+                preferenceDialogUI, topDownUI, logger, debugConsole, rdfsParser,
                 poslParser, rmlParser, subsumesParser, backwardReasoner);
 
         return topDownApp;
     }
 
-    private TopDownApp(Configuration config,
-            PreferenceManager preferenceManager, TopDownUI topDownUI,
-            PreferenceDialogUI preferenceDialogUI, DebugConsole debugConsole,
-            RDFSParser rdfsParser, POSLParser poslParser,
-            RuleMLParser rmlParser, SubsumesParser subsumesParser,
-            BackwardReasoner backwardReasoner) {
+    private TopDownApp(Configuration config, PreferenceManager preferenceManager,
+            PreferenceDialogUI preferenceDialogUI, TopDownUI topDownUI, Logger logger,
+            DebugConsole debugConsole, RDFSParser rdfsParser, POSLParser poslParser, RuleMLParser rmlParser,
+            SubsumesParser subsumesParser, BackwardReasoner backwardReasoner) {
 
-        super(config, preferenceManager, topDownUI, preferenceDialogUI,
-                debugConsole, rdfsParser, poslParser, rmlParser,
-                subsumesParser, backwardReasoner);
-
-        getUI().setController(this);
-        preferenceDialogUI.setSettingsController(this);
-        config.addPreferenceChangeListener(this);
-        preferenceChange(null);
+        super(config, preferenceManager, preferenceDialogUI, topDownUI, logger, debugConsole, rdfsParser,
+                poslParser, rmlParser, subsumesParser, backwardReasoner);
     }
 
     private TopDownUI getUI() {

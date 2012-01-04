@@ -60,7 +60,7 @@ public class PreferenceManager implements PreferenceChangeListener {
         }
 
         try {
-            UIManager.setLookAndFeel(config.getSelectedLookAndFeel());
+            UIManager.setLookAndFeel(config.getLookAndFeel());
         } catch (Exception e) {
             e.printStackTrace();
         }

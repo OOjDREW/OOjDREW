@@ -19,10 +19,12 @@ package org.ruleml.oojdrew.GUI;
 import java.awt.Component;
 import java.io.IOException;
 import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.ruleml.oojdrew.Configuration;
 import org.ruleml.oojdrew.Reasoner;
 import org.ruleml.oojdrew.SyntaxFormat;
@@ -37,7 +39,12 @@ import org.ruleml.oojdrew.util.Util;
 import org.ruleml.oojdrew.xml.RuleMLNormalizer;
 import org.ruleml.oojdrew.xml.RuleMLValidator;
 
-public abstract class AbstractUIApp {
+/**
+ * This class serves as a general UI app
+ * 
+ *
+ */
+public abstract class AbstractUIApp implements UISettingsController, PreferenceChangeListener {
 
     protected Configuration config;
     protected UI ui;
@@ -46,44 +53,51 @@ public abstract class AbstractUIApp {
     protected PreferenceManager preferenceManager;
     protected Logger logger;
 
-    protected RDFSParser rdfsParser;
     protected POSLParser poslParser;
     protected RuleMLParser rmlParser;
-    protected SubsumesParser subsumesParser;
     
+    protected RDFSParser rdfsParser;
+    protected SubsumesParser subsumesParser;
+
     protected Reasoner reasoner;
 
-    protected AbstractUIApp(Configuration config,
-            PreferenceManager preferenceManager, UI ui,
-            PreferenceDialogUI preferenceDialogUI, DebugConsole debugConsole,
-            RDFSParser rdfsParser, POSLParser poslParser,
-            RuleMLParser rmlParser, SubsumesParser subsumesParser, Reasoner reasoner) {
+    protected AbstractUIApp(Configuration config, PreferenceManager preferenceManager,
+            PreferenceDialogUI preferenceDialogUI, UI ui, Logger logger, DebugConsole debugConsole,
+            RDFSParser rdfsParser, POSLParser poslParser, RuleMLParser rmlParser,
+            SubsumesParser subsumesParser, Reasoner reasoner) {
         this.config = config;
         this.preferenceManager = preferenceManager;
         this.ui = ui;
         this.preferenceDialogUI = preferenceDialogUI;
         this.debugConsole = debugConsole;
-        this.logger = Logger.getLogger(this.getClass());
+        this.logger = logger;
         this.rdfsParser = rdfsParser;
         this.poslParser = poslParser;
         this.rmlParser = rmlParser;
         this.subsumesParser = subsumesParser;
         this.reasoner = reasoner;
+        
+        TextPaneAppender tpa = new TextPaneAppender(new PatternLayout("%-5p %d [%t]:  %m%n"), "Debug");
+        tpa.setTextPane(debugConsole.getTextPane());
+        logger.addAppender(tpa);
+
+        ui.setController(this);
+        preferenceDialogUI.setSettingsController(this);
+        config.addPreferenceChangeListener(this);
+        preferenceChange(null);
     }
 
     public void syncUIWithSettings() {
-        preferenceDialogUI.setSpinnerTextAreaFontSizeValue(config
-                .getTextAreaFontSize());
+        preferenceDialogUI.setSpinnerTextAreaFontSizeValue(config.getTextAreaFontSize());
         preferenceDialogUI.setSpinnerUIFontSizeValue(config.getUIFontSize());
         preferenceDialogUI.setLinkFontSizes(config.getLinkFontSizes());
-        preferenceDialogUI.setLookAndFeel(config.getSelectedLookAndFeel());
-        preferenceDialogUI.setRuleMLFormat(config.getSelectedRuleMLFormat());
+        preferenceDialogUI.setLookAndFeel(config.getLookAndFeel());
+        preferenceDialogUI.setRuleMLFormat(config.getRuleMLFormat());
         preferenceDialogUI.setLoggingLevel(config.getLogLevel());
     }
 
     public void applySettingsFromUI() {
-        config.setTextAreaFontSize(preferenceDialogUI
-                .getSpinnerTextAreaFontSizeValue());
+        config.setTextAreaFontSize(preferenceDialogUI.getSpinnerTextAreaFontSizeValue());
         config.setUIFontSize(preferenceDialogUI.getSpinnerUIFontSizeValue());
         config.setLinkFontSizes(preferenceDialogUI.getLinkFontSizes());
         config.setLookAndFeel(preferenceDialogUI.getSelectedLookAndFeel());
@@ -100,8 +114,17 @@ public abstract class AbstractUIApp {
     }
 
     public void preferenceChange(PreferenceChangeEvent evt) {
-        ui.updateUI();
-        preferenceDialogUI.updateUI();
+        int uiPreferenceChanges = config.getUiPreferenceChangeCount();
+        if (uiPreferenceChanges > 0) {
+            if (uiPreferenceChanges == 1) {
+                preferenceDialogUI.updateUI();
+                ui.updateUI();
+                debugConsole.updateUI();
+            }
+            config.decreaseUiPreferenceChangeCount();
+        } else {
+            logger.setLevel(config.getLogLevel());
+        }
     }
 
     private boolean showOpenForAppendDialog() {
@@ -120,7 +143,7 @@ public abstract class AbstractUIApp {
             ui.setTextForCurrentEditingTab(text);
         }
     }
-    
+
     /**
      * Shows open URI dialog and reads from URL to editing tab
      */
@@ -136,11 +159,11 @@ public abstract class AbstractUIApp {
                 defaultExceptionHandler(e);
                 return;
             }
-            
+
             setTextOfCurrentEditingTab(pageContent, append);
         }
     }
-    
+
     public void openFile() {
         boolean append = showOpenForAppendDialog();
         Component parent = ui.getFrmOoJdrew();
@@ -180,7 +203,8 @@ public abstract class AbstractUIApp {
             parsePOSLTypes(typeInformation);
         }
 
-        // Type information may have changed, time to parse the knowledge base again.
+        // Type information may have changed, time to parse the knowledge base
+        // again.
         parseKnowledgeBase();
     }
 
@@ -217,7 +241,7 @@ public abstract class AbstractUIApp {
             }
         }
     }
-    
+
     protected void parseRuleMLKnowledeBase(String knowledgeBase) {
         rmlParser.clear();
 
@@ -255,11 +279,11 @@ public abstract class AbstractUIApp {
         JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), msg, "Error", JOptionPane.ERROR_MESSAGE);
         logger.error(msg);
     }
-    
+
     protected void showInformationDialog(String title, String message) {
         JOptionPane.showMessageDialog(ui.getFrmOoJdrew(), message, title, JOptionPane.INFORMATION_MESSAGE);
     }
-    
+
     protected void validateRuleMLDocument() {
         String content = ui.getKnowledgeBaseTextAreaText();
         RuleMLValidator validator = new RuleMLValidator();
@@ -270,11 +294,11 @@ public abstract class AbstractUIApp {
             defaultExceptionHandler(e);
         }
     }
-    
+
     protected void normalizeRuleMLDocument() {
-        RuleMLFormat rmlFormat = config.getSelectedRuleMLFormat();
+        RuleMLFormat rmlFormat = config.getRuleMLFormat();
         String input = ui.getTextForCurrentEditingTab();
-        
+
         RuleMLNormalizer normalizer = new RuleMLNormalizer();
         try {
             String normalizedRuleML = normalizer.normalize(input, rmlFormat);
