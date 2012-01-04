@@ -51,7 +51,7 @@ import org.ruleml.oojdrew.parsing.RuleMLTagNames;
 import org.ruleml.oojdrew.parsing.SubsumesParser;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.SymbolTable;
-import org.ruleml.oojdrew.util.Util;
+import org.ruleml.oojdrew.xml.XmlUtils;
 
 public class BottomUpApp extends AbstractUIApp implements UISettingsController,
         PreferenceChangeListener {
@@ -255,7 +255,7 @@ public class BottomUpApp extends AbstractUIApp implements UISettingsController,
                 appendRuleML(assertChild, rules.elements(), rmlFormat);
             }
 
-            String rmlString = Util.toRuleMLString(assertElement);
+            String rmlString = XmlUtils.elementToString(assertElement);
             getUI().setOutputTextAreaText(rmlString);
         }
     }

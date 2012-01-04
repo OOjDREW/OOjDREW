@@ -23,6 +23,7 @@ import nu.xom.Element;
 
 import org.ruleml.oojdrew.parsing.RuleMLFormat;
 import org.ruleml.oojdrew.parsing.RuleMLTagNames;
+import org.ruleml.oojdrew.xml.XmlUtils;
 
 /**
  * <p>
@@ -171,7 +172,7 @@ public class DefiniteClause {
      */
     public String toRuleMLString(RuleMLFormat rmlFormat) {
         Element rmlElement = this.toRuleML(rmlFormat);
-        return Util.toRuleMLString(rmlElement);
+        return XmlUtils.elementToString(rmlElement);
     }
 
     /**

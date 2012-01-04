@@ -262,8 +262,9 @@ public abstract class AbstractUIApp {
     
     protected void validateRuleMLDocument() {
         String content = ui.getKnowledgeBaseTextAreaText();
+        RuleMLValidator validator = new RuleMLValidator();
         try {
-            RuleMLValidator.validateRuleMLDocument(content);
+            validator.validateRuleMLDocument(content);
             showInformationDialog("Successfully validated document.", "Validation successful");
         } catch (Exception e) {
             defaultExceptionHandler(e);

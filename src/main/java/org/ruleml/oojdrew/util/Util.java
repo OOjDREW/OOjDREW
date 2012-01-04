@@ -21,7 +21,6 @@ import java.awt.Component;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,9 +35,6 @@ import java.net.URLConnection;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-
-import nu.xom.Document;
-import nu.xom.Element;
 
 import com.ibm.icu.text.CharsetDetector;
 import com.ibm.icu.text.CharsetMatch;
@@ -171,7 +167,7 @@ public class Util {
         CharsetMatch charsetMatch = charsetDetector.detect();
         
         if (charsetMatch == null) {
-            throw new IOException("Unsupported character set.");
+            throw new IOException("Character set is not supported.");
         }
         
         Reader reader = charsetMatch.getReader();
@@ -225,28 +221,5 @@ public class Util {
         // Write content and close steam
         bufferedWriter.write(content);
         bufferedWriter.close();
-    }
-
-    /**
-     * Convert a XML (RuleML) element into its string representation
-     * 
-     * @param rmlElement
-     *            Element to convert
-     * 
-     * @return The string representation of the element
-     */
-    public static String toRuleMLString(Element rmlElement) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        nu.xom.Serializer serializer = new nu.xom.Serializer(outputStream);
-        serializer.setIndent(3);
-        serializer.setLineSeparator(NEWLINE);
-        try {
-            Document doc = new Document(rmlElement);
-            serializer.write(doc);
-            outputStream.close();
-        } catch (java.io.IOException e) {
-            System.err.println(e.getMessage());
-        }
-        return outputStream.toString();
     }
 }

@@ -1,10 +1,26 @@
+// OO jDREW - An Object Oriented extension of the Java Deductive Reasoning Engine for the Web
+// Copyright (C) 2011
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
 package org.ruleml.oojdrew.xml;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
 import javax.xml.transform.Transformer;
@@ -14,10 +30,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import nu.xom.Builder;
-import nu.xom.Document;
 import nu.xom.ParsingException;
-import nu.xom.Serializer;
 
 import org.ruleml.oojdrew.parsing.RuleMLFormat;
 
@@ -37,9 +50,6 @@ public class RuleMLNormalizer {
     private final String SaxonTransformer = "net.sf.saxon.TransformerFactoryImpl";
     // XALAN (default) XML transformer
     private final String XalanTransformer = "org.apache.xalan.processor.TransformerFactoryImpl";
-
-    // XML indent used for document formatting 
-    private final int XmlIndent = 2;
 
     /**
      * Initializes a RuleML normalizer which uses XSL either in version 1.x or
@@ -101,37 +111,11 @@ public class RuleMLNormalizer {
         
         // Format normalized document
         try {
-            result = formatDocument(result);
+            result = XmlUtils.formatDocument(result);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
-    }
-    
-    /**
-     * Format (pretty print) a given XML document
-     * 
-     * @param xmlDocument
-     *            The document to format
-     * 
-     * @return The formatted document
-     * 
-     * @throws ParsingException
-     * @throws IOException
-     */
-    private String formatDocument(String xmlDocument) throws ParsingException, IOException {
-        // Create formatted document
-        Builder builder = new Builder();
-        StringReader stringReader = new StringReader(xmlDocument);
-        Document formattedDocument = builder.build(stringReader);
-        
-        // Write formatted document to output stream
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Serializer serializer = new Serializer(outputStream);
-        serializer.setIndent(XmlIndent);      
-        serializer.write(formattedDocument);
-        
-        return outputStream.toString();
     }
     
     /**
