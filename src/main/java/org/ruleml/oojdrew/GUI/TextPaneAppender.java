@@ -11,17 +11,11 @@
 package org.ruleml.oojdrew.GUI;
 
 import java.awt.Color;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
 
 import javax.swing.JTextPane;
-import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
@@ -31,106 +25,69 @@ import javax.swing.text.StyledDocument;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
-import org.apache.log4j.Priority;
 import org.apache.log4j.helpers.QuietWriter;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
- * Adatpted from James House's TextPanelAppender, part of the log4j package.
- *
- * This is used to append loggin output to the text pane that is part of the
+ * From James House's TextPanelAppender, part of the log4j package. The
+ * source have been adapted and modified. The authors do not provide ANY 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * This is used to append logging output to the text pane that is part of the
  * debug console.
  */
-
 public class TextPaneAppender extends AppenderSkeleton {
 
-
-    JTextPane textpane;
-    StyledDocument doc;
-    StringWriter sw;
-    QuietWriter qw;
-    Hashtable attributes;
-    Hashtable icons;
-    PrintWriter pw;
-
-    private String label;
-
-    private boolean fancy;
-
-    final String LABEL_OPTION = "Label";
-    final String COLOR_OPTION_FATAL = "Color.Emerg";
-    final String COLOR_OPTION_ERROR = "Color.Error";
-    final String COLOR_OPTION_WARN = "Color.Warn";
-    final String COLOR_OPTION_INFO = "Color.Info";
-    final String COLOR_OPTION_DEBUG = "Color.Debug";
-    final String COLOR_OPTION_BACKGROUND = "Color.Background";
-    final String FANCY_OPTION = "Fancy";
-    final String FONT_NAME_OPTION = "Font.Name";
-    final String FONT_SIZE_OPTION = "Font.Size";
-
-    public static Image loadIcon(String path) {
-        Image img = null;
-        try {
-            URL url = ClassLoader.getSystemResource(path);
-            img = (Image) (Toolkit.getDefaultToolkit()).getImage(url);
-        } catch (Exception e) {
-            System.out.println("Exception occured: " + e.getMessage() +
-                               " - " + e);
-        }
-        return (img);
-    }
+    private JTextPane textpane;
+    private StyledDocument doc;
+    private StringWriter sw;
+    private QuietWriter qw;
+    private Hashtable<Level, MutableAttributeSet> attributes;
+    private PrintWriter pw;
+    
+    private int maxBufferSize = 65536;
 
     public TextPaneAppender(Layout layout, String name) {
         this();
         this.layout = layout;
         this.name = name;
-        setTextPane(new JTextPane());
-        createAttributes();
-        createIcons();
     }
 
     public TextPaneAppender() {
         super();
         setTextPane(new JTextPane());
         createAttributes();
-        createIcons();
-        this.label = "";
+
         this.sw = new StringWriter();
         this.qw = new QuietWriter(sw, errorHandler);
         this.pw = new PrintWriter(qw);
-        this.fancy = true;
     }
 
-    public
-            void close() {
-
+    public void close() {
     }
 
     private void createAttributes() {
-        Priority prio[] = Priority.getAllPossiblePriorities();
+        Level[] loggingLevels = new Level[] { Level.OFF, Level.ERROR, Level.WARN, Level.DEBUG, Level.INFO };
 
-        attributes = new Hashtable();
-        for (int i = 0; i < prio.length; i++) {
+        attributes = new Hashtable<Level, MutableAttributeSet>();
+        for (Level level : loggingLevels) {
             MutableAttributeSet att = new SimpleAttributeSet();
-            attributes.put(prio[i], att);
-            StyleConstants.setFontSize(att, 14);
+            attributes.put(level, att);
         }
-        //StyleConstants.setForeground((MutableAttributeSet)attributes.get(Level.ERROR),Color.red);
-        //StyleConstants.setForeground((MutableAttributeSet)attributes.get(Level.WARN),Color.orange);
-        //StyleConstants.setForeground((MutableAttributeSet)attributes.get(Level.INFO),Color.gray);
-        //StyleConstants.setForeground((MutableAttributeSet)attributes.get(Level.DEBUG),Color.black);
-    }
-
-    private void createIcons() {
-
+       
+        setColor(Level.ERROR, Color.red);
+        setColor(Level.WARN, Color.orange);
+        setColor(Level.DEBUG, Color.black);
+        setColor(Level.INFO, Color.gray);
     }
 
     public void append(LoggingEvent event) {
         String text = this.layout.format(event);
         String trace = "";
+        
         // Print Stacktrace
         // Quick Hack maybe there is a better/faster way?
-
         if (event.getThrowableInformation() != null) {
             Throwable t = event.getThrowableInformation().getThrowable();
             t.printStackTrace(pw);
@@ -143,196 +100,45 @@ public class TextPaneAppender extends AppenderSkeleton {
             sw.getBuffer().delete(0, sw.getBuffer().length());
         }
 
-        try {
-            if (fancy) {
-                textpane.setEditable(true);
-                textpane.setEditable(false);
+        try {           
+            doc.insertString(doc.getLength(), text + trace, attributes.get(event.getLevel()));
+            
+            if (doc.getLength() > maxBufferSize) {
+                doc.remove(0, doc.getLength() - maxBufferSize);
             }
-            doc.insertString(doc.getLength(), text + trace,
-                             (MutableAttributeSet) attributes.get(event.
-                    getLevel()));
+            
         } catch (BadLocationException badex) {
             System.err.println(badex);
         }
+               
         textpane.setCaretPosition(doc.getLength());
     }
 
-    public
-            JTextPane getTextPane() {
+    public JTextPane getTextPane() {
         return textpane;
     }
 
-    private
-            static
-            Color parseColor(String v) {
-        StringTokenizer st = new StringTokenizer(v, ",");
-        int val[] = {255, 255, 255, 255};
-        int i = 0;
-        while (st.hasMoreTokens()) {
-            val[i] = Integer.parseInt(st.nextToken());
-            i++;
-        }
-        return new Color(val[0], val[1], val[2], val[3]);
-    }
-
-    private
-            static
-            String colorToString(Color c) {
-        // alpha component emitted only if not default (255)
-        String res = "" + c.getRed() + "," + c.getGreen() + "," + c.getBlue();
-        return c.getAlpha() >= 255 ? res : res + "," + c.getAlpha();
-    }
-
-    public
-            void setLayout(Layout layout) {
+    public void setLayout(Layout layout) {
         this.layout = layout;
     }
 
-    public
-            void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-
-    public
-            void setTextPane(JTextPane textpane) {
+    public void setTextPane(JTextPane textpane) {
         this.textpane = textpane;
         textpane.setEditable(false);
         textpane.setBackground(Color.lightGray);
         this.doc = textpane.getStyledDocument();
     }
 
-    private
-            void setColor(Priority p, String v) {
-        StyleConstants.setForeground(
-                (MutableAttributeSet) attributes.get(p), parseColor(v));
+    private void setColor(Level logLevel, Color color) {
+        StyleConstants.setForeground(attributes.get(logLevel), color);
     }
 
-    private
-            String getColor(Priority p) {
-        Color c = StyleConstants.getForeground(
-                (MutableAttributeSet) attributes.get(p));
-        return c == null ? null : colorToString(c);
-    }
-
-    /////////////////////////////////////////////////////////////////////
-    // option setters and getters
-
-    public
-            void setLabel(String label) {
-        this.label = label;
-    }
-
-    public
-            String getLabel() {
-        return label;
-    }
-
-    public
-            void setColorEmerg(String color) {
-        setColor(Level.FATAL, color);
-    }
-
-    public
-            String getColorEmerg() {
-        return getColor(Level.FATAL);
-    }
-
-    public
-            void setColorError(String color) {
-        setColor(Level.ERROR, color);
-    }
-
-    public
-            String getColorError() {
-        return getColor(Level.ERROR);
-    }
-
-    public
-            void setColorWarn(String color) {
-        setColor(Level.WARN, color);
-    }
-
-    public
-            String getColorWarn() {
-        return getColor(Level.WARN);
-    }
-
-    public
-            void setColorInfo(String color) {
-        setColor(Level.INFO, color);
-    }
-
-    public
-            String getColorInfo() {
-        return getColor(Level.INFO);
-    }
-
-    public
-            void setColorDebug(String color) {
-        setColor(Level.DEBUG, color);
-    }
-
-    public
-            String getColorDebug() {
-        return getColor(Level.DEBUG);
-    }
-
-    public
-            void setColorBackground(String color) {
-        textpane.setBackground(parseColor(color));
-    }
-
-    public
-            String getColorBackground() {
-        return colorToString(textpane.getBackground());
-    }
-
-    public
-            void setFancy(boolean fancy) {
-        this.fancy = fancy;
-    }
-
-    public
-            boolean getFancy() {
-        return fancy;
-    }
-
-    public
-            void setFontSize(int size) {
-        Enumeration e = attributes.elements();
-        while (e.hasMoreElements()) {
-            StyleConstants.setFontSize((MutableAttributeSet) e.nextElement(),
-                                       size);
-        }
-        return;
-    }
-
-    public
-            int getFontSize() {
-        AttributeSet attrSet = (AttributeSet) attributes.get(Level.INFO);
-        return StyleConstants.getFontSize(attrSet);
-    }
-
-    public
-            void setFontName(String name) {
-        Enumeration e = attributes.elements();
-        while (e.hasMoreElements()) {
-            StyleConstants.setFontFamily((MutableAttributeSet) e.nextElement(),
-                                         name);
-        }
-        return;
-    }
-
-    public
-            String getFontName() {
-        AttributeSet attrSet = (AttributeSet) attributes.get(Level.INFO);
-        return StyleConstants.getFontFamily(attrSet);
-    }
-
-    public
-            boolean requiresLayout() {
+    public boolean requiresLayout() {
         return true;
     }
-} // TextPaneAppender
 
+} // TextPaneAppender
