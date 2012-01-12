@@ -227,9 +227,6 @@ public abstract class AbstractUIApp implements UISettingsController, PreferenceC
     }
 
     public void parseKnowledgeBase() {
-        SymbolTable.reset();
-        reasoner.clearClauses();
-
         SyntaxFormat knowledgeBaseFormat = ui.getKnowledgeBaseInputFormat();
         String knowledgeBase = ui.getKnowledgeBaseTextAreaText();
 

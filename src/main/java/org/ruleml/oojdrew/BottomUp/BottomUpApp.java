@@ -46,6 +46,7 @@ import org.ruleml.oojdrew.parsing.RuleMLTagNames;
 import org.ruleml.oojdrew.parsing.SubsumesParser;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.SymbolTable;
+import org.ruleml.oojdrew.util.Util;
 import org.ruleml.oojdrew.xml.XmlUtils;
 
 public class BottomUpApp extends AbstractUIApp {
@@ -104,6 +105,9 @@ public class BottomUpApp extends AbstractUIApp {
 
         // Create a forward reasoning engine
         ForwardReasoner forwardReasoner = new ForwardReasoner();
+        
+        // Set global configuration variables
+        org.ruleml.oojdrew.Config.PRINTGENOIDS = false;
 
         // Create a BottomUp application
         BottomUpApp bottomUpApp = new BottomUpApp(config, preferenceManager, preferenceDialogUI, bottomUpUI,
@@ -113,11 +117,15 @@ public class BottomUpApp extends AbstractUIApp {
     }
 
     private BottomUpUI getUI() {
-        return (BottomUpUI) super.ui;
+        return (BottomUpUI) ui;
     }
 
     private ForwardReasoner getReasoner() {
-        return (ForwardReasoner) super.reasoner;
+        return (ForwardReasoner) reasoner;
+    }
+    
+    private void setReasoner(ForwardReasoner reasoner) {
+        this.reasoner = reasoner;
     }
 
     private boolean updateReasonerLoopCounter() {
@@ -160,6 +168,14 @@ public class BottomUpApp extends AbstractUIApp {
             showInformationDialog("Stratfiable", "Knowledge base is stratifiable.");
         }
     }
+    
+    @Override
+    public void parseKnowledgeBase() {
+        SymbolTable.reset();
+        setReasoner(new ForwardReasoner());
+        
+        super.parseKnowledgeBase();
+    }
 
     public void runForwardReasoner() {
         if (!updateReasonerLoopCounter()) {
@@ -194,7 +210,9 @@ public class BottomUpApp extends AbstractUIApp {
             stringBuilder.append(facts);
 
             if (printRules) {
-                stringBuilder.append("\n% Rules : \n");
+                stringBuilder.append(Util.NEWLINE);
+                stringBuilder.append("% Rules:");
+                stringBuilder.append(Util.NEWLINE);
                 appendString(outputFormat, rmlFormat, rules.elements(),
                         stringBuilder);
             }
@@ -202,13 +220,16 @@ public class BottomUpApp extends AbstractUIApp {
             
         } else if (outputFormat == SyntaxFormat.POSL) {
             StringBuilder stringBuilder = new StringBuilder();
-
-            stringBuilder.append("% Derived Facts:\n\n");
+            stringBuilder.append(Util.NEWLINE);
+            stringBuilder.append("% Derived Facts:");
+            stringBuilder.append(Util.NEWLINE);;
             appendString(outputFormat, rmlFormat, oldFacts.elements(),
                     stringBuilder);
             // Add the option to print rules or not
             if (printRules) {
-                stringBuilder.append("\n % Rules : \n");
+                stringBuilder.append(Util.NEWLINE);
+                stringBuilder.append("% Rules:");
+                stringBuilder.append(Util.NEWLINE);
                 appendString(outputFormat, rmlFormat, rules.elements(),
                         stringBuilder);
             }

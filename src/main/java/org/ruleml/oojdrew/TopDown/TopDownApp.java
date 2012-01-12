@@ -51,6 +51,7 @@ import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.LUBGLBStructure;
 import org.ruleml.oojdrew.util.QueryTypes;
 import org.ruleml.oojdrew.util.SubsumesStructure;
+import org.ruleml.oojdrew.util.SymbolTable;
 import org.ruleml.oojdrew.util.Term;
 
 public class TopDownApp extends AbstractUIApp {
@@ -143,9 +144,13 @@ public class TopDownApp extends AbstractUIApp {
         super.reasoner = reasoner;
     }
 
+    @Override
     public void parseKnowledgeBase() {
         getUI().setBtnNextSolutionEnabled(false);
 
+        SymbolTable.reset();
+        reasoner.clearClauses();
+        
         super.parseKnowledgeBase();
     }
 
