@@ -45,6 +45,14 @@ public class MockConfiguration implements Configuration {
     public void setTextAreaFontSize(int newSize) {
         throw new UnsupportedOperationException();
     }
+    
+    public int getHttpConnectionTimeout() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setHttpConnectionTimeout(int timeoutInMilliseconds) {
+        throw new UnsupportedOperationException();
+    }
 
     public void addPreferenceChangeListener(PreferenceChangeListener listener) {
     }

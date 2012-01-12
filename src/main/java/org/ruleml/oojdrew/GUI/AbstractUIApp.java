@@ -33,7 +33,6 @@ import org.ruleml.oojdrew.parsing.RDFSParser;
 import org.ruleml.oojdrew.parsing.RuleMLFormat;
 import org.ruleml.oojdrew.parsing.RuleMLParser;
 import org.ruleml.oojdrew.parsing.SubsumesParser;
-import org.ruleml.oojdrew.util.SymbolTable;
 import org.ruleml.oojdrew.util.Types;
 import org.ruleml.oojdrew.util.Util;
 import org.ruleml.oojdrew.xml.RuleMLNormalizer;
@@ -152,9 +151,10 @@ public abstract class AbstractUIApp implements UISettingsController, PreferenceC
         String uri = JOptionPane.showInputDialog("Please enter an URI");
 
         if (uri != null) {
+            int httpConnectionTimeout = config.getHttpConnectionTimeout();
             String pageContent;
             try {
-                pageContent = Util.readFromURIWithTimeout(uri, 3000);
+                pageContent = Util.readFromURIWithTimeout(uri, httpConnectionTimeout);
             } catch (IOException e) {
                 defaultExceptionHandler(e);
                 return;

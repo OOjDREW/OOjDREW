@@ -43,6 +43,9 @@ public interface Configuration {
 
     public RuleMLFormat getRuleMLFormat();
     public void setSelectedRuleMLFormat(RuleMLFormat rmlFormat);
+    
+    public int getHttpConnectionTimeout();
+    public void setHttpConnectionTimeout(int timeoutInMilliseconds);
 
     public Level getLogLevel();
     public void setLogLevel(Level logLevel);
