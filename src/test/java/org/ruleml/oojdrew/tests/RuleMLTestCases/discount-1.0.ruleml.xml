@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!DOCTYPE LegalRuleMLDocument [
+<!ENTITY ruleml "http://ruleml.org">  
+]>
 <RuleML
-xmlns="http://www.ruleml.org/1.0/xsd"
+xmlns="&ruleml;/spec"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/datalog.xsd">
-  <oid>
-    <Ind>
+xsi:schemaLocation="http://www.ruleml.org/spec http://www.ruleml.org/1.0/xsd/datalog.xsd">
+  <!--
+
 	BUSINESS RULES IN RuleML                            Harold Boley, 1 Apr. 2002
 	(revised Nov 2005)
 
@@ -24,15 +27,13 @@ xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/
 
 	These examples could be easily extended by further categories of customers,
 	product discounting conditions, etc.
-    </Ind>
-  </oid>
+    -->
 
 <Assert mapClosure="universal">
-<oid><Ind>Asserted content, i.e. rules and facts</Ind></oid>
+<!--Asserted content, i.e. rules and facts -->
 
 <Implies>
-  <oid>
-    <Ind>
+  <!--
 	Implies 1
 	The discount for a customer buying a product is 5.0 percent
 	if the customer is premium and the product is regular.
@@ -42,8 +43,7 @@ xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/
 	having exactly the same spelling (incl. spaces). One could refine this markup
 	by introducing a constructor term for "percent[5.0]", thus leaving Datalog
 	towards full Horn logic.
-    </Ind>
-  </oid>
+    -->
   <if>
     <And>
       <Atom>
@@ -67,13 +67,11 @@ xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/
 </Implies>
 
 <Implies>
-  <oid>
-    <Ind>
+  <!--
 	Implies 2
 	The discount for a customer buying a product is 7.5 percent
 	if the customer is premium and the product is luxury.
-    </Ind>
-  </oid>
+    -->
   <if>
     <And>
       <Atom>
@@ -97,8 +95,7 @@ xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/
 </Implies>
 
 <Implies>
-  <oid>
-    <Ind>
+  <!--
 	Implies 3
 	A customer is premium if
 	their spending has been min 5000 euro in the previous year.
@@ -111,8 +108,7 @@ xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/
 	Similarly, "min 5000 euro" can as well be regarded as an individual constant phrase.
 	It can also be regarded as a semi-formal construct ultimately to be replaced by a
 	'greater-than' comparison over numbers with units.
-    </Ind>
-  </oid>
+    -->
   <if>
     <Atom>
       <op><Rel>spending</Rel></op>
@@ -172,7 +168,7 @@ xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/
 </Assert>
 
 <Query>
-  <oid><Ind>Queried content</Ind></oid>
+  <!--Queried content-->
 
   <Atom>
     <oid>
