@@ -1249,6 +1249,23 @@ public POSLParser(ParserSharedInputState state) {
 				i = new Term(symid, SymbolTable.INOROLE, Types.IOBJECT);
 				
 			}
+			// automatic type inference<
+			if ( inputState.guessing==0 ) {
+				try {
+					Integer.parseInt(sym);
+					i.type = 2;
+				} catch (NumberFormatException e) {
+					//Symbol is no int. Try parsing to double.
+					try{
+						Double.parseDouble(sym);
+						i.type = 3;
+					} catch(NumberFormatException e2){
+						//Symbol is no double. We assign the String type
+						i.type = 4;
+					}
+				}
+			}
+			//
 			{
 			switch ( LA(1)) {
 			case DHAT:
@@ -1261,7 +1278,8 @@ public POSLParser(ParserSharedInputState state) {
 				break;
 			}
 			case COMMA:
-			case RPAREN:
+			case RPAREN: 
+				break;
 			case SEMI:
 			case HAT:
 			case PIPE:
