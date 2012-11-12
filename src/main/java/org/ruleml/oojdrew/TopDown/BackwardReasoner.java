@@ -34,6 +34,7 @@ import org.ruleml.oojdrew.Builtins.ContainsBuiltin;
 import org.ruleml.oojdrew.Builtins.ContainsIgnoreCaseBuiltin;
 import org.ruleml.oojdrew.Builtins.CosBuiltin;
 import org.ruleml.oojdrew.Builtins.DateBuiltin;
+import org.ruleml.oojdrew.Builtins.DateTimeBuiltin;
 import org.ruleml.oojdrew.Builtins.DivideBuiltin;
 import org.ruleml.oojdrew.Builtins.EndsWithBuiltin;
 import org.ruleml.oojdrew.Builtins.EqualBuiltin;
@@ -58,6 +59,7 @@ import org.ruleml.oojdrew.Builtins.StringUpperCaseBuiltin;
 import org.ruleml.oojdrew.Builtins.SubstringBuiltin;
 import org.ruleml.oojdrew.Builtins.SubtractBuiltin;
 import org.ruleml.oojdrew.Builtins.TanBuiltin;
+import org.ruleml.oojdrew.Builtins.TimeBuiltin;
 import org.ruleml.oojdrew.TopDown.Builtins.AssertBuiltin;
 import org.ruleml.oojdrew.TopDown.Builtins.RegisterBuiltin;
 import org.ruleml.oojdrew.TopDown.Builtins.TDBuiltin;
@@ -187,6 +189,8 @@ public class BackwardReasoner implements Reasoner {
         this.registerBuiltin(new SubtractBuiltin());
         this.registerBuiltin(new TanBuiltin());
         this.registerBuiltin(new DateBuiltin());
+        this.registerBuiltin(new TimeBuiltin());
+        this.registerBuiltin(new DateTimeBuiltin());
     }
 
     /**

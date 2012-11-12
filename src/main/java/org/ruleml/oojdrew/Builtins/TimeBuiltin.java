@@ -26,7 +26,8 @@ import org.ruleml.oojdrew.util.Types;
 
 /**
  *
- * <p>Title: OO jDREW</p>
+ *  Satisfied iff the first argument is the xsd:time representation consisting of the hours the second argument, minutes the third argument, seconds the fourth argument, and timezone the fifth argument.
+ * call example: time(?x,23^^Integer,59^^Integer, 59^^Integer, "+01:00"^^String). 
  *
  * <p>Description: Reasoning Engine for the Semantic Web - Supporting OO RuleML
  * 0.88</p>
@@ -35,8 +36,8 @@ import org.ruleml.oojdrew.util.Types;
  *
  * @author Nicolas Neu
  */
-public class DateBuiltin implements Builtin {
-    private int symbol = SymbolTable.internSymbol("date");
+public class TimeBuiltin implements Builtin {
+    private int symbol = SymbolTable.internSymbol("time");
 
     public DefiniteClause buildResult(Term t) {
         if (t.getSymbol() != symbol) {
@@ -63,18 +64,18 @@ public class DateBuiltin implements Builtin {
             String p4s = p4.getSymbolString();
             String p5s = p5.getSymbolString();
             
-            //negative year
-            if(Integer.parseInt(p2s) < 0){
+            //invalid hours
+            if(Integer.parseInt(p2s) < 0 || Integer.parseInt(p2s)>=24){
             	return null;
             }
             
-            //invalid month
-            if(Integer.parseInt(p3s)<0 || Integer.parseInt(p3s)>12){
+            //invalid minutes
+            if(Integer.parseInt(p3s)<0 || Integer.parseInt(p3s)>=60){
             	return null;
             }
             
-            //invalid day
-            if(Integer.parseInt(p4s)<0 || Integer.parseInt(p4s)>31){
+            //invalid seconds
+            if(Integer.parseInt(p4s)<0 || Integer.parseInt(p4s)>=60){
             	return null;
             }
             
