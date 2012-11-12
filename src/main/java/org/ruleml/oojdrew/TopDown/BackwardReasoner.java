@@ -33,6 +33,7 @@ import org.ruleml.oojdrew.Builtins.CeilingBuiltin;
 import org.ruleml.oojdrew.Builtins.ContainsBuiltin;
 import org.ruleml.oojdrew.Builtins.ContainsIgnoreCaseBuiltin;
 import org.ruleml.oojdrew.Builtins.CosBuiltin;
+import org.ruleml.oojdrew.Builtins.DateBuiltin;
 import org.ruleml.oojdrew.Builtins.DivideBuiltin;
 import org.ruleml.oojdrew.Builtins.EndsWithBuiltin;
 import org.ruleml.oojdrew.Builtins.EqualBuiltin;
@@ -185,6 +186,7 @@ public class BackwardReasoner implements Reasoner {
         this.registerBuiltin(new SubstringBuiltin());
         this.registerBuiltin(new SubtractBuiltin());
         this.registerBuiltin(new TanBuiltin());
+        this.registerBuiltin(new DateBuiltin());
     }
 
     /**
