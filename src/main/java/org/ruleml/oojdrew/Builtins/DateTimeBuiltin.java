@@ -37,7 +37,7 @@ import org.ruleml.oojdrew.util.Types;
  * @author Nicolas Neu
  */
 public class DateTimeBuiltin implements Builtin {
-	private int symbol = SymbolTable.internSymbol("datetime");
+	private int symbol = SymbolTable.internSymbol("dateTime");
 
 	public DefiniteClause buildResult(Term t) {
 		if (t.getSymbol() != symbol) {
