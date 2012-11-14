@@ -106,8 +106,12 @@ public class DateTimeBuiltin implements Builtin {
 				return null;
 			}
 
-			int h = Integer.parseInt(timezone.split(":")[0]);
-			int m = Integer.parseInt(timezone.split(":")[1]);
+            int h;
+            if(timezone.charAt(0)=='+'){
+            	h = Integer.parseInt(timezone.split(":")[0].substring(1));
+            } else {
+            	h = -Integer.parseInt(timezone.split(":")[0]);
+            }			int m = Integer.parseInt(timezone.split(":")[1]);
 
 			if(h<-12 || h>14 || !(m!=30 || m!=45 || m!=0)){
 				return null;

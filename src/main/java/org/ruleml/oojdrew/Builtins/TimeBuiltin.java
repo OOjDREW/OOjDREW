@@ -84,7 +84,12 @@ public class TimeBuiltin implements Builtin {
             	return null;
             }
             
-            int h = Integer.parseInt(p5s.split(":")[0]);
+            int h;
+            if(p5s.charAt(0)=='+'){
+            	h = Integer.parseInt(p5s.split(":")[0].substring(1));
+            } else {
+            	h = -Integer.parseInt(p5s.split(":")[0]);
+            }
             int m = Integer.parseInt(p5s.split(":")[1]);
             
             if(h<-12 || h>14 || !(m!=30 || m!=45 || m!=0)){
