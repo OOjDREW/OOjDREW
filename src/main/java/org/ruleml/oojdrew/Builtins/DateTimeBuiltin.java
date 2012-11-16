@@ -66,9 +66,9 @@ public class DateTimeBuiltin implements Builtin {
 			String month = p3.getSymbolString();
 			String day = p4.getSymbolString();
 			String hours = p5.getSymbolString();
-			String minutes = p5.getSymbolString();
-			String seconds  = p5.getSymbolString();
-			String timezone = p5.getSymbolString();
+			String minutes = p6.getSymbolString();
+			String seconds  = p7.getSymbolString();
+			String timezone = p8.getSymbolString();
 
 
 			//negative year
@@ -111,7 +111,8 @@ public class DateTimeBuiltin implements Builtin {
             	h = Integer.parseInt(timezone.split(":")[0].substring(1));
             } else {
             	h = -Integer.parseInt(timezone.split(":")[0]);
-            }			int m = Integer.parseInt(timezone.split(":")[1]);
+            }			
+            int m = Integer.parseInt(timezone.split(":")[1]);
 
 			if(h<-12 || h>14 || !(m!=30 || m!=45 || m!=0)){
 				return null;
@@ -123,7 +124,7 @@ public class DateTimeBuiltin implements Builtin {
 
 			Term r1 = new Term(SymbolTable.internSymbol(results),
 					SymbolTable.INOROLE, Types.ISTRING);
-			Term roid = new Term(SymbolTable.internSymbol("$jdrew-date-"
+			Term roid = new Term(SymbolTable.internSymbol("$jdrew-dateTime-"
 					+ year + "-" + month + "-" + day + "-" + hours  + "-" + minutes + "-" + seconds + timezone),
 					SymbolTable.IOID, Types.ITHING);
 			Vector v = new Vector();
@@ -133,6 +134,9 @@ public class DateTimeBuiltin implements Builtin {
 			v.add(p3);
 			v.add(p4);
 			v.add(p5);
+			v.add(p6);
+			v.add(p7);
+			v.add(p8);
 
 			Term atm = new Term(symbol, SymbolTable.INOROLE, Types.IOBJECT, v);
 			atm.setAtom(true);
