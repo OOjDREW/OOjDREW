@@ -80,7 +80,7 @@ public class TimeBuiltin implements Builtin {
             }
             
             //check for proper syntax of timezone
-            if(!p5s.matches("[+-][0-1][0-4](:)[0-5][0-9]")){
+            if(!p5s.matches("[+-][0-1][0-9](:)[0-5][0-9]")){
             	return null;
             }
             

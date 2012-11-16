@@ -102,7 +102,7 @@ public class DateTimeBuiltin implements Builtin {
 			}
 
 			//check for proper syntax of timezone
-			if(!timezone.matches("[+-][0-1][0-4](:)[0-5][0-9]")){
+			if(!timezone.matches("[+-][0-1][0-9](:)[0-5][0-9]")){
 				return null;
 			}
 
