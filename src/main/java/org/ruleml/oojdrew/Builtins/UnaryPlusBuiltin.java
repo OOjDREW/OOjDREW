@@ -40,7 +40,7 @@ import org.ruleml.oojdrew.util.Types;
  * @version 0.89
  */
 public class UnaryPlusBuiltin implements Builtin {
-    private int symbol = SymbolTable.internSymbol("unaryplus");
+    private int symbol = SymbolTable.internSymbol("unaryPlus");
 
     public DefiniteClause buildResult(Term t) {
         if (t.getSymbol() != symbol) {

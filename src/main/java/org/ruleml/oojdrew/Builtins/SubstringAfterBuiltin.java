@@ -38,7 +38,7 @@ import org.ruleml.oojdrew.util.Types;
  *
  */
 public class SubstringAfterBuiltin implements Builtin {
-    private int symbol = SymbolTable.internSymbol("substringafter");
+    private int symbol = SymbolTable.internSymbol("substringAfter");
 
     public DefiniteClause buildResult(Term t) {
         if (t.getSymbol() != symbol) {
