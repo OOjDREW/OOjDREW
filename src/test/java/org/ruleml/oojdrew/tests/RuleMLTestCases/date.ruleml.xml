@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RuleML
+xmlns="http://www.ruleml.org/1.0/xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/datalog.xsd">
+  <oid>
+    <Ind>
+		Canadian public holidays.
+		The rule lists all the public Canadian holidays. The facts are checked with the date builtin, verifying that the date exists. 
+    </Ind>
+  </oid>
+  
+<Assert>
+   <Rulebase mapClosure="universal">
+      <Implies>
+         <And>
+            <Atom>
+               <Rel>datetable</Rel>
+               <Var>what</Var>
+               <Var>y</Var>
+               <Var>m</Var>
+               <Var>d</Var>
+               <Var>tz</Var>
+            </Atom>
+            <Atom>
+               <Rel>date</Rel>
+               <Var>when</Var>
+               <Var>y</Var>
+               <Var>m</Var>
+               <Var>d</Var>
+               <Var>tz</Var>
+            </Atom>
+         </And>
+         <Atom>
+            <Rel>publicHolidays</Rel>
+            <Var>what</Var>
+            <Var>when</Var>
+         </Atom>
+      </Implies>
+      <Atom>
+         <Rel>datetable</Rel>
+         <Ind type="String">New Year's Day</Ind>
+         <Ind type="Integer">2012</Ind>
+         <Ind type="Integer">1</Ind>
+         <Ind type="Integer">1</Ind>
+         <Ind type="String">+01:00</Ind>
+      </Atom>
+      <Atom>
+         <Rel>datetable</Rel>
+         <Ind type="String">Good Friday</Ind>
+         <Ind type="Integer">2012</Ind>
+         <Ind type="Integer">4</Ind>
+         <Ind type="Integer">6</Ind>
+         <Ind type="String">+01:00</Ind>
+      </Atom>
+      <Atom>
+         <Rel>datetable</Rel>
+         <Ind type="String">Victoria Day</Ind>
+         <Ind type="Integer">2012</Ind>
+         <Ind type="Integer">5</Ind>
+         <Ind type="Integer">21</Ind>
+         <Ind type="String">+01:00</Ind>
+      </Atom>
+      <Atom>
+         <Rel>datetable</Rel>
+         <Ind type="String">Canada Day</Ind>
+         <Ind type="Integer">2012</Ind>
+         <Ind type="Integer">6</Ind>
+         <Ind type="Integer">1</Ind>
+         <Ind type="String">+01:00</Ind>
+      </Atom>
+      <Atom>
+         <Rel>datetable</Rel>
+         <Ind type="String">Labour Day</Ind>
+         <Ind type="Integer">2012</Ind>
+         <Ind type="Integer">9</Ind>
+         <Ind type="Integer">3</Ind>
+         <Ind type="String">+01:00</Ind>
+      </Atom>
+      <Atom>
+         <Rel>datetable</Rel>
+         <Ind type="String">Thanksgiving Day</Ind>
+         <Ind type="Integer">2012</Ind>
+         <Ind type="Integer">10</Ind>
+         <Ind type="Integer">8</Ind>
+         <Ind type="String">+01:00</Ind>
+      </Atom>
+      <Atom>
+         <Rel>datetable</Rel>
+         <Ind type="String">Remembrance Day</Ind>
+         <Ind type="Integer">2012</Ind>
+         <Ind type="Integer">11</Ind>
+         <Ind type="Integer">11</Ind>
+         <Ind type="String">+01:00</Ind>
+      </Atom>
+      <Atom>
+         <Rel>datetable</Rel>
+         <Ind type="String">Christmas</Ind>
+         <Ind type="Integer">2012</Ind>
+         <Ind type="Integer">12</Ind>
+         <Ind type="Integer">25</Ind>
+         <Ind type="String">+01:00</Ind>
+      </Atom>
+      <Atom>
+         <Rel>datetable</Rel>
+         <Ind type="String">Boxing Day</Ind>
+         <Ind type="Integer">2012</Ind>
+         <Ind type="Integer">12</Ind>
+         <Ind type="Integer">26</Ind>
+         <Ind type="String">+01:00</Ind>
+      </Atom>
+   </Rulebase>
+</Assert>
+
+<Query>
+  <oid><Ind>Queried content</Ind></oid>
+
+  <Atom>
+    <oid>
+      <Ind>
+	Query 1
+	List all facts that has a valid date all the valid dates related to the Canadian public holidays. 
+      </Ind>
+    </oid>
+    <op><Rel>publicHolidays</Rel></op>
+    <Var>what</Var>
+    <Var>when</Var>
+  </Atom>
+  
+
+</Query>
+
+</RuleML>

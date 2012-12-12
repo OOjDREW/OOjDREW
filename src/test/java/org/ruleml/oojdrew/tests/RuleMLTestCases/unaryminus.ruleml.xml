@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RuleML
+xmlns="http://www.ruleml.org/1.0/xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/datalog.xsd">
+  <oid>
+    <Ind>
+	Finding the absolute value of a number by using the unaryMinus builtin.
+    </Ind>
+  </oid>
+<Assert>
+   <Rulebase mapClosure="universal">
+      <Implies>
+		 <oid>
+			<Ind>
+				Implies 1
+				If the number is less than 0, we should use the unary minus builtin to convert the value to a positive.
+			</Ind>
+		 </oid>
+         <And>
+            <Atom>
+               <Rel>lessThan</Rel>
+               <Var>num</Var>
+               <Ind type="Integer">0</Ind>
+            </Atom>
+            <Atom>
+               <Rel>unaryMinus</Rel>
+               <Var>umin</Var>
+               <Var>num</Var>
+            </Atom>
+            <Atom>
+               <Rel>unaryPlus</Rel>
+               <Var>out</Var>
+               <Var>umin</Var>
+            </Atom>
+         </And>
+         <Atom>
+            <Rel>absolute</Rel>
+            <Var>num</Var>
+            <Var>out</Var>
+         </Atom>
+      </Implies>
+      <Implies>
+		 <oid>
+			<Ind>
+				Implies 2
+				The number is not a negative number. Therefor return the number as is using the unaryPlus to grab the value out. 
+			</Ind>
+		 </oid>
+         <And>
+            <Atom>
+               <Rel>greaterThanOrEqual</Rel>
+               <Var>num</Var>
+               <Ind type="Integer">0</Ind>
+            </Atom>
+            <Atom>
+               <Rel>unaryPlus</Rel>
+               <Var>out</Var>
+               <Var>num</Var>
+            </Atom>
+         </And>
+         <Atom>
+            <Rel>absolute</Rel>
+            <Var>num</Var>
+            <Var>out</Var>
+         </Atom>
+      </Implies>
+   </Rulebase>
+</Assert>
+
+<Query>
+  <oid><Ind>Queried content</Ind></oid>
+
+  <Atom>
+    <oid>
+      <Ind>
+	Query 1
+	Using absolute to find the absolute value of 5. The returned value should be 5.
+      </Ind>
+    </oid>
+    <op><Rel>absolute</Rel></op>
+	<Ind type="Integer">5</Ind>
+    <Var>out</Var>
+  </Atom>
+  
+  <Atom>
+    <oid>
+      <Ind>
+	Query 2
+	Using absolute to find the absolute value of -9. The returned value should be 9.
+      </Ind>
+    </oid>
+    <op><Rel>absolute</Rel></op>
+	<Ind type="Integer">-9</Ind>
+    <Var>out</Var>
+  </Atom>
+
+</Query>
+
+</RuleML>

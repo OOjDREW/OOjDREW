@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RuleML
+xmlns="http://www.ruleml.org/1.0/xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/datalog.xsd">
+  <oid>
+    <Ind>
+	Hide all emails of a given text. The rule uses replace with a regular expression looking for all email occurrences and replacing them with a prefix string.
+    </Ind>
+  </oid>
+<Assert>
+   <Rulebase mapClosure="universal">
+      <Implies>
+		 <oid>
+			<Ind>
+				Implies 1
+				Searches and replaces all email occurrences of the given country domains ca, com, de and no.
+			</Ind>
+		 </oid>
+         <Atom>
+            <Rel>replace</Rel>
+            <Var>textWithOutEmail</Var>
+            <Var>textWithEmail</Var>
+            <Ind type="String">[a-zA-Z.-]*@[a-zA-Z.-]*.(ca|com|de|no)</Ind>
+            <Ind type="String">[hidden mail]</Ind>
+         </Atom>
+         <Atom>
+            <Rel>hideEmails</Rel>
+            <Var>textWithEmail</Var>
+            <Var>textWithOutEmail</Var>
+         </Atom>
+      </Implies>
+   </Rulebase>
+</Assert>
+
+<Query>
+  <oid><Ind>Queried content</Ind></oid>
+
+  <Atom>
+    <oid>
+      <Ind>
+	Query 1
+	Query with a single email. The out put should be "[hidden mail]"
+      </Ind>
+    </oid>
+    <op><Rel>hideEmails</Rel></op>
+	<Ind>john@example.com</Ind>
+    <Var>textWithOutEmail</Var>
+  </Atom>
+  
+  <Atom>
+    <oid>
+      <Ind>
+	Query 2
+	Query with a single email and more text. The out put should be "John from [hidden mail] agrees."
+      </Ind>
+    </oid>
+    <op><Rel>hideEmails</Rel></op>
+	<Ind>John from john@example.com agrees.</Ind>
+    <Var>textWithOutEmail</Var>
+  </Atom>
+  
+    <Atom>
+    <oid>
+      <Ind>
+	Query 3
+	Query with a multiple emails and text. The out put should be "John from [hidden mail] agrees with Jane from [hidden mail] and have disussed this with Paul. If you want to confirm this, send an email to [hidden mail]"
+      </Ind>
+    </oid>
+    <op><Rel>hideEmails</Rel></op>
+	<Ind>John from john@example.com agrees with Jane from jane@example.no and have disussed this with Paul. If you want to confirm this, send an email to paul@confirmed.de</Ind>
+    <Var>textWithOutEmail</Var>
+  </Atom>
+
+</Query>
+
+</RuleML>
