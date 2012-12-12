@@ -23,6 +23,7 @@ import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.SymbolTable;
 import org.ruleml.oojdrew.util.Term;
 import org.ruleml.oojdrew.util.Types;
+import org.ruleml.oojdrew.util.Util;
 
 import antlr.NoViableAltException;
 import antlr.ParserSharedInputState;
@@ -1249,6 +1250,11 @@ public POSLParser(ParserSharedInputState state) {
 				i = new Term(symid, SymbolTable.INOROLE, Types.IOBJECT);
 				
 			}
+			// automatic type inference<
+			if ( inputState.guessing==0 ) {
+				i.type=Util.getTypeForInference(sym);
+			}
+			//
 			{
 			switch ( LA(1)) {
 			case DHAT:
@@ -1261,7 +1267,8 @@ public POSLParser(ParserSharedInputState state) {
 				break;
 			}
 			case COMMA:
-			case RPAREN:
+			case RPAREN: 
+				break;
 			case SEMI:
 			case HAT:
 			case PIPE:
