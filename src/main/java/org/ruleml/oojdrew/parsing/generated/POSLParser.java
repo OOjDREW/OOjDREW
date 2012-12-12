@@ -23,6 +23,7 @@ import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.SymbolTable;
 import org.ruleml.oojdrew.util.Term;
 import org.ruleml.oojdrew.util.Types;
+import org.ruleml.oojdrew.util.Util;
 
 import antlr.NoViableAltException;
 import antlr.ParserSharedInputState;
@@ -1251,19 +1252,7 @@ public POSLParser(ParserSharedInputState state) {
 			}
 			// automatic type inference<
 			if ( inputState.guessing==0 ) {
-				try {
-					Integer.parseInt(sym);
-					i.type = 2;
-				} catch (NumberFormatException e) {
-					//Symbol is no int. Try parsing to double.
-					try{
-						Double.parseDouble(sym);
-						i.type = 3;
-					} catch(NumberFormatException e2){
-						//Symbol is no double. We assign the String type
-						i.type = 4;
-					}
-				}
+				i.type=Util.getTypeForInference(sym);
 			}
 			//
 			{
