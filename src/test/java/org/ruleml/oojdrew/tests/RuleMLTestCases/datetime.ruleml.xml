@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RuleML
+xmlns="http://www.ruleml.org/1.0/xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/datalog.xsd">
+  <oid>
+    <Ind>
+		As illustrated in the builtins for time and date this builtin combines date and time for a complete occurrence. 
+    </Ind>
+  </oid>
+  
+
+<Query>
+  <oid><Ind>Queried content</Ind></oid>
+
+  <Atom>
+    <oid>
+      <Ind>
+	Query 1
+	Query the dateTime with a specific time to check if its a valid date and time. This should return the date and time as its contents is true. 
+      </Ind>
+    </oid>
+    <op><Rel>dateTime</Rel></op>
+	<Var>out</Var>
+	<Ind type="Integer">2012</Ind>
+	<Ind type="Integer">11</Ind>
+	<Ind type="Integer">16</Ind>
+	<Ind type="Integer">20</Ind>
+	<Ind type="Integer">11</Ind>
+	<Ind type="Integer">21</Ind>
+	<Ind type="String">+01:00</Ind>
+  </Atom>
+  
+
+</Query>
+
+</RuleML>

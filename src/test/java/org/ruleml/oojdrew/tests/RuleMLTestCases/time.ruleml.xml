@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RuleML
+xmlns="http://www.ruleml.org/1.0/xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/datalog.xsd">
+  <oid>
+    <Ind>
+		Day planer, uses the builtin time to verify that the time is correct. Day planer reads of a datasource, in this case facts and list all the events of the day that has a valid date with what and when description. 
+    </Ind>
+  </oid>
+  
+<Assert>
+   <Rulebase mapClosure="universal">
+      <Implies>
+         <And>
+            <Atom>
+               <Rel>timetable</Rel>
+               <Var>what</Var>
+               <Var>h</Var>
+               <Var>m</Var>
+               <Var>s</Var>
+               <Var>tz</Var>
+            </Atom>
+            <Atom>
+               <Rel>time</Rel>
+               <Var>when</Var>
+               <Var>h</Var>
+               <Var>m</Var>
+               <Var>s</Var>
+               <Var>tz</Var>
+            </Atom>
+         </And>
+         <Atom>
+            <Rel>dayPlaner</Rel>
+            <Var>what</Var>
+            <Var>when</Var>
+         </Atom>
+      </Implies>
+      <Atom>
+         <Rel>timetable</Rel>
+         <Ind type="String">Lunch</Ind>
+         <Ind type="Integer">11</Ind>
+         <Ind type="Integer">30</Ind>
+         <Ind type="Integer">00</Ind>
+         <Ind type="String">+01:00</Ind>
+      </Atom>
+      <Atom>
+         <Rel>timetable</Rel>
+         <Ind type="String">Flight to New York</Ind>
+         <Ind type="Integer">11</Ind>
+         <Ind type="Integer">30</Ind>
+         <Ind type="Integer">00</Ind>
+         <Ind type="String">+01:00</Ind>
+      </Atom>
+      <Atom>
+         <Rel>timetable</Rel>
+         <Ind type="String">New York buisnes meeting. </Ind>
+         <Ind type="Integer">11</Ind>
+         <Ind type="Integer">30</Ind>
+         <Ind type="Integer">00</Ind>
+         <Ind type="String">-05:00</Ind>
+      </Atom>
+   </Rulebase>
+</Assert>
+
+<Query>
+  <oid><Ind>Queried content</Ind></oid>
+
+  <Atom>
+    <oid>
+      <Ind>
+	Query 1
+	List all facts that has a valid time with the description to its occurrence.
+      </Ind>
+    </oid>
+    <op><Rel>dayPlaner</Rel></op>
+    <Var>what</Var>
+    <Var>when</Var>
+  </Atom>
+  
+
+</Query>
+
+</RuleML>

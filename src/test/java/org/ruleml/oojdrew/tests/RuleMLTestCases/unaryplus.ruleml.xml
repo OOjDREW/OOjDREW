@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RuleML
+xmlns="http://www.ruleml.org/1.0/xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/datalog.xsd">
+  <oid>
+    <Ind>
+		Querying the unary plus builtin with different values. The builtin can be used to verify and return any give number or compare two different values to be equal. Recommended to see builtin equal to check if values are equal. 
+    </Ind>
+  </oid>
+  
+
+<Query>
+  <oid><Ind>Queried content</Ind></oid>
+
+  <Atom>
+    <oid>
+      <Ind>
+	Query 1
+	Query the unary plus builtin with 37, where the result will return the exact number 37.
+      </Ind>
+    </oid>
+    <op><Rel>unaryPlus</Rel></op>
+	<Var>out</Var>
+	<Ind type="Integer">37</Ind>
+  </Atom>
+  
+    <Atom>
+    <oid>
+      <Ind>
+	Query 2
+	Query the unary plus builtin with 37 and 36 will return a false clause as they are not equal. Unary plus expects the same input as output. 
+      </Ind>
+    </oid>
+    <op><Rel>unaryPlus</Rel></op>
+	<Ind type="Integer">36</Ind>
+	<Ind type="Integer">37</Ind>
+  </Atom>
+  
+
+</Query>
+
+</RuleML>

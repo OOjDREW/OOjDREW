@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RuleML
+xmlns="http://www.ruleml.org/1.0/xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/datalog.xsd">
+  <oid>
+    <Ind>
+	Uses substringbefore to search quotes with a specific word. If the word is found. The String will return the quote before as is before the quote is found. 
+    </Ind>
+  </oid>
+  
+<Assert>
+   <Rulebase mapClosure="universal">
+      <Implies>
+         <And>
+            <Atom>
+               <Rel>quotedata</Rel>
+               <Var>quote</Var>
+               <Var>author</Var>
+            </Atom>
+            <Atom>
+               <Rel>substringBefore</Rel>
+               <Var>out</Var>
+               <Var>quote</Var>
+               <Var>search</Var>
+            </Atom>
+         </And>
+         <Atom>
+            <Rel>subQuote</Rel>
+            <Var>out</Var>
+            <Var>search</Var>
+         </Atom>
+      </Implies>
+      <Atom>
+         <Rel>quotedata</Rel>
+         <Ind type="String">We need transparency in government spending. We need to put each government expenditure online so every Floridian can see where their tax money is being spent.</Ind>
+         <Ind type="String">Marco Rubio</Ind>
+      </Atom>
+      <Atom>
+         <Rel>quotedata</Rel>
+         <Ind type="String">A lot of people are living their lives online in much more public ways with Facebook and Twitter.</Ind>
+         <Ind type="String">Dan Savage</Ind>
+      </Atom>
+      <Atom>
+         <Rel>quotedata</Rel>
+         <Ind type="String">Team Obama continues to dominate new media, spending far more effort and money than Team Romney in targeted online youth outreach.</Ind>
+         <Ind type="String">Jennifer Granholm</Ind>
+      </Atom>
+      <Atom>
+         <Rel>quotedata</Rel>
+         <Ind type="String">You get what you give. What you put into things is what you get out of them.</Ind>
+         <Ind type="String">Jennifer Lopez</Ind>
+      </Atom>
+   </Rulebase>
+</Assert>
+
+<Query>
+  <oid><Ind>Queried content</Ind></oid>
+
+  <Atom>
+    <oid>
+      <Ind>
+	Query 1
+	Search all quotes for a keyword where the text before the word is found is return. In case no keyword is found, no quotes will be listed. This query will return Team, as its the only word stated before Obama of all the quotes. 
+      </Ind>
+    </oid>
+    <op><Rel>subQuote</Rel></op>
+    <Var>out</Var>
+	<Ind type="String">Obama</Ind>
+  </Atom>
+  
+  <Atom>
+    <oid>
+      <Ind>
+	Query 2
+	Search all quotes for a keyword where the text before the word is found is return. In case no keyword is found, no quotes will be listed. This query will return "A lot of people are living their lives online in much more public ways with" 
+      </Ind>
+    </oid>
+    <op><Rel>subQuote</Rel></op>
+    <Var>out</Var>
+	<Ind type="String">Facebook</Ind>
+  </Atom>
+
+</Query>
+
+</RuleML>

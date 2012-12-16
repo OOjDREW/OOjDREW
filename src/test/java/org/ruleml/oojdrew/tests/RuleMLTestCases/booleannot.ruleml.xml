@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RuleML
+xmlns="http://www.ruleml.org/1.0/xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/datalog.xsd">
+  <oid>
+    <Ind>
+	Using the booleanNot builtin to give a reverse opinion. Based on the rule saying 0 or 1 will match the oposite matches of the data in game. 
+    </Ind>
+  </oid>
+<Assert>
+   <Rulebase mapClosure="universal">
+      <Implies>
+         <And>
+            <Atom>
+               <Rel>game</Rel>
+               <Var>x</Var>
+               <Var>y</Var>
+            </Atom>
+            <Atom>
+               <Rel>booleanNot</Rel>
+               <Var>x</Var>
+               <Ind type="Integer">0</Ind>
+            </Atom>
+         </And>
+         <Atom>
+            <Rel>funny</Rel>
+            <Var>y</Var>
+         </Atom>
+      </Implies>
+      <Atom>
+         <Rel>game</Rel>
+         <Ind type="Integer">1</Ind>
+         <Ind>I like to play chess</Ind>
+      </Atom>
+      <Atom>
+         <Rel>game</Rel>
+         <Ind type="Integer">0</Ind>
+         <Ind>I dont like to play chess</Ind>
+      </Atom>
+   </Rulebase>
+</Assert>
+
+<Query>
+  <oid><Ind>Queried content</Ind></oid>
+
+  <Atom>
+    <oid>
+      <Ind>
+	Query 1
+	
+      </Ind>
+    </oid>
+    <op><Rel>funny</Rel></op>
+    <Var>WhatNow</Var>
+  </Atom>
+
+</Query>
+
+</RuleML>
