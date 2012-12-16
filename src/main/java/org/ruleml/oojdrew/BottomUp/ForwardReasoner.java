@@ -35,6 +35,8 @@ import org.ruleml.oojdrew.Builtins.CeilingBuiltin;
 import org.ruleml.oojdrew.Builtins.ContainsBuiltin;
 import org.ruleml.oojdrew.Builtins.ContainsIgnoreCaseBuiltin;
 import org.ruleml.oojdrew.Builtins.CosBuiltin;
+import org.ruleml.oojdrew.Builtins.DateBuiltin;
+import org.ruleml.oojdrew.Builtins.DateTimeBuiltin;
 import org.ruleml.oojdrew.Builtins.DivideBuiltin;
 import org.ruleml.oojdrew.Builtins.EndsWithBuiltin;
 import org.ruleml.oojdrew.Builtins.EqualBuiltin;
@@ -48,6 +50,7 @@ import org.ruleml.oojdrew.Builtins.ModBuiltin;
 import org.ruleml.oojdrew.Builtins.MultiplyBuiltin;
 import org.ruleml.oojdrew.Builtins.NotEqualBuiltin;
 import org.ruleml.oojdrew.Builtins.PowBuiltin;
+import org.ruleml.oojdrew.Builtins.ReplaceBuiltin;
 import org.ruleml.oojdrew.Builtins.RoundBuiltin;
 import org.ruleml.oojdrew.Builtins.SinBuiltin;
 import org.ruleml.oojdrew.Builtins.StartsWithBuiltin;
@@ -56,9 +59,14 @@ import org.ruleml.oojdrew.Builtins.StringEqualIgnoreCaseBuiltin;
 import org.ruleml.oojdrew.Builtins.StringLengthBuiltin;
 import org.ruleml.oojdrew.Builtins.StringLowerCaseBuiltin;
 import org.ruleml.oojdrew.Builtins.StringUpperCaseBuiltin;
+import org.ruleml.oojdrew.Builtins.SubstringAfterBuiltin;
+import org.ruleml.oojdrew.Builtins.SubstringBeforeBuiltin;
 import org.ruleml.oojdrew.Builtins.SubstringBuiltin;
 import org.ruleml.oojdrew.Builtins.SubtractBuiltin;
 import org.ruleml.oojdrew.Builtins.TanBuiltin;
+import org.ruleml.oojdrew.Builtins.TimeBuiltin;
+import org.ruleml.oojdrew.Builtins.UnaryMinusBuiltin;
+import org.ruleml.oojdrew.Builtins.UnaryPlusBuiltin;
 import org.ruleml.oojdrew.parsing.RuleMLFormat;
 import org.ruleml.oojdrew.util.DefiniteClause;
 import org.ruleml.oojdrew.util.Term;
@@ -284,6 +292,15 @@ public class ForwardReasoner implements Reasoner {
         this.registerBuiltin(new SubstringBuiltin());
         this.registerBuiltin(new SubtractBuiltin());
         this.registerBuiltin(new TanBuiltin());
+        this.registerBuiltin(new DateBuiltin());
+        this.registerBuiltin(new TimeBuiltin());
+        this.registerBuiltin(new DateTimeBuiltin());
+        this.registerBuiltin(new SubstringAfterBuiltin());
+        this.registerBuiltin(new SubstringBeforeBuiltin());
+        this.registerBuiltin(new ReplaceBuiltin());
+        this.registerBuiltin(new UnaryPlusBuiltin());
+        this.registerBuiltin(new UnaryMinusBuiltin());
+        
     }
 
     /**

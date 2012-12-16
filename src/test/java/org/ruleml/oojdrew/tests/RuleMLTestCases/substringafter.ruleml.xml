@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RuleML
+xmlns="http://www.ruleml.org/1.0/xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.ruleml.org/1.0/xsd http://www.ruleml.org/1.0/xsd/datalog.xsd">
+  <oid>
+    <Ind>
+	Uses substringafter to find quotes by finding the firstname of the speaker. 
+    </Ind>
+  </oid>
+  
+<Assert>
+   <Rulebase mapClosure="universal">
+      <Implies>
+         <And>
+            <Atom>
+               <Rel>quotedata</Rel>
+               <Var>quote</Var>
+               <Var>author</Var>
+            </Atom>
+            <Atom>
+               <Rel>substringAfter</Rel>
+               <Var>out</Var>
+               <Var>author</Var>
+               <Var>search</Var>
+            </Atom>
+         </And>
+         <Atom>
+            <Rel>subQuote</Rel>
+            <Var>quote</Var>
+            <Var>search</Var>
+         </Atom>
+      </Implies>
+      <Atom>
+         <Rel>quotedata</Rel>
+         <Ind type="String">Team Obama continues to dominate new media, spending far more effort and money than Team Romney in targeted online youth outreach.</Ind>
+         <Ind type="String">Jennifer Granholm</Ind>
+      </Atom>
+      <Atom>
+         <Rel>quotedata</Rel>
+         <Ind type="String">You get what you give. What you put into things is what you get out of them.</Ind>
+         <Ind type="String">Jennifer Lopez</Ind>
+      </Atom>
+   </Rulebase>
+</Assert>
+
+<Query>
+  <oid><Ind>Queried content</Ind></oid>
+
+  <Atom>
+    <oid>
+      <Ind>
+	Query 1
+	Match any quotes where the quotees name starts with Jennifer. This query will therefor return both of the quotes in the rulebase. 
+      </Ind>
+    </oid>
+    <op><Rel>subQuote</Rel></op>
+    <Var>out</Var>
+	<Ind type="String">Jennifer</Ind>
+  </Atom>
+
+</Query>
+
+</RuleML>
