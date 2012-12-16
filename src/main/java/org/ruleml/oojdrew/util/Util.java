@@ -222,4 +222,22 @@ public class Util {
         bufferedWriter.write(content);
         bufferedWriter.close();
     }
+    
+    public static int getTypeForInference(String inputstring){
+    	int type = -1;
+		try {
+			Integer.parseInt(inputstring);
+			type = 2;
+		} catch (NumberFormatException e) {
+			//Symbol is no int. Try parsing to double.
+			try{
+				Double.parseDouble(inputstring);
+				type = 3;
+			} catch(NumberFormatException e2){
+				//Symbol is no double. We assign the String type
+				type = 4;
+			}
+		}
+		return type;
+    }
 }
